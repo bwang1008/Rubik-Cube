@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
 	for(int i = 0; i < 100; i++) {
 		for(int j = 0; j < 3; j++) {
-			int L = cubeWidth;
+			int L = cubieWidth;
 
 			int what = (int) floor(30 * sin(i*L/30.0));
 			Cube c(2, 50 + i*L, (what/L) * L, 50 + j*L);
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Cube cube(1, 3, 3, 3);
+	Cube cube(1, 0, 0, 0);
 	cube.create_cube(cube_vertices, cube_faces, cube_types);
 
 	Cube cube2(2, 12, 3, 12);
@@ -261,6 +261,7 @@ int main(int argc, char* argv[])
 		mesh.loadAnimationFrom(argv[2]);
 	}
 	*/
+
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.

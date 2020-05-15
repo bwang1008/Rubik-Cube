@@ -121,8 +121,7 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 				orientation_ *
 				glm::vec3(mouse_direction.y, -mouse_direction.x, 0.0f)
 				);
-		orientation_ =
-			glm::mat3(glm::rotate(rotation_speed_, axis) * glm::mat4(orientation_));
+		orientation_ = glm::mat3(glm::rotate(rotation_speed_, axis) * glm::mat4(orientation_));
 		tangent_ = glm::column(orientation_, 0);
 		up_ = glm::column(orientation_, 1);
 		look_ = glm::column(orientation_, 2);
@@ -159,14 +158,11 @@ void GUI::updateMatrices()
 {
 	// Compute our view, and projection matrices.
 
-	//glm::vec3 originalEye = eye_;
 
 	if (fps_mode_)
 		center_ = eye_ + camera_distance_ * look_;
 	else
 		eye_ = center_ - camera_distance_ * look_;
-
-	//glm::vec3 diff = eye_ - originalEye;
 
 
 	view_matrix_ = glm::lookAt(eye_, center_, up_);

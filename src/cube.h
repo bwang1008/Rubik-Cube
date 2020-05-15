@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 
 struct Cube {
-	int L = cubeWidth;
+	int L = cubieWidth;
 
 	glm::vec4 pos; 	// World coordinates of smaller corner
 	int type; 		// Dirt, grass, water,...
