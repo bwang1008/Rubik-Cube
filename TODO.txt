@@ -1,4 +1,4 @@
-- Implement camera rotation around a center
+v Implement camera rotation around a center
 - Design Rubik's Cube's vertices, faces
 - Render Cube
 - Color faces
