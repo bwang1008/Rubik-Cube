@@ -23,6 +23,6 @@ const float kFloorY = -0.75617 - kFloorEps;
 const float kScrollSpeed = 64.0f;
 
 const float cubieWidth = 1.0f;
-const int cubeWidth = 1;
+const int cubeWidth = 50;
 
 #endif

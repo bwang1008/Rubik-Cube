@@ -103,11 +103,13 @@ int main(int argc, char* argv[])
 	// tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	std::vector<Cube*> cubes;
-	std::vector<glm::vec4> cube_vertices;
-	std::vector<glm::uvec3> cube_faces;
-	std::vector<int> cube_types;
+	// Information for cubes
+	std::vector<Cube*> cubes; // actual Cube objects
+	std::vector<glm::vec4> cube_vertices; // list of all vertices of cubes in world coord
+	std::vector<glm::uvec3> cube_faces; // all triangular faces making up all cubes
+	std::vector<int> cube_types; 
 
+	// Pass containers into method to populate the vectors appropriately 
 	create_rubik(cubes, cube_vertices, cube_faces, cube_types);
 	
 	std::cout << "Num cubes = " << cubes.size() << std::endl;
@@ -251,7 +253,6 @@ int main(int argc, char* argv[])
 		mesh.loadAnimationFrom(argv[2]);
 	}
 	*/
-
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
