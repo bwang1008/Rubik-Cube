@@ -14,8 +14,11 @@ struct Cube {
 	int L = cubieWidth;
 
 	glm::vec4 pos; 	// World coordinates of smaller corner
-	int type; 		// Dirt, grass, water,...
+	int type; 		// Bitmask regarding which of the 6 faces are shown
 	glm::mat4 trans; // overall transformation matrix
+
+	// type = 111111_2 means, in an arbitrarily chosen order,
+	// Front, Right, Top, Bottom, Left, Back
 
 	Cube(int x, int y, int z):
 		pos(x, y, z, 1),

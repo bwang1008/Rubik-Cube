@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
 
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
-	cube_pass_input.assign(1, "cube_type", cube_types.data(), cube_types.size(), 1, GL_FLOAT);
+	cube_pass_input.assign(1, "cube_type", cube_types.data(), cube_types.size(), 1, GL_INT);
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 	RenderPass cube_pass(-1, cube_pass_input,
 			{ cube_vertex_shader, nullptr, cube_fragment_shader},
@@ -291,15 +291,15 @@ int main(int argc, char* argv[])
 		}
 
 		glfwSetWindowTitle(window, title.str().data());
-
 		glViewport(0, 0, window_width, window_height);
 
-
+		// Render cubes
 		if (draw_cube) {
 			cube_pass.setup();
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));
 		}
 
+		// Render skybox
 		if (draw_sky) {
 			sky_pass.setup();
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, sky_faces.size() * 3, GL_UNSIGNED_INT, 0));

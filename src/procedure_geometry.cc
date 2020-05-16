@@ -41,12 +41,13 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	// faces
 	for(int i = 1; i < N-1; ++i) {
 		for(int j = 1; j < N-1; j++) {
-			Cube* c1 = new Cube(1, i, 0, j); // front
-			Cube* c2 = new Cube(1, i, N-1, j); // back
-			Cube* c3 = new Cube(1, 0, i, j);
-			Cube* c4 = new Cube(1, N-1, i, j);
+			// types ensure inside of cube is black
+			Cube* c1 = new Cube(4, i, 0, j); // front
+			Cube* c2 = new Cube(8, i, N-1, j); // back
+			Cube* c3 = new Cube(2, 0, i, j);
+			Cube* c4 = new Cube(16, N-1, i, j);
 			Cube* c5 = new Cube(1, i, j, 0);
-			Cube* c6 = new Cube(1, i, j, N-1);
+			Cube* c6 = new Cube(32, i, j, N-1);
 
 			c1 -> create_cube(cube_vertices, cube_faces, cube_types);
 			c2 -> create_cube(cube_vertices, cube_faces, cube_types);
@@ -66,20 +67,20 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 
 	// edges
 	for(int i = 1; i < N-1; ++i) {
-		Cube* c1 = new Cube(1, i, 0, 0);
-		Cube* c2 = new Cube(1, i, 0, N-1);
-		Cube* c3 = new Cube(1, i, N-1, 0);
-		Cube* c4 = new Cube(1, i, N-1, N-1);
+		Cube* c1 = new Cube(63, i, 0, 0);
+		Cube* c2 = new Cube(63, i, 0, N-1);
+		Cube* c3 = new Cube(63, i, N-1, 0);
+		Cube* c4 = new Cube(63, i, N-1, N-1);
 
-		Cube* c5 = new Cube(1, 0, i, 0);
-		Cube* c6 = new Cube(1, 0, i, N-1);
-		Cube* c7 = new Cube(1, N-1, i, 0);
-		Cube* c8 = new Cube(1, N-1, i, N-1);
+		Cube* c5 = new Cube(63, 0, i, 0);
+		Cube* c6 = new Cube(63, 0, i, N-1);
+		Cube* c7 = new Cube(63, N-1, i, 0);
+		Cube* c8 = new Cube(63, N-1, i, N-1);
 
-		Cube* c9 = new Cube(1, 0, 0, i);
-		Cube* c10 = new Cube(1, 0, N-1, i);
-		Cube* c11 = new Cube(1, N-1, 0, i);
-		Cube* c12 = new Cube(1, N-1, N-1, i);
+		Cube* c9 = new Cube(63, 0, 0, i);
+		Cube* c10 = new Cube(63, 0, N-1, i);
+		Cube* c11 = new Cube(63, N-1, 0, i);
+		Cube* c12 = new Cube(63, N-1, N-1, i);
 
 		c1 -> create_cube(cube_vertices, cube_faces, cube_types);
 		c2 -> create_cube(cube_vertices, cube_faces, cube_types);
@@ -112,7 +113,7 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	for(int i = 0; i < 2; ++i) {
 		for(int j = 0; j < 2; ++j) {
 			for(int k = 0; k < 2; ++k) {
-				Cube* c = new Cube(1, i * (N-1), j * (N-1), k * (N-1));
+				Cube* c = new Cube(63, i * (N-1), j * (N-1), k * (N-1));
 				c -> create_cube(cube_vertices, cube_faces, cube_types);
 				cubes.push_back(c);
 			}
