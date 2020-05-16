@@ -103,12 +103,14 @@ int main(int argc, char* argv[])
 	// tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	std::vector<Cube*> cubes;
 	std::vector<glm::vec4> cube_vertices;
 	std::vector<glm::uvec3> cube_faces;
 	std::vector<int> cube_types;
 
-	create_rubik(cube_vertices, cube_faces, cube_types);
+	create_rubik(cubes, cube_vertices, cube_faces, cube_types);
 	
+	std::cout << "Num cubes = " << cubes.size() << std::endl;
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
 
