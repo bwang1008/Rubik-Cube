@@ -42,12 +42,12 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	for(int i = 1; i < N-1; ++i) {
 		for(int j = 1; j < N-1; j++) {
 			// types ensure inside of cube is black
-			Cube* c1 = new Cube(4, i, 0, j); // front
-			Cube* c2 = new Cube(8, i, N-1, j); // back
-			Cube* c3 = new Cube(2, 0, i, j);
-			Cube* c4 = new Cube(16, N-1, i, j);
-			Cube* c5 = new Cube(1, i, j, 0);
-			Cube* c6 = new Cube(32, i, j, N-1);
+			Cube* c1 = new Cube(4, i, 0, j); // Top
+			Cube* c2 = new Cube(8, i, N-1, j); // Bottom
+			Cube* c3 = new Cube(2, 0, i, j); // Left
+			Cube* c4 = new Cube(16, N-1, i, j); // Right
+			Cube* c5 = new Cube(1, i, j, 0); // Front
+			Cube* c6 = new Cube(32, i, j, N-1); // Back
 
 			c1 -> create_cube(cube_vertices, cube_faces, cube_types);
 			c2 -> create_cube(cube_vertices, cube_faces, cube_types);
@@ -120,4 +120,8 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 		}
 	}
 
+}
+
+void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertices, glm::vec3 move) {
+	
 }

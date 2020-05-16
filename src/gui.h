@@ -41,6 +41,9 @@ public:
 	float getEyeY() { return eye_[1]; }
 	float getEyeZ() { return eye_[2]; }
 
+	glm::vec3 getCurrentMove() { return currentMove; }
+	void setCurrentMove(glm::vec3 v) { currentMove[0] = v[0]; currentMove[1] = v[1]; currentMove[2] = v[2]; }
+
 	const float* getLightPositionPtr() const { return &light_position_[0]; }
 
 	bool isPlaying() const { return play_; }
@@ -78,6 +81,11 @@ private:
 	glm::mat4 view_matrix_ = glm::lookAt(eye_, center_, up_);
 	glm::mat4 projection_matrix_;
 	glm::mat4 model_matrix_ = glm::mat4(1.0f);
+
+	// Face 5 = Front, 4 = Right, 3 = Top, 2 = Bottom, 1 = Left, 0 = Back
+	// Which layer behind Face
+	// How many quarter turns
+	glm::vec3 currentMove = glm::vec3(0, 0, 0);
 
 	bool captureWASDUPDOWN(int key, int action);
 

@@ -293,6 +293,10 @@ int main(int argc, char* argv[])
 		glfwSetWindowTitle(window, title.str().data());
 		glViewport(0, 0, window_width, window_height);
 
+		// Update transformation of vertices
+		update_rubik(cubes, cube_vertices, gui.getCurrentMove());
+		cube_pass.updateVBO(0, cube_vertices.data(), cube_vertices.size());
+
 		// Render cubes
 		if (draw_cube) {
 			cube_pass.setup();
