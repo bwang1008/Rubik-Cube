@@ -24,7 +24,7 @@
 #include <jpegio.h>
 #include <math.h>
 
-int window_width = 1280;
+int window_width = 720; //1280;
 int window_height = 720;
 
 const std::string window_title = "Rubik's Cube";
@@ -108,25 +108,10 @@ int main(int argc, char* argv[])
 	std::vector<int> cube_types;
 
 	create_rubik(cube_vertices, cube_faces, cube_types);
-	/*
-	for(int i = 0; i < 100; i++) {
-		for(int j = 0; j < 3; j++) {
-			int L = cubieWidth;
-
-			int what = (int) floor(30 * sin(i*L/30.0));
-			Cube c(2, 50 + i*L, (what/L) * L, 50 + j*L);
-
-			c.create_cube(cube_vertices, cube_faces, cube_types);
-		}
-	}
-
-	Cube cube(1, 0, 0, 0);
-	cube.create_cube(cube_vertices, cube_faces, cube_types);
-
-	Cube cube2(2, 12, 3, 12);
-	cube2.create_cube(cube_vertices, cube_faces, cube_types);
-	*/
 	
+	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
+	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
+
 	// SKY BOX
 	std::vector<glm::vec4> sky_vertices;
 	std::vector<glm::uvec3> sky_faces;

@@ -81,8 +81,12 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 			offset = getCurrentPlayTime();
 		}
 	} else if (key == GLFW_KEY_R && action != GLFW_RELEASE){
-		offset = 0;	
-		start_time = std::chrono::system_clock::now();
+		center_ = glm::vec3(cubeWidth/2.0f, cubeWidth/2.0f, cubeWidth/2.0f);
+		up_ = glm::vec3(0.0f, 1.0f, 0.0f);
+		look_ = glm::vec3(0.0f, 0.0f, -1.0f);
+		tangent_ = glm::cross(look_, up_);
+		orientation_ = glm::mat3(tangent_, up_, look_);
+		camera_distance_ = cubeWidth * 3;
 	}
 	// FIXME: implement other controls here.
 }
