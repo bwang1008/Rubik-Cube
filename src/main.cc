@@ -107,6 +107,8 @@ int main(int argc, char* argv[])
 	std::vector<glm::uvec3> cube_faces;
 	std::vector<int> cube_types;
 
+	create_rubik(cube_vertices, cube_faces, cube_types);
+	/*
 	for(int i = 0; i < 100; i++) {
 		for(int j = 0; j < 3; j++) {
 			int L = cubieWidth;
@@ -123,7 +125,8 @@ int main(int argc, char* argv[])
 
 	Cube cube2(2, 12, 3, 12);
 	cube2.create_cube(cube_vertices, cube_faces, cube_types);
-
+	*/
+	
 	// SKY BOX
 	std::vector<glm::vec4> sky_vertices;
 	std::vector<glm::uvec3> sky_faces;

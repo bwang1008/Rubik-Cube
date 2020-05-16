@@ -15,15 +15,19 @@ struct Cube {
 
 	glm::vec4 pos; 	// World coordinates of smaller corner
 	int type; 		// Dirt, grass, water,...
+	glm::mat4 trans; // overall transformation matrix
+
 	Cube(int x, int y, int z):
 		pos(x, y, z, 1),
-		type(0)
+		type(0),
+		trans(1.0f)
 	{
 	}
 
 	Cube(int material, int x, int y, int z):
 		pos(x, y, z, 1),
-		type(material)
+		type(material),
+		trans(1.0f)
 	{
 	}
 
@@ -33,14 +37,16 @@ struct Cube {
 							 ) {
 		size_t index = cube_vertices.size();
 
-		cube_vertices.push_back(glm::vec4(pos[0],     pos[1],     pos[2]    , 1));
-		cube_vertices.push_back(glm::vec4(pos[0] + L, pos[1],     pos[2]    , 1));
-		cube_vertices.push_back(glm::vec4(pos[0]    , pos[1] + L, pos[2]    , 1));
-		cube_vertices.push_back(glm::vec4(pos[0] + L, pos[1] + L, pos[2]    , 1));
-		cube_vertices.push_back(glm::vec4(pos[0]    , pos[1]    , pos[2] + L, 1));
-		cube_vertices.push_back(glm::vec4(pos[0] + L, pos[1]    , pos[2] + L, 1));
-		cube_vertices.push_back(glm::vec4(pos[0]    , pos[1] + L, pos[2] + L, 1));
-		cube_vertices.push_back(glm::vec4(pos[0] + L, pos[1] + L, pos[2] + L, 1));
+		glm::vec4 pos2 = trans * pos;
+
+		cube_vertices.push_back(glm::vec4(pos2[0],     pos2[1],     pos2[2]    , 1));
+		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1],     pos2[2]    , 1));
+		cube_vertices.push_back(glm::vec4(pos2[0]    , pos2[1] + L, pos2[2]    , 1));
+		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1] + L, pos2[2]    , 1));
+		cube_vertices.push_back(glm::vec4(pos2[0]    , pos2[1]    , pos2[2] + L, 1));
+		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1]    , pos2[2] + L, 1));
+		cube_vertices.push_back(glm::vec4(pos2[0]    , pos2[1] + L, pos2[2] + L, 1));
+		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1] + L, pos2[2] + L, 1));
 
 		cube_faces.push_back(glm::uvec3(index + 0, index + 2, index + 1));
 		cube_faces.push_back(glm::uvec3(index + 1, index + 2, index + 3));
