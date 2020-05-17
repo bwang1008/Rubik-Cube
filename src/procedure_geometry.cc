@@ -68,20 +68,20 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 
 	// edges
 	for(int i = 1; i < N-1; ++i) {
-		Cube* c1 = new Cube(63, -half + i, -half + 0, -half + 0);
-		Cube* c2 = new Cube(63, -half + i, -half + 0, -half + N-1);
-		Cube* c3 = new Cube(63, -half + i, -half + N-1, -half + 0);
-		Cube* c4 = new Cube(63, -half + i, -half + N-1, -half + N-1);
+		Cube* c1 = new Cube(5, -half + i, -half + 0, -half + 0);
+		Cube* c2 = new Cube(36, -half + i, -half + 0, -half + N-1);
+		Cube* c3 = new Cube(9, -half + i, -half + N-1, -half + 0);
+		Cube* c4 = new Cube(40, -half + i, -half + N-1, -half + N-1);
 
-		Cube* c5 = new Cube(63, -half + 0, -half + i, -half + 0);
-		Cube* c6 = new Cube(63, -half + 0, -half + i, -half + N-1);
-		Cube* c7 = new Cube(63, -half + N-1, -half + i, -half + 0);
-		Cube* c8 = new Cube(63, -half + N-1, -half + i, -half + N-1);
+		Cube* c5 = new Cube(3, -half + 0, -half + i, -half + 0);
+		Cube* c6 = new Cube(34, -half + 0, -half + i, -half + N-1);
+		Cube* c7 = new Cube(17, -half + N-1, -half + i, -half + 0);
+		Cube* c8 = new Cube(48, -half + N-1, -half + i, -half + N-1);
 
-		Cube* c9 = new Cube(63, -half + 0, -half + 0, -half + i);
-		Cube* c10 = new Cube(63, -half + 0, -half + N-1, -half + i);
-		Cube* c11 = new Cube(63, -half + N-1, -half + 0, -half + i);
-		Cube* c12 = new Cube(63, -half + N-1, -half + N-1, -half + i);
+		Cube* c9 = new Cube(6, -half + 0, -half + 0, -half + i);
+		Cube* c10 = new Cube(10, -half + 0, -half + N-1, -half + i);
+		Cube* c11 = new Cube(20, -half + N-1, -half + 0, -half + i);
+		Cube* c12 = new Cube(24, -half + N-1, -half + N-1, -half + i);
 
 		c1 -> create_cube(cube_vertices, cube_faces, cube_types);
 		c2 -> create_cube(cube_vertices, cube_faces, cube_types);

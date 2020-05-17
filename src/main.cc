@@ -100,6 +100,11 @@ int main(int argc, char* argv[])
 		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
 		return -1;
 	}
+	if (cubeWidth <= 0 || cubeWidth > 200) {
+		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
+		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
+		return -1;
+	}
 
 	GLFWwindow *window = init_glefw();
 	GUI gui(window, window_width, window_height, window_height);
