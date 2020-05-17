@@ -129,6 +129,6 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 
 }
 
-void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertices, glm::vec3 move) {
+void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::mat4>& trans, glm::vec3 move) {
 	
 }
