@@ -36,7 +36,7 @@ void main() {
 
 		int bit = (type >> 1) & 1;
 
-		fragment_color = bit * vec4(1.0, 0.5, 0.0, 1.0); // orange
+		fragment_color = bit * vec4(255.0f/255.0, 100.0f/255.0, 0.0, 1.0); // orange
 	}
 	else if(coord[2] == 1.0) { // front
 		u = coord[0];

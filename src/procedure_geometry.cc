@@ -110,11 +110,13 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 		cubes.push_back(c12);
 	}
 
+	std::vector<int> corner_types{7, 38, 11, 42, 21, 52, 25, 56};
+
 	// corners
 	for(int i = 0; i < 2; ++i) {
 		for(int j = 0; j < 2; ++j) {
 			for(int k = 0; k < 2; ++k) {
-				Cube* c = new Cube(63, -half + i * (N-1), -half + j * (N-1), -half + k * (N-1));
+				Cube* c = new Cube(corner_types[4*i+2*j+k], -half + i * (N-1), -half + j * (N-1), -half + k * (N-1));
 				c -> create_cube(cube_vertices, cube_faces, cube_types);
 				cubes.push_back(c);
 			}
