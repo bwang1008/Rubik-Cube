@@ -32,6 +32,10 @@ struct Cube {
 	{
 	}
 
+	glm::vec4 getPos() {
+		return pos;
+	}
+
 	/*
 	void setTrans(glm::mat4 mat) {
 		for(int i = 0; i < 4; ++i) {

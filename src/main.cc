@@ -262,9 +262,9 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, window_width, window_height);
 
 		// Update transformation of vertices
-		update_rubik(cubes, trans, gui.getCurrentMove());
+		update_rubik(cubes, trans, gui.getCurrentMove(), gui.getCurrentPlayTime());
+		
 		// update cols
-
 		for(size_t i = 0; i < trans.size(); ++i) {
 			glm::mat4 mat = trans[i];
 			col0s[i] = mat[0];
@@ -272,7 +272,6 @@ int main(int argc, char* argv[])
 			col2s[i] = mat[2];
 			col3s[i] = mat[3];
 		}
-
 		
 		// update VBOs
 		cube_pass.updateVBO(2, col0s.data(), col0s.size());

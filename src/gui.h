@@ -82,10 +82,10 @@ private:
 	glm::mat4 projection_matrix_;
 	glm::mat4 model_matrix_ = glm::mat4(1.0f);
 
-	// Face 5 = Front, 4 = Right, 3 = Top, 2 = Bottom, 1 = Left, 0 = Back
+	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
 	// Which layer behind Face
 	// How many quarter turns
-	glm::vec3 currentMove = glm::vec3(0, 0, 0);
+	glm::vec3 currentMove = glm::vec3(2, 0, 1);
 
 	bool captureWASDUPDOWN(int key, int action);
 
