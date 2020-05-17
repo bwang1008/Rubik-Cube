@@ -20,13 +20,13 @@ struct Cube {
 	// type = 111111_2 means, in an arbitrarily chosen order,
 	// Front, Right, Top, Bottom, Left, Back
 
-	Cube(int x, int y, int z):
+	Cube(float x, float y, float z):
 		pos(x, y, z, 1),
 		type(0)
 	{
 	}
 
-	Cube(int material, int x, int y, int z):
+	Cube(int material, float x, float y, float z):
 		pos(x, y, z, 1),
 		type(material)
 	{

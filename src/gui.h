@@ -74,7 +74,7 @@ private:
 	glm::vec3 look_ = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 tangent_ = glm::cross(look_, up_);
 	//glm::vec3 center_ = eye_ - camera_distance_ * look_;
-	glm::vec3 center_ = glm::vec3(cubeWidth/2.0f, cubeWidth/2.0f, cubeWidth/2.0f);
+	glm::vec3 center_ = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat3 orientation_ = glm::mat3(tangent_, up_, look_);
 	glm::vec4 light_position_;
 
@@ -85,7 +85,7 @@ private:
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
 	// Which layer behind Face
 	// How many quarter turns
-	glm::vec3 currentMove = glm::vec3(2, 0, 1);
+	glm::vec3 currentMove = glm::vec3(4, 0, 1);
 
 	bool captureWASDUPDOWN(int key, int action);
 
