@@ -64,4 +64,6 @@ void main() {
 		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);
 	}
 
+	fragment_color[3] = 1.0; // prevent transparencies
+
 })zzz"

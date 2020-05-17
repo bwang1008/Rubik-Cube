@@ -301,7 +301,15 @@ int main(int argc, char* argv[])
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
+
+	// free memory
+	for(auto ptr : cubes)
+		delete ptr;
+	cubes.clear();
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
+
+
 }

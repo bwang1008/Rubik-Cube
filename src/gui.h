@@ -85,7 +85,7 @@ private:
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
 	// Which layer behind Face
 	// How many quarter turns
-	glm::vec3 currentMove = glm::vec3(0, 0, 1);
+	glm::vec3 currentMove = glm::vec3(0, 1, 1);
 
 	bool captureWASDUPDOWN(int key, int action);
 
