@@ -15,25 +15,24 @@ struct Cube {
 
 	glm::vec4 pos; 	// World coordinates of smaller corner
 	int type; 		// Bitmask regarding which of the 6 faces are shown
-	glm::mat4 trans; // overall transformation matrix
+	//glm::mat4 trans; // overall transformation matrix
 
 	// type = 111111_2 means, in an arbitrarily chosen order,
 	// Front, Right, Top, Bottom, Left, Back
 
 	Cube(int x, int y, int z):
 		pos(x, y, z, 1),
-		type(0),
-		trans(1.0f)
+		type(0)
 	{
 	}
 
 	Cube(int material, int x, int y, int z):
 		pos(x, y, z, 1),
-		type(material),
-		trans(1.0f)
+		type(material)
 	{
 	}
 
+	/*
 	void setTrans(glm::mat4 mat) {
 		for(int i = 0; i < 4; ++i) {
 			for(int j = 0; j < 4; ++j) {
@@ -41,6 +40,7 @@ struct Cube {
 			}
 		}
 	}
+	*/
 
 	void create_cube(std::vector<glm::vec4>& cube_vertices, 
 							 std::vector<glm::uvec3>& cube_faces,
@@ -48,7 +48,7 @@ struct Cube {
 							 ) {
 		size_t index = cube_vertices.size();
 
-		glm::vec4 pos2 = trans * pos;
+		glm::vec4 pos2 = pos;
 
 		cube_vertices.push_back(glm::vec4(pos2[0],     pos2[1],     pos2[2]    , 1));
 		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1],     pos2[2]    , 1));

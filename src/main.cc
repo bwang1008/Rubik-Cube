@@ -45,12 +45,16 @@ const char* fragment_shader =
 #include "shaders/default.frag"
 ;
 
+const char* cube_vertex_shader = 
+#include "shaders/cube.vert"
+;
+
 const char* cube_fragment_shader = 
 #include "shaders/cube.frag"
 ;
 
-const char* cube_vertex_shader = 
-#include "shaders/cube.vert"
+const char* sky_vertex_shader = 
+#include "shaders/sky.vert"
 ;
 
 const char* sky_fragment_shader = 
@@ -107,14 +111,29 @@ int main(int argc, char* argv[])
 	std::vector<Cube*> cubes; // actual Cube objects
 	std::vector<glm::vec4> cube_vertices; // list of all vertices of cubes in world coord
 	std::vector<glm::uvec3> cube_faces; // all triangular faces making up all cubes
-	std::vector<int> cube_types; 
+	std::vector<int> cube_types; // specify which faces of cube to actually color
+
+	std::vector<glm::mat4> trans;
 
 	// Pass containers into method to populate the vectors appropriately 
-	create_rubik(cubes, cube_vertices, cube_faces, cube_types);
+	create_rubik(cubes, cube_vertices, cube_faces, cube_types, trans);
+
+	std::vector<glm::vec4> col0s;
+	std::vector<glm::vec4> col1s;
+	std::vector<glm::vec4> col2s;
+	std::vector<glm::vec4> col3s;
+
+	for(glm::mat4 mat : trans) {
+		col0s.push_back(mat[0]);
+		col1s.push_back(mat[1]);
+		col2s.push_back(mat[2]);
+		col3s.push_back(mat[3]);
+	}
 	
 	std::cout << "Num cubes = " << cubes.size() << std::endl;
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
+	std::cout << "trans size = " << trans.size() << std::endl;
 
 	// SKY BOX
 	std::vector<glm::vec4> sky_vertices;
@@ -165,64 +184,13 @@ int main(int argc, char* argv[])
 	auto std_proj = make_uniform("projection", proj_data);
 	auto std_light = make_uniform("light_position", lp_data);
 
-	/*
-	std::function<float()> alpha_data = [&gui]() {
-		static const float transparet = 0.5; // Alpha constant goes here
-		static const float non_transparet = 1.0;
-		if (gui.isTransparent())
-			return transparet;
-		else
-			return non_transparet;
-	};
-
-	
-	//auto object_alpha = make_uniform("alpha", alpha_data);
-
-	std::function<std::vector<glm::vec3>()> trans_data = [&mesh](){ return mesh.getCurrentQ()->transData(); };
-	std::function<std::vector<glm::fquat>()> rot_data = [&mesh](){ return mesh.getCurrentQ()->rotData(); };
-	auto joint_trans = make_uniform("joint_trans", trans_data);
-	auto joint_rot = make_uniform("joint_rot", rot_data);
-
-	std::function<std::vector<glm::mat4>()> def_data = [&mesh](){ return mesh.getDef(); };
-	auto joint_def = make_uniform("joint_def", def_data);
-	// FIXME: define more ShaderUniforms for RenderPass if you want to use it.
-	//        Otherwise, do whatever you like here
-
-	
-	// PMD Model render pass
-	std::vector<glm::vec2>& uv_coordinates = mesh.uv_coordinates;
-	RenderDataInput object_pass_input;
-	object_pass_input.assign(0, "jid0", mesh.joint0.data(), mesh.joint0.size(), 1, GL_INT);
-	object_pass_input.assign(1, "jid1", mesh.joint1.data(), mesh.joint1.size(), 1, GL_INT);
-	object_pass_input.assign(2, "w0", mesh.weight_for_joint0.data(), mesh.weight_for_joint0.size(), 1, GL_FLOAT);
-	object_pass_input.assign(3, "vector_from_joint0", mesh.vector_from_joint0.data(), mesh.vector_from_joint0.size(), 3, GL_FLOAT);
-	object_pass_input.assign(4, "vector_from_joint1", mesh.vector_from_joint1.data(), mesh.vector_from_joint1.size(), 3, GL_FLOAT);
-	object_pass_input.assign(5, "normal", mesh.vertex_normals.data(), mesh.vertex_normals.size(), 4, GL_FLOAT);
-	object_pass_input.assign(6, "uv", uv_coordinates.data(), uv_coordinates.size(), 2, GL_FLOAT);
-	// TIPS: You won't need vertex position in your solution.
-	//       This only serves the stub shader.
-	object_pass_input.assign(7, "vert", mesh.vertices.data(), mesh.vertices.size(), 4, GL_FLOAT);
-	object_pass_input.assignIndex(mesh.faces.data(), mesh.faces.size(), 3);
-	object_pass_input.useMaterials(mesh.materials);
-	RenderPass object_pass(-1,
-			object_pass_input,
-			{
-			  blending_shader,
-			  geometry_shader,
-			  fragment_shader
-			},
-			{ std_model, std_view, std_proj,
-			  std_light,
-			  std_camera, object_alpha,
-			  joint_trans, joint_rot, joint_def
-			},
-			{ "fragment_color" }
-			);
-	*/
-
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
 	cube_pass_input.assign(1, "cube_type", cube_types.data(), cube_types.size(), 1, GL_INT);
+	cube_pass_input.assign(2, "col0", col0s.data(), col0s.size(), 4, GL_FLOAT);
+	cube_pass_input.assign(3, "col1", col1s.data(), col1s.size(), 4, GL_FLOAT);
+	cube_pass_input.assign(4, "col2", col2s.data(), col2s.size(), 4, GL_FLOAT);
+	cube_pass_input.assign(5, "col3", col3s.data(), col3s.size(), 4, GL_FLOAT);
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 	RenderPass cube_pass(-1, cube_pass_input,
 			{ cube_vertex_shader, nullptr, cube_fragment_shader},
@@ -234,7 +202,7 @@ int main(int argc, char* argv[])
 	sky_pass_input.assign(0, "vertex_position", sky_vertices.data(), sky_faces.size(), 4, GL_FLOAT);
 	sky_pass_input.assignIndex(sky_faces.data(), sky_faces.size(), 3);
 	RenderPass sky_pass(-1, sky_pass_input,
-			{ cube_vertex_shader, nullptr, sky_fragment_shader},
+			{ sky_vertex_shader, nullptr, sky_fragment_shader},
 			{ std_view, std_proj},
 			{ "fragment_color"}
 			);

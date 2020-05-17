@@ -35,7 +35,7 @@ void create_skybox(std::vector<glm::vec4>& sky_vertices, std::vector<glm::uvec3>
 	sky_faces.push_back(glm::uvec3(index + 4, index + 6, index + 7));
 }
 
-void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertices, std::vector<glm::uvec3>& cube_faces, std::vector<int>& cube_types) {
+void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertices, std::vector<glm::uvec3>& cube_faces, std::vector<int>& cube_types, std::vector<glm::mat4>& trans) {
 	int N = cubeWidth;
 
 	// faces
@@ -119,6 +119,13 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 			}
 		}
 	}
+
+	// originally, all cubes are not transformed (identity matrices)
+	for(size_t i = 0; i < 8 * cubes.size(); i++) {
+		glm::mat4 id = glm::mat4(1.0f);
+		trans.push_back(id);
+	}
+
 
 }
 
