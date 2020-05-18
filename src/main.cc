@@ -106,6 +106,8 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	std::cout << "Cube Width = " << cubeWidth << std::endl;
+
 	GLFWwindow *window = init_glefw();
 	GUI gui(window, window_width, window_height, window_height);
 
@@ -117,13 +119,12 @@ int main(int argc, char* argv[])
 	std::vector<glm::vec4> cube_vertices; // list of all vertices of cubes in world coord
 	std::vector<glm::uvec3> cube_faces; // all triangular faces making up all cubes
 	std::vector<int> cube_types; // specify which faces of cube to actually color
-	std::vector<glm::vec3> cube_centers;
+	std::vector<glm::vec3> cube_centers; // centers of each cube
 
 	// Pass containers into method to populate the vectors appropriately 
 	create_rubik(cubes, cube_vertices, cube_faces, cube_types, cube_centers);
 
-	std::vector<int> cube_rotating;
-	
+	std::vector<int> cube_rotating; // which cubes should be rotating with gui.getCurrentMove()
 	for(size_t i = 0; i < 8 * cubes.size(); ++i) {
 		cube_rotating.push_back(0);
 	}
@@ -163,13 +164,6 @@ int main(int argc, char* argv[])
 
 	// FIXME: add more lambdas for data_source if you want to use RenderPass.
 	//        Otherwise, do whatever you like here
-	
-	/*
-	std::function<const glm::mat4*()> model_data = [&mats]() {
-		return mats.model;
-	};*/
-
-
 
 	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
 	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
@@ -179,7 +173,6 @@ int main(int argc, char* argv[])
 	std::function<int()> face_data = [&gui]() { return gui.getCurrentMove()[0]; };
 	std::function<float()> theta_data = [&gui]() { return -gui.getCurrentPlayTime(); };
 
-	//auto std_model = std::make_shared<ShaderUniform<const glm::mat4*>>("model", model_data);
 	auto std_view = make_uniform("view", view_data);
 	auto std_camera = make_uniform("camera_position", cam_data);
 	auto std_proj = make_uniform("projection", proj_data);

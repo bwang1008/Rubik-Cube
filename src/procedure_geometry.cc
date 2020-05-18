@@ -42,6 +42,15 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	int N = cubeWidth;
 	float half = N/2.0f;
 
+	// Special case when N = 1
+	if(N == 1) {
+		Cube* c = new Cube(63, -half, -half, -half);
+		c -> create_cube(cube_vertices, cube_faces, cube_types);
+		cubes.push_back(c);
+		cube_centers.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		return;
+	}
+
 	// faces
 	for(int i = 1; i < N-1; ++i) {
 		for(int j = 1; j < N-1; j++) {
