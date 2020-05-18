@@ -117,27 +117,10 @@ int main(int argc, char* argv[])
 	std::vector<glm::vec4> cube_vertices; // list of all vertices of cubes in world coord
 	std::vector<glm::uvec3> cube_faces; // all triangular faces making up all cubes
 	std::vector<int> cube_types; // specify which faces of cube to actually color
-	std::vector<glm::mat4> trans;
 	std::vector<glm::vec3> cube_centers;
 
-	std::cout << "Good job " << std::endl;
-
 	// Pass containers into method to populate the vectors appropriately 
-	create_rubik(cubes, cube_vertices, cube_faces, cube_types, trans, cube_centers);
-
-	std::cout << "yay" << std::endl;
-
-	std::vector<glm::vec4> col0s;
-	std::vector<glm::vec4> col1s;
-	std::vector<glm::vec4> col2s;
-	std::vector<glm::vec4> col3s;
-
-	for(glm::mat4 mat : trans) {
-		col0s.push_back(mat[0]);
-		col1s.push_back(mat[1]);
-		col2s.push_back(mat[2]);
-		col3s.push_back(mat[3]);
-	}
+	create_rubik(cubes, cube_vertices, cube_faces, cube_types, cube_centers);
 
 	std::vector<int> cube_rotating;
 	
@@ -148,9 +131,6 @@ int main(int argc, char* argv[])
 	std::cout << "Num cubes = " << cubes.size() << std::endl;
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
-	std::cout << "trans size = " << trans.size() << std::endl;
-	std::cout << "cube_centers size = " << cube_centers.size() << std::endl;
-	std::cout << "cube_rotating size= " << cube_rotating.size() << std::endl;
 
 	// SKY BOX
 	std::vector<glm::vec4> sky_vertices;
@@ -189,6 +169,8 @@ int main(int argc, char* argv[])
 		return mats.model;
 	};*/
 
+
+
 	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
 	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
 	std::function<glm::mat4()> identity_mat = [](){ return glm::mat4(1.0f); };
@@ -208,11 +190,7 @@ int main(int argc, char* argv[])
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
 	cube_pass_input.assign(1, "cube_type", cube_types.data(), cube_types.size(), 1, GL_INT);
-	cube_pass_input.assign(2, "col0", col0s.data(), col0s.size(), 4, GL_FLOAT);
-	cube_pass_input.assign(3, "col1", col1s.data(), col1s.size(), 4, GL_FLOAT);
-	cube_pass_input.assign(4, "col2", col2s.data(), col2s.size(), 4, GL_FLOAT);
-	cube_pass_input.assign(5, "col3", col3s.data(), col3s.size(), 4, GL_FLOAT);
-	cube_pass_input.assign(6, "rotating", cube_rotating.data(), cube_rotating.size(), 1, GL_INT);
+	cube_pass_input.assign(2, "rotating", cube_rotating.data(), cube_rotating.size(), 1, GL_INT);
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 	RenderPass cube_pass(-1, cube_pass_input,
 			{ cube_vertex_shader, nullptr, cube_fragment_shader},
@@ -283,37 +261,19 @@ int main(int argc, char* argv[])
 		glfwSetWindowTitle(window, title.str().data());
 		glViewport(0, 0, window_width, window_height);
 
+		// update rotation, depending if rotating already or not
 		if(gui.isQuarterTurning()) {
 
 		}
 		else {
 			gui.setQuarterTurning(true);
 
+			gui.setStartTime();
 			update_rubik2(cubes, gui.getCurrentMove(), cube_rotating);
 			std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
 			
-			cube_pass.updateVBO(6, cube_rotating.data(), cube_rotating.size());
+			cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
 		}
-
-		/*
-		// Update transformation of vertices
-		update_rubik(cubes, trans, gui.getCurrentMove(), gui.getCurrentPlayTime());
-		
-		// update cols
-		for(size_t i = 0; i < trans.size(); ++i) {
-			glm::mat4 mat = trans[i];
-			col0s[i] = mat[0];
-			col1s[i] = mat[1];
-			col2s[i] = mat[2];
-			col3s[i] = mat[3];
-		}
-		
-		// update VBOs
-		cube_pass.updateVBO(2, col0s.data(), col0s.size());
-		cube_pass.updateVBO(3, col1s.data(), col1s.size());
-		cube_pass.updateVBO(4, col2s.data(), col2s.size());
-		cube_pass.updateVBO(5, col3s.data(), col3s.size());
-		*/
 
 		// Render cubes
 		if (draw_cube) {

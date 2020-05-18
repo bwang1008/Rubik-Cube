@@ -7,10 +7,6 @@ uniform float theta;
 
 in vec4 vertex_position;
 in int cube_type;
-in vec4 col0;
-in vec4 col1;
-in vec4 col2;
-in vec4 col3;
 in int rotating;
 
 flat out int type;
@@ -20,7 +16,7 @@ void main(){
 	
 	mat4 mat = mat4(1.0f);
 	if(rotating > 0) {
-	
+
 		if(face == 0) {
 			
 			mat[0][0] = cos(theta);

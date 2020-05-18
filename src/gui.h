@@ -49,6 +49,7 @@ public:
 	bool isPlaying() const { return play_; }
 	float getCurrentPlayTime() const;
 	float getCurrentOffset() const;
+	void setStartTime() { start_time = std::chrono::system_clock::now(); }
 
 	bool isQuarterTurning() { return quarter_turning; }
 	void setQuarterTurning(bool b) { quarter_turning = b; }
