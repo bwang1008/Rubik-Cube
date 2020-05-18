@@ -259,10 +259,17 @@ int main(int argc, char* argv[])
 
 		}
 		else {
-			gui.setQuarterTurning(true);
+			gui.setQuarterTurning(true); // Applying next move
 
-			gui.setStartTime();
-			update_rubik2(cubes, gui.getCurrentMove(), cube_rotating);
+			gui.addMove(glm::vec3(2, 0, 1));
+
+			gui.setCurrentMove(); // Get the next move
+
+			glm::vec3 myMove = gui.getCurrentMove();
+			std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+
+			gui.setStartTime(); // set time at 0
+			update_rubik2(cubes, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
 			std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
 			
 			cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());

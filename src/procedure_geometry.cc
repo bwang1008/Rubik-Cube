@@ -276,15 +276,20 @@ void update_rubik2(std::vector<Cube*>& cubes, glm::vec3 move, std::vector<int>& 
 	int N = cubeWidth;
 	float half = N/2.0f;
 
+	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
+	int face = move[0];
+	int layer = move[1];
+
+	if(face < 0) { // do nothing
+		for(size_t i = 0; i < cube_rotating.size(); ++i)
+			cube_rotating[i] = 0;
+		return;
+	}
+
 	cube_rotating.clear();
 
 	// Build point P and Q, where unit vector PQ is axis rotating about
 	glm::vec3 P = glm::vec3(0.0f, 0.0f, 0.0f);
-
-
-	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
-	int face = move[0];
-	int layer = move[1];
 	
 	if(face == 0) { // Front
 		P[2] = N - 0.5 - layer - half;

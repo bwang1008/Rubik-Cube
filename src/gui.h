@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
 #include <chrono>
+#include <deque>
 
 #include "config.h"
 #include "texture_to_render.h"
@@ -42,7 +43,17 @@ public:
 	float getEyeZ() { return eye_[2]; }
 
 	glm::ivec3 getCurrentMove() { return currentMove; }
+	void setCurrentMove() {
+		if(allMoves.size() == 0) {
+			currentMove = glm::vec3(-1, 0, 0);
+		}
+		else {
+			currentMove = allMoves.front();
+			allMoves.pop_front();
+		}
+	}
 	void setCurrentMove(glm::vec3 v) { currentMove[0] = v[0]; currentMove[1] = v[1]; currentMove[2] = v[2]; }
+	void addMove(glm::vec3 v) { allMoves.push_back(v); }
 
 	const float* getLightPositionPtr() const { return &light_position_[0]; }
 
@@ -89,7 +100,8 @@ private:
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
 	// Which layer behind Face
 	// How many quarter turns
-	glm::ivec3 currentMove = glm::ivec3(5, 0, 1);
+	std::deque<glm::vec3> allMoves; // list of all moves to perform
+	glm::ivec3 currentMove = glm::ivec3(-1, 0, 0); // current move
 
 	bool quarter_turning = false;
 
