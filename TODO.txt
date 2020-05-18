@@ -4,7 +4,10 @@ v Render Cube
 v Color faces
 v Make inside cube faces black
 v Implement turns
-- Implement quarter turns
-- Optimize quarter turns to not updateVBO every render cycle
+v Implement quarter turns
+- Implement stopping quarter turns and move onto next move
+v Optimize quarter turns to not updateVBO every render cycle
 - BVH?
+- Key bindings for 6 possible turns
 - Implement solver
+- Implement reader-writer system where solver writes, graphical rendering pulls first for current move
