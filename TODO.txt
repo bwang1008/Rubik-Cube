@@ -3,7 +3,8 @@ v Design Rubik's Cube's vertices, faces graphically
 v Render Cube
 v Color faces
 v Make inside cube faces black
-v Implement quarter turns
+v Implement turns
+- Implement quarter turns
 - Optimize quarter turns to not updateVBO every render cycle
 - BVH?
 - Implement solver

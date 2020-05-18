@@ -41,7 +41,7 @@ public:
 	float getEyeY() { return eye_[1]; }
 	float getEyeZ() { return eye_[2]; }
 
-	glm::vec3 getCurrentMove() { return currentMove; }
+	glm::ivec3 getCurrentMove() { return currentMove; }
 	void setCurrentMove(glm::vec3 v) { currentMove[0] = v[0]; currentMove[1] = v[1]; currentMove[2] = v[2]; }
 
 	const float* getLightPositionPtr() const { return &light_position_[0]; }
@@ -49,6 +49,9 @@ public:
 	bool isPlaying() const { return play_; }
 	float getCurrentPlayTime() const;
 	float getCurrentOffset() const;
+
+	bool isQuarterTurning() { return quarter_turning; }
+	void setQuarterTurning(bool b) { quarter_turning = b; }
 	
 private:
 	GLFWwindow* window_;
@@ -85,7 +88,9 @@ private:
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
 	// Which layer behind Face
 	// How many quarter turns
-	glm::vec3 currentMove = glm::vec3(0, 1, 1);
+	glm::ivec3 currentMove = glm::ivec3(5, 0, 1);
+
+	bool quarter_turning = false;
 
 	bool captureWASDUPDOWN(int key, int action);
 

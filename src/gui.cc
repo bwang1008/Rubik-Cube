@@ -190,7 +190,7 @@ MatrixPointers GUI::getMatrixPointers() const
 float GUI::getCurrentPlayTime() const
 {
 	std::chrono::duration<double> diff = std::chrono::system_clock::now() - start_time;
-	return offset + diff.count();
+	return diff.count() / 1.0f;
 }
 
 bool GUI::captureWASDUPDOWN(int key, int action)
