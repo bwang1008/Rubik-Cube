@@ -272,7 +272,7 @@ void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::mat4>& trans, glm:
 }
 
 
-void update_rubik2(std::vector<Cube*>& cubes, glm::vec3 move, std::vector<int>& cube_rotating) {
+void update_rubik2(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vector<int>& cube_rotating) {
 	int N = cubeWidth;
 	float half = N/2.0f;
 
@@ -337,12 +337,8 @@ void update_rubik2(std::vector<Cube*>& cubes, glm::vec3 move, std::vector<int>& 
 
 	// Iterate across all cubes where vector (P, center-of-cube) DOT (PQ) is 0
 	// Want cubes in plane containing P and perpendicular to PQ 
-	for(size_t i = 0; i < cubes.size(); ++i) {
-		Cube* c = cubes[i];
-		glm::vec3 cube_center = glm::vec3(c -> getPos());
-		cube_center[0] += 0.5;
-		cube_center[1] += 0.5;
-		cube_center[2] += 0.5;
+	for(size_t i = 0; i < cube_centers.size(); i += 8) {
+		glm::vec3 cube_center = cube_centers[i];
 
 		glm::vec3 PC = cube_center - P;
 

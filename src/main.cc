@@ -22,7 +22,9 @@
 #include <debuggl.h>
 
 #include <jpegio.h>
-#include <math.h>
+//#include <math.h>
+#include <cmath>
+
 
 int window_width = 720; //1280;
 int window_height = 720;
@@ -114,6 +116,65 @@ int main(int argc, char* argv[])
 	// tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	// Rotation matrices;
+	glm::mat4 matX1 = glm::mat4(1.0f);
+	glm::mat4 matY1 = glm::mat4(1.0f);
+	glm::mat4 matZ1 = glm::mat4(1.0f);
+
+	glm::mat4 matX2 = glm::mat4(1.0f);
+	glm::mat4 matY2 = glm::mat4(1.0f);
+	glm::mat4 matZ2 = glm::mat4(1.0f);
+
+	glm::mat4 matX3 = glm::mat4(1.0f);
+	glm::mat4 matY3 = glm::mat4(1.0f);
+	glm::mat4 matZ3 = glm::mat4(1.0f);
+
+	// sin(pi/2) = 1 to make counter clockwise; so negate for clockwise
+	matX1[1][1] = 0.0f;
+	matX1[2][1] = 1.0f;
+	matX1[1][2] = -1.0f;
+	matX1[2][2] = 0.0f;
+
+	matY1[0][0] = 0.0f;
+	matY1[2][0] = -1.0f;
+	matY1[0][2] = 1.0f;
+	matY1[2][2] = 0.0f;
+
+	matZ1[0][0] = 0.0f;
+	matZ1[1][0] = 1.0f;
+	matZ1[0][1] = -1.0f;
+	matZ1[1][1] = 0.0f;
+
+	matX2[1][1] = -1.0f;
+	matX2[2][1] = 0.0f;
+	matX2[1][2] = 0.0f;
+	matX2[2][2] = 1.0f;
+
+	matY2[0][0] = -1.0f;
+	matY2[2][0] = 0.0f;
+	matY2[0][2] = 0.0f;
+	matY2[2][2] = 1.0f;
+
+	matZ2[0][0] = -1.0f;
+	matZ2[1][0] = 0.0f;
+	matZ2[0][1] = 0.0f;
+	matZ2[1][1] = -1.0f;
+
+	matX3[1][1] = 0.0f;
+	matX3[2][1] = -1.0f;
+	matX3[1][2] = 1.0f;
+	matX3[2][2] = 0.0f;
+
+	matY3[0][0] = 0.0f;
+	matY3[2][0] = 1.0f;
+	matY3[0][2] = -1.0f;
+	matY3[2][2] = 0.0f;
+
+	matZ3[0][0] = 0.0f;
+	matZ3[1][0] = -1.0f;
+	matZ3[0][1] = 1.0f;
+	matZ3[1][1] = 0.0f;
+
 	// Information for cubes
 	std::vector<Cube*> cubes; // actual Cube objects
 	std::vector<glm::vec4> cube_vertices; // list of all vertices of cubes in world coord
@@ -171,7 +232,7 @@ int main(int argc, char* argv[])
 	std::function<glm::vec3()> cam_data = [&gui](){ return gui.getCamera(); };
 	std::function<glm::vec4()> lp_data = [&light_position]() { return light_position; };
 	std::function<int()> face_data = [&gui]() { return gui.getCurrentMove()[0]; };
-	std::function<float()> theta_data = [&gui]() { return -gui.getCurrentPlayTime(); };
+	std::function<float()> theta_data = [&gui]() { return -gui.getCurrentPlayTime() * gui.getRotatingSpeed(); };
 
 	auto std_view = make_uniform("view", view_data);
 	auto std_camera = make_uniform("camera_position", cam_data);
@@ -215,6 +276,10 @@ int main(int argc, char* argv[])
 	}
 	*/
 
+	gui.addMove(glm::vec3(0, 0, 2));
+	gui.addMove(glm::vec3(2, 0, 1));
+	gui.addMove(glm::vec3(1, 1, 1));
+
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
@@ -257,19 +322,137 @@ int main(int argc, char* argv[])
 		// update rotation, depending if rotating already or not
 		if(gui.isQuarterTurning()) {
 
+			float currentTheta = std::abs(gui.getCurrentPlayTime() * gui.getRotatingSpeed());
+			glm::ivec3 myMove = gui.getCurrentMove();
+			int face = myMove[0];
+			int turns = ((myMove[2] % 4) + 4) % 4;
+			float supposedRadians = (std::abs(myMove[2])) * 3.1415926/2.0;
+
+			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough
+				std::cout << "currentTheta = " << currentTheta << std::endl;
+				std::cout << "currentPlayTime * rotateSpeed = " << gui.getCurrentPlayTime() << " * " << gui.getRotatingSpeed() << std::endl;
+				std::cout << "supposedRadians = " << supposedRadians << std::endl;
+				// update cube vertices (VBO) and centers after making quarter turns
+				// to make transformations permanent
+				glm::mat4 mat = glm::mat4(1.0f);
+
+				if(face == 0) { // front
+					if(turns == 1) {
+						mat = matZ3;
+					}
+					else if(turns == 2) {
+						mat = matZ2;
+					}
+					else if(turns == 3) {
+						mat = matZ1;
+					}
+				}
+				else if(face == 1) { // right
+					if(turns == 1) {
+						mat = matX1;
+					}
+					else if(turns == 2) {
+						mat = matX2;
+					}
+					else if(turns == 3) {
+						mat = matX3;
+					}
+				}
+				else if(face == 2) { // top
+					if(turns == 1) {
+						mat = matY1;
+					}
+					else if(turns == 2) {
+						mat = matY2;
+					}
+					else if(turns == 3) {
+						mat = matY3;
+					}
+				}
+				else if(face == 3) { // bottom
+					if(turns == 1) {
+						mat = matY3;
+					}
+					else if(turns == 2) {
+						mat = matY2;
+					}
+					else if(turns == 3) {
+						mat = matY1;
+					}
+				}
+				else if(face == 4) { // left
+					if(turns == 1) {
+						mat = matX3;
+					}
+					else if(turns == 2) {
+						mat = matX2;
+					}
+					else if(turns == 3) {
+						mat = matX1;
+					}
+				}
+				if(face == 5) { // back
+					if(turns == 1) {
+						mat = matZ1;
+					}
+					else if(turns == 2) {
+						mat = matZ2;
+					}
+					else if(turns == 3) {
+						mat = matZ3;
+					}
+				}
+
+				std::cout << "mat = " << std::endl;
+				for(int i = 0; i < 4; ++i) {
+					for(int j = 0; j < 4; ++j) {
+						std::cout << mat[j][i] << " ";
+					}
+					std::cout << std::endl;
+				}
+				
+
+				for(size_t i = 0; i < cube_centers.size(); i += 8) {
+					if(cube_rotating[i] == 1) {
+						glm::vec4 origPos = glm::vec4(cube_centers[i], 1.0f);
+						glm::vec4 newPos = mat * origPos;
+
+						for(int j = 0; j < 8; ++j) {
+							cube_centers[i + j] = newPos;
+						}
+
+						cube_vertices[i + 0] = glm::vec4(newPos[0] - 0.5, newPos[0] - 0.5, newPos[0] - 0.5, 1);
+						cube_vertices[i + 1] = glm::vec4(newPos[0] + 0.5, newPos[0] - 0.5, newPos[0] - 0.5, 1);
+						cube_vertices[i + 2] = glm::vec4(newPos[0] - 0.5, newPos[0] + 0.5, newPos[0] - 0.5, 1);
+						cube_vertices[i + 3] = glm::vec4(newPos[0] + 0.5, newPos[0] + 0.5, newPos[0] - 0.5, 1);
+						cube_vertices[i + 4] = glm::vec4(newPos[0] - 0.5, newPos[0] - 0.5, newPos[0] + 0.5, 1);
+						cube_vertices[i + 5] = glm::vec4(newPos[0] + 0.5, newPos[0] - 0.5, newPos[0] + 0.5, 1);
+						cube_vertices[i + 6] = glm::vec4(newPos[0] - 0.5, newPos[0] + 0.5, newPos[0] + 0.5, 1);
+						cube_vertices[i + 7] = glm::vec4(newPos[0] + 0.5, newPos[0] + 0.5, newPos[0] + 0.5, 1);
+					}
+				}
+
+				// updateVBO of vertices
+				cube_pass.updateVBO(0, cube_vertices.data(), cube_vertices.size());
+
+
+
+				gui.setQuarterTurning(false);
+			}
 		}
-		else {
+		if(!gui.isQuarterTurning()) {
+
 			gui.setQuarterTurning(true); // Applying next move
 
-			gui.addMove(glm::vec3(2, 0, 1));
+			//gui.addMove(glm::vec3(2, 0, 1));
 
 			gui.setCurrentMove(); // Get the next move
 
-			glm::vec3 myMove = gui.getCurrentMove();
+			glm::ivec3 myMove = gui.getCurrentMove();
 			std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
 
 			gui.setStartTime(); // set time at 0
-			update_rubik2(cubes, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
+			update_rubik2(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
 			std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
 			
 			cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());

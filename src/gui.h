@@ -45,7 +45,7 @@ public:
 	glm::ivec3 getCurrentMove() { return currentMove; }
 	void setCurrentMove() {
 		if(allMoves.size() == 0) {
-			currentMove = glm::vec3(-1, 0, 0);
+			currentMove = glm::ivec3(-1, 0, 0);
 		}
 		else {
 			currentMove = allMoves.front();
@@ -64,6 +64,7 @@ public:
 
 	bool isQuarterTurning() { return quarter_turning; }
 	void setQuarterTurning(bool b) { quarter_turning = b; }
+	float getRotatingSpeed() { return rotation_speed_; }
 	
 private:
 	GLFWwindow* window_;
@@ -80,7 +81,8 @@ private:
 	float camera_distance_ = cubeWidth * 3;
 	//float pan_speed_ = 0.1f;
 	float pan_speed_ = 0.5f;
-	float rotation_speed_ = 0.02f;
+	float rotation_speed_ = 1.0f;
+	float drag_speed_ = 0.02f;
 	float zoom_speed_ = 0.5f;
 	float aspect_;
 
@@ -100,7 +102,7 @@ private:
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
 	// Which layer behind Face
 	// How many quarter turns
-	std::deque<glm::vec3> allMoves; // list of all moves to perform
+	std::deque<glm::ivec3> allMoves; // list of all moves to perform
 	glm::ivec3 currentMove = glm::ivec3(-1, 0, 0); // current move
 
 	bool quarter_turning = false;

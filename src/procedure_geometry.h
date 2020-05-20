@@ -11,5 +11,5 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 				std::vector<glm::vec3>& cube_centers);
 void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::mat4>& trans, glm::vec3 move, float time);
 
-void update_rubik2(std::vector<Cube*>& cubes, glm::vec3 move, std::vector<int>& cube_rotating);
+void update_rubik2(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vector<int>& cube_rotating);
 #endif
