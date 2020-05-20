@@ -193,6 +193,7 @@ int main(int argc, char* argv[])
 	std::cout << "Num cubes = " << cubes.size() << std::endl;
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
+	std::cout << "cube centers size = " << cube_centers.size() << std::endl;
 
 	// SKY BOX
 	std::vector<glm::vec4> sky_vertices;
@@ -417,18 +418,22 @@ int main(int argc, char* argv[])
 						glm::vec4 origPos = glm::vec4(cube_centers[i], 1.0f);
 						glm::vec4 newPos = mat * origPos;
 
+						glm::vec4 diff = newPos - origPos;
+						std::cout << "i = " << i << std::endl;
+						std::cout << "diff = " << diff[0] << " " << diff[1] << " " << diff[2] << " " << diff[3] << std::endl;
+
 						for(int j = 0; j < 8; ++j) {
 							cube_centers[i + j] = newPos;
 						}
 
-						cube_vertices[i + 0] = glm::vec4(newPos[0] - 0.5, newPos[0] - 0.5, newPos[0] - 0.5, 1);
-						cube_vertices[i + 1] = glm::vec4(newPos[0] + 0.5, newPos[0] - 0.5, newPos[0] - 0.5, 1);
-						cube_vertices[i + 2] = glm::vec4(newPos[0] - 0.5, newPos[0] + 0.5, newPos[0] - 0.5, 1);
-						cube_vertices[i + 3] = glm::vec4(newPos[0] + 0.5, newPos[0] + 0.5, newPos[0] - 0.5, 1);
-						cube_vertices[i + 4] = glm::vec4(newPos[0] - 0.5, newPos[0] - 0.5, newPos[0] + 0.5, 1);
-						cube_vertices[i + 5] = glm::vec4(newPos[0] + 0.5, newPos[0] - 0.5, newPos[0] + 0.5, 1);
-						cube_vertices[i + 6] = glm::vec4(newPos[0] - 0.5, newPos[0] + 0.5, newPos[0] + 0.5, 1);
-						cube_vertices[i + 7] = glm::vec4(newPos[0] + 0.5, newPos[0] + 0.5, newPos[0] + 0.5, 1);
+						cube_vertices[i + 0] = glm::vec4(newPos[0] - 0.5, newPos[1] - 0.5, newPos[2] - 0.5, 1);
+						cube_vertices[i + 1] = glm::vec4(newPos[0] + 0.5, newPos[1] - 0.5, newPos[2] - 0.5, 1);
+						cube_vertices[i + 2] = glm::vec4(newPos[0] - 0.5, newPos[1] + 0.5, newPos[2] - 0.5, 1);
+						cube_vertices[i + 3] = glm::vec4(newPos[0] + 0.5, newPos[1] + 0.5, newPos[2] - 0.5, 1);
+						cube_vertices[i + 4] = glm::vec4(newPos[0] - 0.5, newPos[1] - 0.5, newPos[2] + 0.5, 1);
+						cube_vertices[i + 5] = glm::vec4(newPos[0] + 0.5, newPos[1] - 0.5, newPos[2] + 0.5, 1);
+						cube_vertices[i + 6] = glm::vec4(newPos[0] - 0.5, newPos[1] + 0.5, newPos[2] + 0.5, 1);
+						cube_vertices[i + 7] = glm::vec4(newPos[0] + 0.5, newPos[1] + 0.5, newPos[2] + 0.5, 1);
 					}
 				}
 
