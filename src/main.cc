@@ -96,8 +96,8 @@ GLFWwindow* init_glefw()
 
 
 int main(int argc, char* argv[])
-{
-	if (argc < 2) {
+{	
+	if (argc < 2 && false) {
 		std::cerr << "Input model file is missing" << std::endl;
 		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
 		return -1;
