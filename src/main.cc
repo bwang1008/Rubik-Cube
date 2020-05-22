@@ -329,10 +329,11 @@ int main(int argc, char* argv[])
 			int turns = ((myMove[2] % 4) + 4) % 4;
 			float supposedRadians = (std::abs(myMove[2])) * 3.1415926/2.0;
 
-			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough
-				std::cout << "currentTheta = " << currentTheta << std::endl;
-				std::cout << "currentPlayTime * rotateSpeed = " << gui.getCurrentPlayTime() << " * " << gui.getRotatingSpeed() << std::endl;
-				std::cout << "supposedRadians = " << supposedRadians << std::endl;
+			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough, stop turning
+				//std::cout << "currentTheta = " << currentTheta << std::endl;
+				//std::cout << "currentPlayTime * rotateSpeed = " << gui.getCurrentPlayTime() << " * " << gui.getRotatingSpeed() << std::endl;
+				//std::cout << "supposedRadians = " << supposedRadians << std::endl;
+
 				// update cube vertices (VBO) and centers after making quarter turns
 				// to make transformations permanent
 				glm::mat4 mat = glm::mat4(1.0f);
@@ -404,6 +405,7 @@ int main(int argc, char* argv[])
 					}
 				}
 
+				
 				std::cout << "mat = " << std::endl;
 				for(int i = 0; i < 4; ++i) {
 					for(int j = 0; j < 4; ++j) {
@@ -412,15 +414,15 @@ int main(int argc, char* argv[])
 					std::cout << std::endl;
 				}
 				
+				
 
 				for(size_t i = 0; i < cube_centers.size(); i += 8) {
-					if(cube_rotating[i] == 1) {
+					if(cube_rotating[i] == 1) { // if it was rotating
+						// update final positions of vertices (and cubie center)
 						glm::vec4 origPos = glm::vec4(cube_centers[i], 1.0f);
 						glm::vec4 newPos = mat * origPos;
 
-						glm::vec4 diff = newPos - origPos;
 						std::cout << "i = " << i << std::endl;
-						std::cout << "diff = " << diff[0] << " " << diff[1] << " " << diff[2] << " " << diff[3] << std::endl;
 
 						for(int j = 0; j < 8; ++j) {
 							cube_centers[i + j] = newPos;
@@ -434,13 +436,92 @@ int main(int argc, char* argv[])
 						cube_vertices[i + 5] = glm::vec4(newPos[0] + 0.5, newPos[1] - 0.5, newPos[2] + 0.5, 1);
 						cube_vertices[i + 6] = glm::vec4(newPos[0] - 0.5, newPos[1] + 0.5, newPos[2] + 0.5, 1);
 						cube_vertices[i + 7] = glm::vec4(newPos[0] + 0.5, newPos[1] + 0.5, newPos[2] + 0.5, 1);
+						
+						
+						// now update axes of cube (absolute orientation)
+						int myType = (cube_types[i] >> 6) & 4095; // get first 12 bits
+						
+						// front, right, top axes, each 4 bits
+						int frontBits = (myType >> 8) & 15;
+						int rightBits = (myType >> 4) & 15;
+						int topBits = (myType) & 15;
+						
+						glm::vec4 frontAxis = glm::vec4((frontBits >> 2) & 1, (frontBits >> 1) & 1, frontBits & 1, 0.0f);
+						glm::vec4 rightAxis = glm::vec4((rightBits >> 2) & 1, (rightBits >> 1) & 1, rightBits & 1, 0.0f);
+						glm::vec4 topAxis = glm::vec4((topBits >> 2) & 1, (topBits >> 1) & 1, topBits & 1, 0.0f);
+						glm::vec4 lastCol = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+						// apply negative sign
+						if ((frontBits >> 3) == 1) {
+							frontAxis = -frontAxis;
+						}
+						if ((rightBits >> 3) == 1) {
+							rightAxis = -rightAxis;
+						}
+						if ((topBits >> 3) == 1) {
+							topAxis = -topAxis;
+						}
+
+						std::cout << "origFrontAxis = " << frontAxis[0] << " " << frontAxis[1] << " " << frontAxis[2] << std::endl;
+						std::cout << "origRightAxis = " << rightAxis[0] << " " << rightAxis[1] << " " << rightAxis[2] << std::endl;
+						std::cout << "origTopAxis = " << topAxis[0] << " " << topAxis[1] << " " << topAxis[2] << std::endl;
+
+
+						// apply final rotation
+						glm::mat4 origAxes = glm::mat4(frontAxis, rightAxis, topAxis, lastCol);
+						glm::mat4 newAxes = mat * origAxes;
+
+						// get back axes
+						frontAxis = newAxes[0];
+						rightAxis = newAxes[1];
+						topAxis = newAxes[2];
+
+						int frontAxisNum = 9 * frontAxis[0] + 3 * frontAxis[1] + frontAxis[2];
+						int rightAxisNum = 9 * rightAxis[0] + 3 * rightAxis[1] + rightAxis[2];
+						int topAxisNum = 9 * topAxis[0] + 3 * topAxis[1] + topAxis[2];
+						
+						if (frontAxisNum < 0) {
+							frontAxis = -frontAxis;
+							frontAxisNum = 8 + (4 * frontAxis[0] + 2 * frontAxis[1] + frontAxis[2]);
+						}
+						else {
+							frontAxisNum = (4 * frontAxis[0] + 2 * frontAxis[1] + frontAxis[2]);
+						}
+						if (rightAxisNum < 0) {
+							rightAxis = -rightAxis;
+							rightAxisNum = 8 + (4 * rightAxis[0] + 2 * rightAxis[1] + rightAxis[2]);
+						}
+						else {
+							rightAxisNum = (4 * rightAxis[0] + 2 * rightAxis[1] + rightAxis[2]);
+						}
+						if (topAxisNum < 0) {
+							topAxis = -topAxis;
+							topAxisNum = 8 + (4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]);
+						}
+						else {
+							topAxisNum = (4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]);
+						}
+
+						std::cout << "frontAxisNum = " << frontAxisNum << std::endl;
+						std::cout << "rightAxisNum = " << rightAxisNum << std::endl;
+						std::cout << "topAxisNum = " << topAxisNum << std::endl;
+
+						int newType = (frontAxisNum * 256 + rightAxisNum * 16 + topAxisNum) * 64;
+						newType += (cube_types[i] & 63);
+
+						std::cout << "newType = " << newType << std::endl;
+
+						// finally update cube_types 
+						for (int j = 0; j < 8; ++j) {
+							cube_types[i + j] = newType;
+						}
 					}
 				}
 
-				// updateVBO of vertices
+				// updateVBO of vertices and types
 				cube_pass.updateVBO(0, cube_vertices.data(), cube_vertices.size());
-
-
+				cube_pass.updateVBO(1, cube_types.data(), cube_types.size());
+				
 
 				gui.setQuarterTurning(false);
 			}
@@ -454,11 +535,11 @@ int main(int argc, char* argv[])
 			gui.setCurrentMove(); // Get the next move
 
 			glm::ivec3 myMove = gui.getCurrentMove();
-			std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+			//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
 
 			gui.setStartTime(); // set time at 0
 			update_rubik2(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
-			std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
+			//std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
 			
 			cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
 		}

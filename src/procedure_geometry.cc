@@ -42,9 +42,13 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	int N = cubeWidth;
 	float half = N/2.0f;
 
+	// front axis, right axis, top axis: <0,0,1>, <1, 0, 0>, <0, 1, 0> -> 0001 0100 0010 ******_2 
+	// -> (256 + 64 + 2) * 64 = 322 * 64 = 20608
+	int frontBits = 20608;
+
 	// Special case when N = 1
 	if(N == 1) {
-		Cube* c = new Cube(63, -half, -half, -half);
+		Cube* c = new Cube(frontBits + 63, -half, -half, -half);
 		c -> create_cube(cube_vertices, cube_faces, cube_types);
 		cubes.push_back(c);
 		cube_centers.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -55,12 +59,12 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	for(int i = 1; i < N-1; ++i) {
 		for(int j = 1; j < N-1; j++) {
 			// types ensure inside of cube is black
-			Cube* c1 = new Cube(4, -half + i, -half + 0, -half + j); // Bottom
-			Cube* c2 = new Cube(8, -half + i, -half + N-1, - half + j); // Top
-			Cube* c3 = new Cube(2, -half + 0, -half + i, -half + j); // Left
-			Cube* c4 = new Cube(16,-half + N-1, -half + i, -half + j); // Right
-			Cube* c5 = new Cube(1, -half + i, -half + j, -half + 0); // Back
-			Cube* c6 = new Cube(32, -half + i, -half + j, -half + N-1); // Front
+			Cube* c1 = new Cube(frontBits + 4, -half + i, -half + 0, -half + j); // Bottom
+			Cube* c2 = new Cube(frontBits + 8, -half + i, -half + N-1, - half + j); // Top
+			Cube* c3 = new Cube(frontBits + 2, -half + 0, -half + i, -half + j); // Left
+			Cube* c4 = new Cube(frontBits + 16,-half + N-1, -half + i, -half + j); // Right
+			Cube* c5 = new Cube(frontBits + 1, -half + i, -half + j, -half + 0); // Back
+			Cube* c6 = new Cube(frontBits + 32, -half + i, -half + j, -half + N-1); // Front
 
 			c1 -> create_cube(cube_vertices, cube_faces, cube_types);
 			c2 -> create_cube(cube_vertices, cube_faces, cube_types);
@@ -80,20 +84,20 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 
 	// edges
 	for(int i = 1; i < N-1; ++i) {
-		Cube* c1 = new Cube(5, -half + i, -half + 0, -half + 0);
-		Cube* c2 = new Cube(36, -half + i, -half + 0, -half + N-1);
-		Cube* c3 = new Cube(9, -half + i, -half + N-1, -half + 0);
-		Cube* c4 = new Cube(40, -half + i, -half + N-1, -half + N-1);
+		Cube* c1 = new Cube(frontBits + 5, -half + i, -half + 0, -half + 0);
+		Cube* c2 = new Cube(frontBits + 36, -half + i, -half + 0, -half + N-1);
+		Cube* c3 = new Cube(frontBits + 9, -half + i, -half + N-1, -half + 0);
+		Cube* c4 = new Cube(frontBits + 40, -half + i, -half + N-1, -half + N-1);
 
-		Cube* c5 = new Cube(3, -half + 0, -half + i, -half + 0);
-		Cube* c6 = new Cube(34, -half + 0, -half + i, -half + N-1);
-		Cube* c7 = new Cube(17, -half + N-1, -half + i, -half + 0);
-		Cube* c8 = new Cube(48, -half + N-1, -half + i, -half + N-1);
+		Cube* c5 = new Cube(frontBits + 3, -half + 0, -half + i, -half + 0);
+		Cube* c6 = new Cube(frontBits + 34, -half + 0, -half + i, -half + N-1);
+		Cube* c7 = new Cube(frontBits + 17, -half + N-1, -half + i, -half + 0);
+		Cube* c8 = new Cube(frontBits + 48, -half + N-1, -half + i, -half + N-1);
 
-		Cube* c9 = new Cube(6, -half + 0, -half + 0, -half + i);
-		Cube* c10 = new Cube(10, -half + 0, -half + N-1, -half + i);
-		Cube* c11 = new Cube(20, -half + N-1, -half + 0, -half + i);
-		Cube* c12 = new Cube(24, -half + N-1, -half + N-1, -half + i);
+		Cube* c9 = new Cube(frontBits + 6, -half + 0, -half + 0, -half + i);
+		Cube* c10 = new Cube(frontBits + 10, -half + 0, -half + N-1, -half + i);
+		Cube* c11 = new Cube(frontBits + 20, -half + N-1, -half + 0, -half + i);
+		Cube* c12 = new Cube(frontBits + 24, -half + N-1, -half + N-1, -half + i);
 
 		c1 -> create_cube(cube_vertices, cube_faces, cube_types);
 		c2 -> create_cube(cube_vertices, cube_faces, cube_types);
@@ -128,7 +132,7 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	for(int i = 0; i < 2; ++i) {
 		for(int j = 0; j < 2; ++j) {
 			for(int k = 0; k < 2; ++k) {
-				Cube* c = new Cube(corner_types[4*i+2*j+k], -half + i * (N-1), -half + j * (N-1), -half + k * (N-1));
+				Cube* c = new Cube(frontBits + corner_types[4*i+2*j+k], -half + i * (N-1), -half + j * (N-1), -half + k * (N-1));
 				c -> create_cube(cube_vertices, cube_faces, cube_types);
 				cubes.push_back(c);
 			}

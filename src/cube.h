@@ -16,9 +16,13 @@ struct Cube {
 	glm::vec4 pos; 	// World coordinates of smaller corner
 	int type; 		// Bitmask regarding which of the 6 faces are shown
 	//glm::mat4 trans; // overall transformation matrix
-
-	// type = 111111_2 means, in an arbitrarily chosen order,
+	
+	// type = 15 bits in total
+	// First 12: 4 bits for axis of Front face, 4 bits for axis of Right face, 4 bits for axis of Top face 
+	// 1 bit for sign, then 3 bits of vector of absolute orientation
+	// Last 6: 111111_2 means, in an arbitrarily chosen order,
 	// Front, Right, Top, Bottom, Left, Back
+	// for which faces to show color (black if bit is 0) (relative to cube)
 
 	Cube(float x, float y, float z):
 		pos(x, y, z, 1),
