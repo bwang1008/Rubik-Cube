@@ -405,7 +405,7 @@ int main(int argc, char* argv[])
 					}
 				}
 
-				
+				/*
 				std::cout << "mat = " << std::endl;
 				for(int i = 0; i < 4; ++i) {
 					for(int j = 0; j < 4; ++j) {
@@ -413,7 +413,7 @@ int main(int argc, char* argv[])
 					}
 					std::cout << std::endl;
 				}
-				
+				*/
 				
 
 				for(size_t i = 0; i < cube_centers.size(); i += 8) {
@@ -421,8 +421,6 @@ int main(int argc, char* argv[])
 						// update final positions of vertices (and cubie center)
 						glm::vec4 origPos = glm::vec4(cube_centers[i], 1.0f);
 						glm::vec4 newPos = mat * origPos;
-
-						std::cout << "i = " << i << std::endl;
 
 						for(int j = 0; j < 8; ++j) {
 							cube_centers[i + j] = newPos;
@@ -462,11 +460,6 @@ int main(int argc, char* argv[])
 							topAxis = -topAxis;
 						}
 
-						std::cout << "origFrontAxis = " << frontAxis[0] << " " << frontAxis[1] << " " << frontAxis[2] << std::endl;
-						std::cout << "origRightAxis = " << rightAxis[0] << " " << rightAxis[1] << " " << rightAxis[2] << std::endl;
-						std::cout << "origTopAxis = " << topAxis[0] << " " << topAxis[1] << " " << topAxis[2] << std::endl;
-
-
 						// apply final rotation
 						glm::mat4 origAxes = glm::mat4(frontAxis, rightAxis, topAxis, lastCol);
 						glm::mat4 newAxes = mat * origAxes;
@@ -502,14 +495,8 @@ int main(int argc, char* argv[])
 							topAxisNum = (4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]);
 						}
 
-						std::cout << "frontAxisNum = " << frontAxisNum << std::endl;
-						std::cout << "rightAxisNum = " << rightAxisNum << std::endl;
-						std::cout << "topAxisNum = " << topAxisNum << std::endl;
-
 						int newType = (frontAxisNum * 256 + rightAxisNum * 16 + topAxisNum) * 64;
 						newType += (cube_types[i] & 63);
-
-						std::cout << "newType = " << newType << std::endl;
 
 						// finally update cube_types 
 						for (int j = 0; j < 8; ++j) {
