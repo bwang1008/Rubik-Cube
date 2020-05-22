@@ -1,0 +1,159 @@
+This is an outline of implementation details of the entire project.
+
+Inspiration fully from https://www.youtube.com/watch?v=IM2czqavlWM by Code Bullet, but none from its source code.
+
+May 14, 2020
+- Used code from Mannequin Project of CS378H Graphics class taught by Etienne Vouga, spring 2020 as starter code
+	- this is because setting up OpenGL from scratch is really overbearing just to get the same desired environment/setup
+- Camera rotation around a center was already implemented
+- cube.h for rendering a cube was already implemented in prior project for Minecraft project
+- Skybox with skyblue color already implemented in same prior project 
+- First started with a single 1x1x1 cube centered at (0.5, 0.5, 0.5), and camera spun around that
+
+Commit "edges of cube black" - May 15, 2020
+- In cube fragment shader, used uv coordinates and a bound to make edges of cube black (0.05 out of width 1)
+
+Commit "Initial design of graphical Rubik's Cube" - May 15, 2020
+- Wanted Rubik's Cube to be hollow
+	- Video by Code Bullet showed brief instances of its source code (Processing 3.0), he used a 3D array
+	- I personally think it's too expensive
+- Constant cubeWidth in config.h
+- in procedure_geometry.cc, added method create_rubik(), that fills in the appropriate vertices and faces
+- First did the 6 "centers" of the Rubik's Cube, the cubies with only 1 face showing
+- Then the 12 edges, the cubies showing 2 faces
+- Then the 8 corners, the cubies showing 3 faces
+- In fragment shader, depending on a value saying where you are in absolute orientation, color it appropriately
+- Made front green, top white, right red, left orange, bottom yellow, back blue
+- Center is (cubeWidth/2.0, cubeWidth/2.0, cubeWidth/2.0)
+
+Commit "R for Revert to default view" - May 16, 2020
+- Rotating cube by right click of mouse was slightly clunky
+- Pressing R reverts the camera's up, look, and distance, and reverts the center of the scene
+
+Commit "Brought Cube pointers into main" - May 16, 2020
+- Used Cube pointers instead of just regular Cube objects on stack, so I can directly access them in main
+
+Commit "Defined Cube type as which faces are colored" - May 16, 2020
+- Used the "type" field of Cube to say which faces of the Cube are colored, based on the bit
+- Decided on Front, Right, Top, Bottom, Left, Back, where opposites are placed on opposite sides
+- Updated fragment shader to color appropriate colors where bit is 1, and black if bit is 0
+- Trial and error to find correct values to pass in for type of cube in initial creation of cubes
+- Made separate creation if cubeWidth = 1, since otherwise only three faces are colored, while 3 faces are black
+
+Commit "Setup for rotation quarterturn" - May 16, 2020
+- Want to keep vertices fixed, but pass into vertex shader the appropriate transformation matrix for each cube
+- I don't think you can pass in a glm::mat4 as an "in" field of vertex shader, so passed in 4 glm::vec4 instead for each column
+- Originally put transformation matrix as a field of cube.h; changed my mind later and just made it a vector<glm::mat4> in main
+- Before, I used cube_vertex_shader for the sky, but later created separate sky_vertex_shader for sky, since cube_vertex_shader
+	was getting changed so much
+- cube_vertex_shader now has gl_Position = projection * view * trans * vertex_position, where trans is created from the 4 columns
+	passed in
+
+Commit "setup a bit of main for updating VBO" - May 16, 2020
+- Idea is every render iteration of main, you update the transformation matrix appropriately, before sending to vertex shader
+
+Commit "Some quarterturn rotations, but incorrect cubies and speed and no stopping point" - May 17, 2020
+- Defined a move (quarter turn) as a glm::vec3 in gui
+	- move[0] is which face (0 = Front, 1 = Right, 2 = Top, 3 = Bottom,...)
+	- move[1] is which layer in (0 for outermost layer, 1 for one layer in, all the way to cubeWidth-1)
+	- move[2] is how many quarter turns (negative for counterclockwise)
+- Updating transformation matrix in update_rubik in procedure_generation; also pass in current time
+- In update_rubik, we define point P as where center of rotating face is, 
+	- point Q is distance 1 away from P in direction of axis
+- For each cube, let S be the cube center in world coordinates. Then to select this cube for rotation,
+	- vector (P->S) and vector (P->Q) must be perpendicular (dot product 0)
+- If cube is selected, do newTransformation = (little bit of rotation)  * originalTransformation (initially identity matrix)
+- Be careful if theta to make (little bit of rotation) should be positive or negative, since general rotation matrix
+	-  is counterclockwise while we want clockwise quarter turns
+- Actual result had cubies wrong, because of
+- Be careful that since no geometry shader (could not get it to work), data must be repeated 8 times, one for each vertex
+- But some rotation was happening (rotating forever)
+
+Commit "Fixed graphical quarter-turns with currentMove" - May 17, 2020
+- Moved entire cube so that center of scene is (0, 0, 0), rather than (cubeWidth/2, cubeWidth/2, cubeWidth/2)
+	- This is so rotations are only about the x/y/z-axis, which is definitely nicer
+- Fixed the wrong cubies by repeatedly adding the transformation matrix in vector 8 times
+
+Commit "Edge cubies now only have 2 faces colored" - May 17, 2020
+- Before, only center cubies (cubies with only 1 face showing) had black faces on the other 5
+- Trial and error to find the right cube_type to assign to the edges so that they are black
+
+Commit "Made corner cubies only have 3 colored faces" - May 17, 2020
+- Also trial and error to find the right cube_type to assign corners so that exactly 3 faces are colored
+- This is where I had a separate if statement for if cubeWidth = 1 (otherwise, 3 faces of the 1 cubie are black)
+- The whole point of making the inside of the cube black is to give the illusion that the cube is solid
+	- Appears that the Rubik's cube inside is made of black cubes
+	- Illusion is broken on big cubes, when rotating an inside layer shows it's only rotating the edge
+	- Looks like a ring is being rotated rather than a solid slice of the cube
+
+Commit "Fixed transparent black faces" - May 17, 2020
+- When turning, sometimes individual black faces are weird because you can see through them
+- Simple fix by making fragment_color[3] = 1.0 (nontransparent) in the cube fragment shader
+
+Commit "Restructured quarter turns for optimization; now no looping through every cube every iteration of rendering" - May 17, 2020
+- Was too slow. When cubeWidth = 100, using WASD to pan in and out had very noticeable lag
+	- Could hold W to zoom in for 5 seconds, and after letting go, you would still zoom in for a couple more seconds
+- This is because each render iteration in main, we recalculate which cubes should be selected to rotate, then update
+- Idea now is: in render while loop in main, we have
+
+if(gui.isCurrentlyTurning()) {
+	// don't do much, maybe update a theta for rotation
+
+	if we turn too much, stop the rotation
+}
+else {
+	set startTime = 0
+	select the right cubes to turn
+	updateVBO of cube_is_rotating
+	turn cubes according to (currentTime - startTime)
+	gui.isCurrentlyTurning = true
+}
+
+- This way, we avoid recalculating which cubes are selected
+- update_rubik now fills a std::vector<int>, where 1 means is currently turning, 0 for not turning, using the dot product = 0 method
+- repeat each 1 / 0,  8 times (for each vertex)
+- make uniforms to pass in a) the current face that is rotating, and b) the time (current - start) as a theta (also negative for clockwise rotation)
+- now instead of creating the matrix transformation in update_rubik, matrix is created instead in the cube vertex shader, on the fly
+
+Commit "Fixed time, removed now-redundant columns for vertex shader" - May 17, 2020
+- Removed trans, the vector<mat4> for transformation matrices (since now in vertex shader instead)
+- Put gui.setStartTime appropriately so that at the start of rotating, time is (close to) 0 and increases
+
+Commit "Special case for N = 1 Rubik's Cube" - May 18, 2020
+- When I actually noticed the bug when cubeWidth = 1 (only 3 faces had color, while other 3 were black)
+
+Commit "Added deque for holding all moves" - May 18, 2020
+- Want solver to add moves into a deque, while the graphical rendering pulls one out from the front
+
+Commit "does quarter turns in sequence, but wrong cubes selected" - May 19, 2020
+- Stops rotation when the angle is large enough
+- Updates the cube_centers to the final position after rotating
+- Colors mess up, more faces show black
+
+Commit "fixed updating cube_vertices, but now cubies turn inside out and faces turn black" - May 19, 2020
+- Fixed a bug where centers of cubes were not properly calculated (reason why cubes disappear)
+
+Commit "Test run on Windows" - May 21, 2020
+- Ubuntu computer I was working on, the disk was not working I think. Sth kept messing up
+- Running through Windows works fine with CMAKE
+
+Commit "FIXED QUARTER TURNS AND COLORSgit add .!" - May 21, 2020
+- Apparently adding "!" in the git commit message does something with the git history
+- Redo of how colors are applied onto cube faces
+- Changed type: instead of 6 bits used, now use an additional 12 bits
+- 4 bits for front axis, 4 bits for right axis, 4 bits for top axis
+- final 6 bits used for saying which face should be colored 
+	- relative orientation, like saying oh this cube's front face should be colored
+	- irrespective of how it's actual orientation (doesn't matter if it's front face is facing +Y or -Z or sth)
+- the 4 bits: front axis means like the vector from cube center to cube's actual front face is <0, 0, -1>,
+	- so we use 1 bit for sign, and 3 bits for the vector: <0, 0, -1> becomes 1 001
+- cumbersome, lots of code to convert bits to actual matrix
+- after finishing rotating a quarter turn, multiply the final transformation matrix by these 3 axes vectors
+	- to change the vectors: originally cube was oriented this way; after this quarter turn, now oriented this way
+- updateVBO of cube_types
+- rebuild axes in cube fragment shader, and knowing where fragment is located (like in +Y direction),
+	- I compare with with the axes, and then I know oh this fragment is the cube's left,
+	- and I know the left of cubes are always orange, so I color it orange
+
+Commit "Removed some print statements, but quarter turns workgit add .!" - May 21, 2020
+- Removed some print statements, since they were significantly slowing down the program for cubeWidth = 100

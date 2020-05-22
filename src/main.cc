@@ -22,7 +22,6 @@
 #include <debuggl.h>
 
 #include <jpegio.h>
-//#include <math.h>
 #include <cmath>
 
 
@@ -193,7 +192,6 @@ int main(int argc, char* argv[])
 	std::cout << "Num cubes = " << cubes.size() << std::endl;
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
-	std::cout << "cube centers size = " << cube_centers.size() << std::endl;
 
 	// SKY BOX
 	std::vector<glm::vec4> sky_vertices;
@@ -223,9 +221,6 @@ int main(int argc, char* argv[])
 	 * More details about copy elision:
 	 *      https://en.cppreference.com/w/cpp/language/copy_elision
 	 */
-
-	// FIXME: add more lambdas for data_source if you want to use RenderPass.
-	//        Otherwise, do whatever you like here
 
 	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
 	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
@@ -393,7 +388,7 @@ int main(int argc, char* argv[])
 						mat = matX1;
 					}
 				}
-				if(face == 5) { // back
+				else if(face == 5) { // back
 					if(turns == 1) {
 						mat = matZ1;
 					}

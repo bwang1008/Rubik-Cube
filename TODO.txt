@@ -5,11 +5,14 @@ v Color faces
 v Make inside cube faces black
 v Implement turns
 v Implement quarter turns
-- Implement stopping quarter turns and move onto next move
+v Implement stopping quarter turns and move onto next move
+v Ensure face colors are preserved after all quarter turns
+- Double check all possible turns are correct
 v Optimize quarter turns to not updateVBO every render cycle
-- BVH?
+- BVH? (Bounding Volume Hierarchy data structure)
 v Deque for storing all moves
 - Key bindings for 6 possible turns
 - Add black box to hide the fact that large cube is in fact hollow
 - Implement solver
 - Implement reader-writer system where solver writes, graphical rendering pulls first for current move
+- Use a thread for above?
