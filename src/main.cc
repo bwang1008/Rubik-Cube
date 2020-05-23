@@ -147,12 +147,12 @@ int main(int argc, char* argv[])
 	matX2[1][1] = -1.0f;
 	matX2[2][1] = 0.0f;
 	matX2[1][2] = 0.0f;
-	matX2[2][2] = 1.0f;
+	matX2[2][2] = -1.0f;
 
 	matY2[0][0] = -1.0f;
 	matY2[2][0] = 0.0f;
 	matY2[0][2] = 0.0f;
-	matY2[2][2] = 1.0f;
+	matY2[2][2] = -1.0f;
 
 	matZ2[0][0] = -1.0f;
 	matZ2[1][0] = 0.0f;
@@ -228,7 +228,12 @@ int main(int argc, char* argv[])
 	std::function<glm::vec3()> cam_data = [&gui](){ return gui.getCamera(); };
 	std::function<glm::vec4()> lp_data = [&light_position]() { return light_position; };
 	std::function<int()> face_data = [&gui]() { return gui.getCurrentMove()[0]; };
-	std::function<float()> theta_data = [&gui]() { return -gui.getCurrentPlayTime() * gui.getRotatingSpeed(); };
+	std::function<float()> theta_data = [&gui]() {
+		float temp = -gui.getCurrentPlayTime() * gui.getRotatingSpeed();
+		if (gui.getCurrentMove()[2] < 0)
+			temp = -temp;
+		return temp;
+	};
 
 	auto std_view = make_uniform("view", view_data);
 	auto std_camera = make_uniform("camera_position", cam_data);
@@ -272,9 +277,9 @@ int main(int argc, char* argv[])
 	}
 	*/
 
-	gui.addMove(glm::vec3(0, 0, 2));
-	gui.addMove(glm::vec3(2, 0, 1));
-	gui.addMove(glm::vec3(1, 1, 1));
+	gui.addMove(glm::vec3(5, 0, 3));
+	//gui.addMove(glm::vec3(2, 0, 1));
+	//gui.addMove(glm::vec3(1, 1, 1));
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -335,13 +340,14 @@ int main(int argc, char* argv[])
 
 				if(face == 0) { // front
 					if(turns == 1) {
-						mat = matZ3;
+						mat = matZ1;
 					}
 					else if(turns == 2) {
 						mat = matZ2;
 					}
 					else if(turns == 3) {
-						mat = matZ1;
+						std::cout << "WOOHOO" << std::endl;
+						mat = matZ3;
 					}
 				}
 				else if(face == 1) { // right
@@ -390,17 +396,17 @@ int main(int argc, char* argv[])
 				}
 				else if(face == 5) { // back
 					if(turns == 1) {
-						mat = matZ1;
+						mat = matZ3;
 					}
 					else if(turns == 2) {
 						mat = matZ2;
 					}
 					else if(turns == 3) {
-						mat = matZ3;
+						mat = matZ1;
 					}
 				}
 
-				/*
+				
 				std::cout << "mat = " << std::endl;
 				for(int i = 0; i < 4; ++i) {
 					for(int j = 0; j < 4; ++j) {
@@ -408,7 +414,7 @@ int main(int argc, char* argv[])
 					}
 					std::cout << std::endl;
 				}
-				*/
+				
 				
 
 				for(size_t i = 0; i < cube_centers.size(); i += 8) {
@@ -510,20 +516,20 @@ int main(int argc, char* argv[])
 		}
 		if(!gui.isQuarterTurning()) {
 
-			gui.setQuarterTurning(true); // Applying next move
-
-			//gui.addMove(glm::vec3(2, 0, 1));
-
 			gui.setCurrentMove(); // Get the next move
-
 			glm::ivec3 myMove = gui.getCurrentMove();
 			//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
 
-			gui.setStartTime(); // set time at 0
-			update_rubik2(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
-			//std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
+			if (myMove[0] >= 0) { // only rotate if valid face
+				gui.setStartTime(); // set time at 0
+				update_rubik2(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
+				//std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
+
+				cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
+				gui.setQuarterTurning(true); // Applying next move
+			}
+
 			
-			cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
 		}
 
 		// Render cubes

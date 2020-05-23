@@ -80,13 +80,31 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		else{
 			offset = getCurrentPlayTime();
 		}
-	} else if (key == GLFW_KEY_R && action != GLFW_RELEASE){
+	} else if (key == GLFW_KEY_V && action != GLFW_RELEASE){
 		center_ = glm::vec3(0.0f, 0.0f, 0.0f);
 		up_ = glm::vec3(0.0f, 1.0f, 0.0f);
 		look_ = glm::vec3(0.0f, 0.0f, -1.0f);
 		tangent_ = glm::cross(look_, up_);
 		orientation_ = glm::mat3(tangent_, up_, look_);
 		camera_distance_ = cubeWidth * 3;
+	}
+	else if (key == GLFW_KEY_U && action == GLFW_RELEASE) {
+		allMoves.push_back(glm::vec3(2, 0, 1));
+	}
+	else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+		allMoves.push_back(glm::vec3(3, 0, 1));
+	}
+	else if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
+		allMoves.push_back(glm::vec3(4, 0, 1));
+	}
+	else if (key == GLFW_KEY_R && action == GLFW_RELEASE) {
+		allMoves.push_back(glm::vec3(1, 0, 1));
+	}
+	else if (key == GLFW_KEY_F && action == GLFW_RELEASE) {
+		allMoves.push_back(glm::vec3(0, 0, 1));
+	}
+	else if (key == GLFW_KEY_B && action == GLFW_RELEASE) {
+		allMoves.push_back(glm::vec3(5, 0, 1));
 	}
 	// FIXME: implement other controls here.
 }
