@@ -15,5 +15,6 @@ v Deque for storing all moves
 - Add black box to hide the fact that large cube is in fact hollow
 - Scramble Cube
 - Implement solver
+	- Idea: recursively solve 3x3x3 cubes
 - Implement reader-writer system where solver writes, graphical rendering pulls first for current move
 - Use a thread for above?

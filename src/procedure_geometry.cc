@@ -6,9 +6,9 @@ void create_skybox(std::vector<glm::vec4>& sky_vertices, std::vector<glm::uvec3>
 	int skyLimit = 200;
 	int L = skyLimit;
 
-	int x = eye[0];
-	int y = eye[1];
-	int z = eye[2];
+	int x = int(eye[0]);
+	int y = int(eye[1]);
+	int z = int(eye[2]);
 
 	int index = 0;
 
@@ -159,27 +159,27 @@ void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::mat4>& trans, glm:
 
 
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
-	int face = move[0];
-	int layer = move[1];
+	int face = int(move[0]);
+	int layer = int(move[1]);
 	
 	if(face == 0) { // Front
-		P[2] = N - 0.5 - layer - half;
+		P[2] = N - 0.5f - layer - half;
 	}
 	else if(face == 1) { // Right
-		P[0] = N - 0.5 - layer - half;
+		P[0] = N - 0.5f - layer - half;
 	}
 	else if(face == 2) { // Top
-		P[1] = N - 0.5 - layer - half;
+		P[1] = N - 0.5f - layer - half;
 	}
 	else if(face == 3) { // Bottom
-		P[1] = 0.5 + layer - half;
+		P[1] = 0.5f + layer - half;
 	}
 	else if(face == 4) { // Left
-		P[0] = 0.5 + layer - half;
+		P[0] = 0.5f + layer - half;
 	}
 	else if(face == 5) { // Back
 		
-		P[2] = 0.5 + layer - half;
+		P[2] = 0.5f + layer - half;
 	}
 
 	glm::vec3 Q = glm::vec3(P[0], P[1], P[2]);
@@ -207,7 +207,7 @@ void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::mat4>& trans, glm:
 	glm::vec3 PQ = Q - P;
 
 	// Build appropriate rotation matrix
-	float theta = -0.03;
+	float theta = -0.03f;
 	glm::mat4 mat = glm::mat4(1.0f);
 
 	if(face == 0) {
@@ -282,8 +282,8 @@ void update_rubik2(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::ve
 	float half = N/2.0f;
 
 	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
-	int face = move[0];
-	int layer = move[1];
+	int face = int(move[0]);
+	int layer = int(move[1]);
 
 	if(face < 0) { // do nothing
 		for(size_t i = 0; i < cube_rotating.size(); ++i)
@@ -297,23 +297,23 @@ void update_rubik2(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::ve
 	glm::vec3 P = glm::vec3(0.0f, 0.0f, 0.0f);
 	
 	if(face == 0) { // Front
-		P[2] = N - 0.5 - layer - half;
+		P[2] = N - 0.5f - layer - half;
 	}
 	else if(face == 1) { // Right
-		P[0] = N - 0.5 - layer - half;
+		P[0] = N - 0.5f - layer - half;
 	}
 	else if(face == 2) { // Top
-		P[1] = N - 0.5 - layer - half;
+		P[1] = N - 0.5f - layer - half;
 	}
 	else if(face == 3) { // Bottom
-		P[1] = 0.5 + layer - half;
+		P[1] = 0.5f + layer - half;
 	}
 	else if(face == 4) { // Left
-		P[0] = 0.5 + layer - half;
+		P[0] = 0.5f + layer - half;
 	}
 	else if(face == 5) { // Back
 		
-		P[2] = 0.5 + layer - half;
+		P[2] = 0.5f + layer - half;
 	}
 
 	glm::vec3 Q = glm::vec3(P[0], P[1], P[2]);

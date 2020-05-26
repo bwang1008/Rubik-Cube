@@ -255,7 +255,7 @@ int main(int argc, char* argv[]) {
 
 
 	bool draw_cube = true;
-	bool draw_sky = false;
+	bool draw_sky = true;
 
 	if(argc == 3){
 		std::string s(argv[2]);
@@ -321,7 +321,7 @@ int main(int argc, char* argv[]) {
 			glm::ivec3 myMove = gui.getCurrentMove();
 			int face = myMove[0];
 			int turns = ((myMove[2] % 4) + 4) % 4;
-			float supposedRadians = (std::abs(myMove[2])) * 3.1415926/2.0;
+			float supposedRadians = float((std::abs(myMove[2])) * 3.1415926/2.0);
 
 			// if we turned enough, stop and update for next turn
 			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough, stop turning
@@ -449,33 +449,33 @@ int main(int argc, char* argv[]) {
 						rightAxis = newAxes[1];
 						topAxis = newAxes[2];
 
-						int frontAxisNum = 9 * frontAxis[0] + 3 * frontAxis[1] + frontAxis[2];
-						int rightAxisNum = 9 * rightAxis[0] + 3 * rightAxis[1] + rightAxis[2];
-						int topAxisNum = 9 * topAxis[0] + 3 * topAxis[1] + topAxis[2];
+						int frontAxisNum = int(9 * frontAxis[0] + 3 * frontAxis[1] + frontAxis[2]);
+						int rightAxisNum = int(9 * rightAxis[0] + 3 * rightAxis[1] + rightAxis[2]);
+						int topAxisNum = int(9 * topAxis[0] + 3 * topAxis[1] + topAxis[2]);
 						
 						if (frontAxisNum < 0) {
 							frontAxis = -frontAxis;
-							frontAxisNum = 8 + (4 * frontAxis[0] + 2 * frontAxis[1] + frontAxis[2]);
+							frontAxisNum = int(8 + (4 * frontAxis[0] + 2 * frontAxis[1] + frontAxis[2]));
 						}
 						else {
-							frontAxisNum = (4 * frontAxis[0] + 2 * frontAxis[1] + frontAxis[2]);
+							frontAxisNum = int(4 * frontAxis[0] + 2 * frontAxis[1] + frontAxis[2]);
 						}
 						if (rightAxisNum < 0) {
 							rightAxis = -rightAxis;
-							rightAxisNum = 8 + (4 * rightAxis[0] + 2 * rightAxis[1] + rightAxis[2]);
+							rightAxisNum = int(8 + (4 * rightAxis[0] + 2 * rightAxis[1] + rightAxis[2]));
 						}
 						else {
-							rightAxisNum = (4 * rightAxis[0] + 2 * rightAxis[1] + rightAxis[2]);
+							rightAxisNum = int(4 * rightAxis[0] + 2 * rightAxis[1] + rightAxis[2]);
 						}
 						if (topAxisNum < 0) {
 							topAxis = -topAxis;
-							topAxisNum = 8 + (4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]);
+							topAxisNum = int(8 + (4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]));
 						}
 						else {
-							topAxisNum = (4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]);
+							topAxisNum = int(4 * topAxis[0] + 2 * topAxis[1] + topAxis[2]);
 						}
 
-						int newType = (frontAxisNum * 256 + rightAxisNum * 16 + topAxisNum) * 64;
+						int newType = int(frontAxisNum * 256 + rightAxisNum * 16 + topAxisNum) * 64;
 						newType += (cube_types[i] & 63);
 
 						// finally update cube_types 

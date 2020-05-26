@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 
 struct Cube {
-	int L = cubieWidth;
+	const float L = cubieWidth;
 
 	glm::vec4 pos; 	// World coordinates of smaller corner
 	int type; 		// Bitmask regarding which of the 6 faces are shown

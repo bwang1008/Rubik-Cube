@@ -114,8 +114,8 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 {
 	last_x_ = current_x_;
 	last_y_ = current_y_;
-	current_x_ = mouse_x;
-	current_y_ = window_height_ - mouse_y;
+	current_x_ = float(mouse_x);
+	current_y_ = float(window_height_ - mouse_y);
 	float delta_x = current_x_ - last_x_;
 	float delta_y = current_y_ - last_y_;
 	if (sqrt(delta_x * delta_x + delta_y * delta_y) < 1e-15)
@@ -208,14 +208,14 @@ MatrixPointers GUI::getMatrixPointers() const
 float GUI::getCurrentPlayTime() const
 {
 	std::chrono::duration<double> diff = std::chrono::system_clock::now() - start_time;
-	return diff.count() / 1.0f;
+	return float(diff.count());
 }
 
 void GUI::scrambleCube()
 {
 	int N = cubeWidth;
 	srand(1);
-	int numberMoves = std::min(3 * N * N, 300);
+	int numberMoves = std::min(3 * N * N, 30);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;

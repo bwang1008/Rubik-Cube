@@ -53,7 +53,7 @@ public:
 			allMoves.pop_front();
 		}
 	}
-	void setCurrentMove(glm::vec3 v) { currentMove[0] = v[0]; currentMove[1] = v[1]; currentMove[2] = v[2]; }
+	void setCurrentMove(glm::ivec3 v) { currentMove[0] = v[0]; currentMove[1] = v[1]; currentMove[2] = v[2]; }
 	void addMove(glm::vec3 v) { allMoves.push_back(v); }
 
 	const float* getLightPositionPtr() const { return &light_position_[0]; }
@@ -79,7 +79,7 @@ private:
 	bool drag_state_ = false;
 	bool fps_mode_ = false;
 	int current_button_ = -1;
-	float roll_speed_ = M_PI / 64.0f;
+	float roll_speed_ = float(M_PI / 64.0f);
 	float last_x_ = 0.0f, last_y_ = 0.0f, current_x_ = 0.0f, current_y_ = 0.0f;
 	float camera_distance_ = cubeWidth * 3;
 	//float pan_speed_ = 0.1f;
