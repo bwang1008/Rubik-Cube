@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <deque>
+#include <stdlib.h>
 
 #include "config.h"
 #include "texture_to_render.h"
@@ -59,12 +60,14 @@ public:
 
 	bool isPlaying() const { return play_; }
 	float getCurrentPlayTime() const;
-	float getCurrentOffset() const;
 	void setStartTime() { start_time = std::chrono::system_clock::now(); }
 
 	bool isQuarterTurning() { return quarter_turning; }
 	void setQuarterTurning(bool b) { quarter_turning = b; }
 	float getRotatingSpeed() { return rotation_speed_; }
+
+	void scrambleCube();
+	size_t getSize() { return allMoves.size(); }
 	
 private:
 	GLFWwindow* window_;
@@ -81,7 +84,7 @@ private:
 	float camera_distance_ = cubeWidth * 3;
 	//float pan_speed_ = 0.1f;
 	float pan_speed_ = 0.5f;
-	float rotation_speed_ = 1.0f;
+	float rotation_speed_ = 3.0f; // how fast quarter turn rotations graphically are
 	float drag_speed_ = 0.02f;
 	float zoom_speed_ = 0.5f;
 	float aspect_;

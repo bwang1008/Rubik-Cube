@@ -13,6 +13,7 @@ v Optimize quarter turns to not updateVBO every render cycle
 v Deque for storing all moves
 - Key bindings for 6 possible turns
 - Add black box to hide the fact that large cube is in fact hollow
+- Scramble Cube
 - Implement solver
 - Implement reader-writer system where solver writes, graphical rendering pulls first for current move
 - Use a thread for above?

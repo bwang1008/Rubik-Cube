@@ -24,7 +24,6 @@
 #include <jpegio.h>
 #include <cmath>
 
-
 int window_width = 720; //1280;
 int window_height = 720;
 
@@ -67,8 +66,7 @@ void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW Error: " << description << "\n";
 }
 
-GLFWwindow* init_glefw()
-{
+GLFWwindow* init_glefw() {
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 	glfwSetErrorCallback(ErrorCallback);
@@ -93,14 +91,7 @@ GLFWwindow* init_glefw()
 	return ret;
 }
 
-
-int main(int argc, char* argv[])
-{	
-	if (argc < 2 && false) {
-		std::cerr << "Input model file is missing" << std::endl;
-		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
-		return -1;
-	}
+int main(int argc, char* argv[]) {	
 	if (cubeWidth <= 0 || cubeWidth > 200) {
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
@@ -264,7 +255,7 @@ int main(int argc, char* argv[])
 
 
 	bool draw_cube = true;
-	bool draw_sky = true;
+	bool draw_sky = false;
 
 	if(argc == 3){
 		std::string s(argv[2]);
@@ -277,9 +268,13 @@ int main(int argc, char* argv[])
 	}
 	*/
 
-	gui.addMove(glm::vec3(5, 0, 3));
+	std::cout << "Begin generating scrambles" << std::endl;
+	gui.scrambleCube();
+	//gui.addMove(glm::vec3(5, 0, 3));
 	//gui.addMove(glm::vec3(2, 0, 1));
 	//gui.addMove(glm::vec3(1, 1, 1));
+	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
+
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -322,18 +317,14 @@ int main(int argc, char* argv[])
 
 		// update rotation, depending if rotating already or not
 		if(gui.isQuarterTurning()) {
-
 			float currentTheta = std::abs(gui.getCurrentPlayTime() * gui.getRotatingSpeed());
 			glm::ivec3 myMove = gui.getCurrentMove();
 			int face = myMove[0];
 			int turns = ((myMove[2] % 4) + 4) % 4;
 			float supposedRadians = (std::abs(myMove[2])) * 3.1415926/2.0;
 
+			// if we turned enough, stop and update for next turn
 			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough, stop turning
-				//std::cout << "currentTheta = " << currentTheta << std::endl;
-				//std::cout << "currentPlayTime * rotateSpeed = " << gui.getCurrentPlayTime() << " * " << gui.getRotatingSpeed() << std::endl;
-				//std::cout << "supposedRadians = " << supposedRadians << std::endl;
-
 				// update cube vertices (VBO) and centers after making quarter turns
 				// to make transformations permanent
 				glm::mat4 mat = glm::mat4(1.0f);
@@ -346,7 +337,6 @@ int main(int argc, char* argv[])
 						mat = matZ2;
 					}
 					else if(turns == 3) {
-						std::cout << "WOOHOO" << std::endl;
 						mat = matZ3;
 					}
 				}
@@ -405,17 +395,6 @@ int main(int argc, char* argv[])
 						mat = matZ1;
 					}
 				}
-
-				
-				std::cout << "mat = " << std::endl;
-				for(int i = 0; i < 4; ++i) {
-					for(int j = 0; j < 4; ++j) {
-						std::cout << mat[j][i] << " ";
-					}
-					std::cout << std::endl;
-				}
-				
-				
 
 				for(size_t i = 0; i < cube_centers.size(); i += 8) {
 					if(cube_rotating[i] == 1) { // if it was rotating
@@ -509,15 +488,13 @@ int main(int argc, char* argv[])
 				// updateVBO of vertices and types
 				cube_pass.updateVBO(0, cube_vertices.data(), cube_vertices.size());
 				cube_pass.updateVBO(1, cube_types.data(), cube_types.size());
-				
 
 				gui.setQuarterTurning(false);
 			}
 		}
-		if(!gui.isQuarterTurning()) {
-
-			gui.setCurrentMove(); // Get the next move
-			glm::ivec3 myMove = gui.getCurrentMove();
+		if(!gui.isQuarterTurning()) { // currently not turning, so start next move
+			gui.setCurrentMove();
+			glm::ivec3 myMove = gui.getCurrentMove(); // Get the next move
 			//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
 
 			if (myMove[0] >= 0) { // only rotate if valid face
@@ -528,8 +505,6 @@ int main(int argc, char* argv[])
 				cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
 				gui.setQuarterTurning(true); // Applying next move
 			}
-
-			
 		}
 
 		// Render cubes
@@ -557,6 +532,5 @@ int main(int argc, char* argv[])
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
-
 
 }

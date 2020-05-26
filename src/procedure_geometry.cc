@@ -51,7 +51,8 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 		Cube* c = new Cube(frontBits + 63, -half, -half, -half);
 		c -> create_cube(cube_vertices, cube_faces, cube_types);
 		cubes.push_back(c);
-		cube_centers.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		for(int i = 0; i < 8; ++i)
+			cube_centers.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 		return;
 	}
 

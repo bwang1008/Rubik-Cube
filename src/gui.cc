@@ -49,7 +49,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 #endif
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window_, GL_TRUE);
-		return ;
+		return;
 	}
 	if (key == GLFW_KEY_J && action == GLFW_RELEASE) {
 		/*
@@ -211,6 +211,23 @@ float GUI::getCurrentPlayTime() const
 	return diff.count() / 1.0f;
 }
 
+void GUI::scrambleCube()
+{
+	int N = cubeWidth;
+	srand(1);
+	int numberMoves = std::min(3 * N * N, 300);
+
+	for (int i = 0; i < numberMoves; ++i) {
+		int randFace = rand() % 3;
+		int randLayer = rand() % N;
+		int randRotation = rand() % 3;
+		if (randRotation == 0)
+			randRotation = -1; // now -1, 1, or 2
+
+		allMoves.push_back(glm::ivec3(randFace, randLayer, randRotation));
+	}
+}
+
 bool GUI::captureWASDUPDOWN(int key, int action)
 {
 	if (key == GLFW_KEY_W) {
@@ -278,3 +295,4 @@ void GUI::MouseScrollCallback(GLFWwindow* window, double dx, double dy)
 	GUI* gui = (GUI*)glfwGetWindowUserPointer(window);
 	gui->mouseScrollCallback(dx, dy);
 }
+
