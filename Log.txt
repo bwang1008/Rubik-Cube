@@ -157,3 +157,21 @@ Commit "FIXED QUARTER TURNS AND COLORSgit add .!" - May 21, 2020
 
 Commit "Removed some print statements, but quarter turns workgit add .!" - May 21, 2020
 - Removed some print statements, since they were significantly slowing down the program for cubeWidth = 100
+
+Commit "Fixed idle state when no quarter turns, and confirmed all possible quarter rotations change faces as intended" - May 22, 2020
+- Added key-bindings to manually turn the outer faces, except for Down face, since that would be for key D, but D is used to pan right
+- Got counter-clockwise rotation when desired
+- Small fixes to which matrix is assigned after a rotation finishes
+- Small change to what happens when cube idle state
+
+Commit "Added scrambling of graphical cube" - May 25, 2020
+- GUI method to add moves to the deque allMoves to get random moves
+
+Commit "Made sky white, edited around to remove warnings" - May 26, 2020
+- Background white (but sky position still not fixed)
+- Minor edits, mostly casting of doubles to floats, to get rid of compiler warnings
+- Added idea to TODO.txt: solve cube by solving individual 3x3x3 cubes with appropriate faces, and recurse out
+	- Every 3x3 block of stickers on a face, when solved, looks like a single sticker
+	- Like Mergesort kind of Divide & Conquer: solve smaller versions first (3x3x3)
+	- When cube length not multiple of 3, like 11, solve the first 9 to get [3 3 3 2] where the last 2 is unsolved
+	- Then split into [8 3] so that first 8 are solved, and use last 3 as a 3x3x3 Rubik's cube

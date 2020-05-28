@@ -10,6 +10,7 @@
 
 #include "config.h"
 #include "texture_to_render.h"
+#include "solver.h"
 
 /*
  * Hint: call glUniformMatrix4fv on thest pointers

@@ -150,133 +150,6 @@ void create_rubik(std::vector<Cube*>& cubes, std::vector<glm::vec4>& cube_vertic
 	}
 }
 
-void update_rubik(std::vector<Cube*>& cubes, std::vector<glm::mat4>& trans, glm::vec3 move, float time) {
-	int N = cubeWidth;
-	float half = N/2.0f;
-
-	// Build point P and Q, where unit vector PQ is axis rotating about
-	glm::vec3 P = glm::vec3(0.0f, 0.0f, 0.0f);
-
-
-	// Face 0 = Front, 1 = Right, 2 = Top, 3 = Bottom, 4 = Left, 5 = Back
-	int face = int(move[0]);
-	int layer = int(move[1]);
-	
-	if(face == 0) { // Front
-		P[2] = N - 0.5f - layer - half;
-	}
-	else if(face == 1) { // Right
-		P[0] = N - 0.5f - layer - half;
-	}
-	else if(face == 2) { // Top
-		P[1] = N - 0.5f - layer - half;
-	}
-	else if(face == 3) { // Bottom
-		P[1] = 0.5f + layer - half;
-	}
-	else if(face == 4) { // Left
-		P[0] = 0.5f + layer - half;
-	}
-	else if(face == 5) { // Back
-		
-		P[2] = 0.5f + layer - half;
-	}
-
-	glm::vec3 Q = glm::vec3(P[0], P[1], P[2]);
-
-	if(face == 0) { // Front
-		Q[2] -= 1.0f;
-	}
-	else if(face == 1) { // Right
-		Q[0] += 1.0f;
-	}
-	else if(face == 2) { // Top
-		Q[1] += 1.0f;
-	}
-	else if(face == 3) { // Bottom
-		Q[1] -= 1.0f;
-	}
-	else if(face == 4) { // Left
-		Q[0] -= 1.0f;
-	}
-	else if(face == 5) { // Back
-		Q[2] += 1.0f;
-	}
-
-	// Build vector PQ
-	glm::vec3 PQ = Q - P;
-
-	// Build appropriate rotation matrix
-	float theta = -0.03f;
-	glm::mat4 mat = glm::mat4(1.0f);
-
-	if(face == 0) {
-		mat[0][0] = cos(theta);
-		mat[1][0] = -sin(theta);
-		mat[0][1] = sin(theta);
-		mat[1][1] = cos(theta);
-	}
-	else if(face == 1) { // right
-		mat[1][1] = cos(theta);
-		mat[2][1] = -sin(theta);
-		mat[1][2] = sin(theta);
-		mat[2][2] = cos(theta);
-	}
-	else if(face == 2) {
-		mat[0][0] = cos(theta);
-		mat[2][0] = sin(theta);
-		mat[0][2] = -sin(theta);
-		mat[2][2] = cos(theta);
-	}
-	else if(face == 3) {
-		mat[0][0] = cos(theta);
-		mat[2][0] = -sin(theta);
-		mat[0][2] = sin(theta);
-		mat[2][2] = cos(theta);
-	}
-	else if(face == 4) {
-		mat[1][1] = cos(theta);
-		mat[2][1] = sin(theta);
-		mat[1][2] = -sin(theta);
-		mat[2][2] = cos(theta);
-	}
-	else if(face == 5) {
-		mat[0][0] = cos(theta);
-		mat[1][0] = sin(theta);
-		mat[0][1] = -sin(theta);
-		mat[1][1] = cos(theta);
-	}
-	
-
-
-	// Iterate across all cubes where vector (P, center-of-cube) DOT (PQ) is 0
-	// Want cubes in plane containing P and perpendicular to PQ 
-	
-	int count = 0;
-
-	for(size_t i = 0; i < cubes.size(); ++i) {
-		Cube* c = cubes[i];
-		glm::vec3 cube_center = glm::vec3(c -> getPos());
-		cube_center[0] += 0.5;
-		cube_center[1] += 0.5;
-		cube_center[2] += 0.5;
-
-		glm::vec3 PC = cube_center - P;
-
-		float dot = glm::dot(PC, PQ);
-
-		if(abs(dot) < 0.00001f) {
-			//std::cout << "count = " << count << std::endl;
-			count++;
-
-			for(int j = 0; j < 8; ++j)
-				trans[8*i + j] *= mat;
-		}
-	}
-	//std::cout << "count = " << count << std::endl;
-}
-
-
 void update_rubik2(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vector<int>& cube_rotating) {
 	int N = cubeWidth;
 	float half = N/2.0f;
@@ -358,4 +231,14 @@ void update_rubik2(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::ve
 				cube_rotating.push_back(0);
 		}
 	}
+}
+
+void create_black_triangles(std::vector<glm::vec4>& black_triangle_vertices, std::vector<glm::uvec3>& black_triangle_faces, glm::ivec3 currentMove) {
+	int N = cubeWidth;
+	float half = N / 2.0f;
+
+	int face = currentMove[0];
+	int layer = currentMove[1];
+
+
 }
