@@ -6,6 +6,7 @@
 #include "gui.h"
 #include "texture_to_render.h"
 #include "cube.h"
+#include "solver.h"
 
 #include <memory>
 #include <algorithm>
@@ -105,6 +106,9 @@ int main(int argc, char* argv[]) {
 
 	// tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	Solver* solver = new Solver();
+	gui.loadSolver(solver);
 
 	// Rotation matrices;
 	glm::mat4 matX1 = glm::mat4(1.0f);
@@ -314,6 +318,20 @@ int main(int argc, char* argv[]) {
 
 		glfwSetWindowTitle(window, title.str().data());
 		glViewport(0, 0, window_width, window_height);
+
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver -> currentState() == 0) {
+			solver->incr();
+			std::cout << "COPYING cuz " << gui.getCurrentMove()[0] << std::endl;
+			solver->copyConfiguration(cube_centers, cube_types);
+		}
+		else {
+			glm::ivec3 myMove = gui.getCurrentMove();
+			//std::cout << "gui get currentmove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+		}
+		if (solver->currentState() == 1) {
+			solver->print();
+			solver->incr();
+		}
 
 		// update rotation, depending if rotating already or not
 		if(gui.isQuarterTurning()) {

@@ -1,4 +1,11 @@
 #include "solver.h"
+#include <map>
+
+/*
+Solver::Solver() {
+
+}
+*/
 
 /* 
 * Face is an int in [0, 6]
@@ -7,7 +14,7 @@
 int Solver::getFaceColor(int face) {
 	if (N % 2 == 1) {
 		int index = N / 2;
-		return faces[index][index];
+		return faces[face][index][index];
 	}
 	return face;
 }
@@ -21,7 +28,7 @@ int Solver::getSticker(int face, int row, int col) {
 
 /* After Rubik's Cube is scrambled, copy sticker colors to inner representation of cube
 */
-void Solver::copyStickers(std::vector<glm::vec3> centers, std::vector<int> types) {
+void Solver::copyConfiguration(std::vector<glm::vec3>& centers, std::vector<int>& types) {
 	float half = N / 2.0f;
 	for (size_t i = 0; i < types.size(); i += 8) {
 		int type = types[i];
@@ -48,7 +55,7 @@ void Solver::copyStickers(std::vector<glm::vec3> centers, std::vector<int> types
 			frontAxis = -frontAxis;
 		if (rightSign == 1)
 			rightAxis = -rightAxis;
-		if (topAxis == 1)
+		if (topSign == 1)
 			topAxis = -topAxis;
 
 		// generate a unique number for each axis
@@ -111,7 +118,7 @@ void Solver::copyStickers(std::vector<glm::vec3> centers, std::vector<int> types
 			y += half;
 
 			// fill in color
-			faces[index][int(x)][int(y)] = color;
+			faces[index][int(x)][int(y)] = myColor;
 			
 		}
 
@@ -120,4 +127,103 @@ void Solver::copyStickers(std::vector<glm::vec3> centers, std::vector<int> types
 
 void Solver::turnFront(int layer, int qts) {
 	
+}
+
+void Solver::turnRight() {
+
+}
+
+void Solver::turnTop() {
+
+}
+
+void Solver::turnBottom() {
+
+}
+
+void Solver::turnLeft() {
+
+}
+
+void Solver::turnBack() {
+
+}
+
+void Solver::solve() {
+
+}
+
+void Solver::print() {
+	std::cout << "Front\n";
+	std::map<int, char> myMap;
+	myMap[0] = 'G';
+	myMap[1] = 'R';
+	myMap[2] = 'W';
+	myMap[3] = 'Y';
+	myMap[4] = 'O';
+	myMap[5] = 'B';
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			int key = faces[0][i][j];
+			char c = myMap[key];
+			std::cout << c << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+	
+	std::cout << "Right\n";
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			int key = faces[1][i][j];
+			char c = myMap[key];
+			std::cout << c << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Up\n";
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			int key = faces[2][i][j];
+			char c = myMap[key];
+			std::cout << c << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Down\n";
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			int key = faces[3][i][j];
+			char c = myMap[key];
+			std::cout << c << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Left\n";
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			int key = faces[4][i][j];
+			char c = myMap[key];
+			std::cout << c << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
+	std::cout << "Back\n";
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			int key = faces[5][i][j];
+			char c = myMap[key];
+			std::cout << c << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
 }

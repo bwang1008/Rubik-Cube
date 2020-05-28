@@ -25,6 +25,9 @@ public:
 	GUI(GLFWwindow*, int view_width = -1, int view_height = -1, int preview_height = -1);
 	~GUI();
 
+	Solver* solver;
+	void loadSolver(Solver* s) { solver = s; }
+
 	void keyCallback(int key, int scancode, int action, int mods);
 	void mousePosCallback(double mouse_x, double mouse_y);
 	void mouseButtonCallback(int button, int action, int mods);

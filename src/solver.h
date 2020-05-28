@@ -10,9 +10,10 @@
 
 class Solver {
 public:
+	Solver() { N = cubeWidth;  state = 0; }
 	int getFaceColor(int face);
 	int getSticker(int face, int row, int col);
-	void copyConfiguration(std::vector<glm::vec3> centers, std::vector<int> types);
+	void copyConfiguration(std::vector<glm::vec3>& centers, std::vector<int>& types);
 
 	void turnFront(int layer, int qt);
 	void turnRight();
@@ -22,15 +23,18 @@ public:
 	void turnBack();
 
 	void solve();
+	void print();
+	void incr() { state++; }
+	int currentState() { return state; }
 	
 
 private:
-	int N = cubeWidth;
+	int N;
 	int faces[6][cubeWidth][cubeWidth];
 	// front, right, top, bottom, left, back
 	// green, red, white, yellow, orange, blue
 
-
+	int state;
 };
 
 #endif
