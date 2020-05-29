@@ -323,7 +323,7 @@ int main(int argc, char* argv[]) {
 			solver->incr();
 			std::cout << "COPYING " << std::endl;
 			solver->copyConfiguration(cube_centers, cube_types);
-			solver->turnRight(0, 1);
+			solver->turnDown(1, 1);
 		}
 		if (solver->currentState() == 1) {
 			solver->print();

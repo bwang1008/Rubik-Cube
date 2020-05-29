@@ -17,8 +17,8 @@ public:
 
 	void turnFront(int layer, int qt);
 	void turnRight(int layer, int qt);
-	void turnTop(int layer, int qt);
-	void turnBottom(int layer, int qt);
+	void turnUp(int layer, int qt);
+	void turnDown(int layer, int qt);
 	void turnLeft(int layer, int qt);
 	void turnBack(int layer, int qt);
 
