@@ -6,7 +6,7 @@ I am aware that many such online Rubik's Cube solvers exist elsewhere. Inspirati
 
 Supported cube sizes are from 1 to 200. Larger cube sizes demand more computer resources.
 
-Main idea is to first render a hollow cube, to save resources, with the appriopriate colors. Upon one rotation of a face, update the position of the vertices of the appropriate cubies on the fly in the vertex shader (not in main). Once that one particular rotation is finished, use the same vertices in main and update them to update transformation / colors appropriately (otherwise the colors are as if no rotation happened at all). For solving, we recursively break down the cube into 3x3x3 Rubik's Cubes, and solve them. Then a 3x3 patch of stickers looks like one giant sticker, and we build up the solution until the cube is solved.  
+Main idea is to first render a hollow cube, to save resources, with the appriopriate colors. Upon one rotation of a face, update the position of the vertices of the appropriate cubies on the fly in the vertex shader (not in main). Once that one particular rotation is finished, use the same vertices in main and update them to update transformation / colors appropriately (otherwise the colors are as if no rotation happened at all). For solving, we first solve the centers, then solve the edges, then solve the rest as a large 3x3x3 cube.
 
 Starter code is fully attributed to Professor Etienne Vouga.
 

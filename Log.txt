@@ -175,3 +175,32 @@ Commit "Made sky white, edited around to remove warnings" - May 26, 2020
 	- Like Mergesort kind of Divide & Conquer: solve smaller versions first (3x3x3)
 	- When cube length not multiple of 3, like 11, solve the first 9 to get [3 3 3 2] where the last 2 is unsolved
 	- Then split into [8 3] so that first 8 are solved, and use last 3 as a 3x3x3 Rubik's cube
+
+Commit "Setup files and some methods for internal solver" - May 29, 2020
+- Above idea does not work
+	- Implicit assumption that stickers were already in some nice configuration to be able to solve in 3x3x3
+- Need an internal representation of where stickers are that code can access (cannot directly access from graphical cube)
+- Started on making black triangles to complete illusion that cube is solid, not hollow
+- Added solver.h, solver.cc
+- Use 6 NxN int[][] as internal representation, with 0,1,2,3,4,5 = green, red, white, yellow, orange, blue
+	- Colors correspond with solved cube's front, right, up, down, left, back
+- Method copyStickers() is used to get the stickers from cube_centers and cube_types; only called once after scrambling cube
+
+Commit "Copying stickers from the graphical representation to the internal representation works accurately" - May 29, 2020
+- Incorporated Solver object into main
+- Changed colors of green and orange to distinguish them faster
+	- My friend claims the colors are closer together now...
+- Renamed copyStickers() to copyConfiguration()
+	- No particular reason why
+- Added print() to Solver to show all 6 faces' colors
+- Minor bug fixes
+
+Commit "Internal representation can now turn front, back, and right" - May 28, 2020
+- Those 6 NxN int[][] for sticker colors, can now do turnFront(), turnBack(), turnRight()
+- Parameters are int layer, like how many layers in from the face you want to turn
+- Then int qts, how many quarter turns clockwise you want
+
+Commit "Internal representation rotation of left, up, down working correctly" - May 29, 2020
+- Can now do turnLeft, turnUp(), turnDown()
+- Need to write to allMoves and have a structured state so that there is pause between scrambling and solving
+- Then we are ready to do actual solving!
