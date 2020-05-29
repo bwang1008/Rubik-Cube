@@ -1,11 +1,12 @@
 #include "solver.h"
 #include <map>
 
-/*
-Solver::Solver() {
 
+Solver::Solver() {
+	N = cubeWidth;
+	state = 0;
+	faces[0][0][0] = 0;
 }
-*/
 
 /* 
 * Face is an int in [0, 6]
@@ -126,27 +127,334 @@ void Solver::copyConfiguration(std::vector<glm::vec3>& centers, std::vector<int>
 }
 
 void Solver::turnFront(int layer, int qts) {
+	qts = ((qts % 4) + 4) % 4;
+	if (qts == 0) {
+		return;
+	}
+
+	if (layer == 0) {
+		int temp[cubeWidth][cubeWidth];
+		if (qts == 1) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[j][N - 1 - i] = faces[0][i][j];
+				}
+			}
+		}
+		else if (qts == 2) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - i][N - 1 - j] = faces[0][i][j];
+				}
+			}
+		}
+		else if (qts == 3) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - j][i] = faces[0][i][j];
+				}
+			}
+		}
+
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				faces[0][i][j] = temp[i][j];
+			}
+		}
+	}
+	else if (layer == N - 1) {
+		int temp[cubeWidth][cubeWidth];
+		if (qts == 1) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - j][i] = faces[5][i][j];
+				}
+			}
+		}
+		else if (qts == 2) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - i][N - 1 - j] = faces[5][i][j];
+				}
+			}
+		}
+		else if (qts == 3) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[j][N - 1 - i] = faces[5][i][j];
+				}
+			}
+		}
+
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				faces[5][i][j] = temp[i][j];
+			}
+		}
+	}
+
+	// now move the bands 
+	int upBand[cubeWidth];
+	int rightBand[cubeWidth];
+	int downBand[cubeWidth];
+	int leftBand[cubeWidth];
+
+	for (int i = 0; i < N; ++i) {
+		upBand[i] = faces[2][N - 1 - layer][i];
+		rightBand[i] = faces[1][i][layer];
+		downBand[i] = faces[3][layer][N - 1 - i];
+		leftBand[i] = faces[4][N - 1 - i][N - 1 - layer];
+	}
+	
+	if (qts == 1) {
+		for (int i = 0; i < N; ++i) {
+			faces[2][N - 1 - layer][i] = leftBand[i];
+			faces[1][i][layer] = upBand[i];
+			faces[3][layer][N - 1 - i] = rightBand[i];
+			faces[4][N - 1 - i][N - 1 - layer] = downBand[i];
+		}
+	}
+	else if (qts == 2) {
+		for (int i = 0; i < N; ++i) {
+			faces[2][N - 1 - layer][i] = downBand[i];
+			faces[1][i][layer] = leftBand[i];
+			faces[3][layer][N - 1 - i] = upBand[i];
+			faces[4][N - 1 - i][N - 1 - layer] = rightBand[i];
+		}
+	}
+	else {
+		for (int i = 0; i < N; ++i) {
+			faces[2][N - 1 - layer][i] = rightBand[i];
+			faces[1][i][layer] = downBand[i];
+			faces[3][layer][N - 1 - i] = leftBand[i];
+			faces[4][N - 1 - i][N - 1 - layer] = upBand[i];
+		}
+	}
 	
 }
 
-void Solver::turnRight() {
+void Solver::turnRight(int layer, int qts) {
+	qts = ((qts % 4) + 4) % 4;
+	if (qts == 0) {
+		return;
+	}
+
+	if (layer == 0) {
+		int temp[cubeWidth][cubeWidth];
+		if (qts == 1) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[j][N - 1 - i] = faces[1][i][j];
+				}
+			}
+		}
+		else if (qts == 2) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - i][N - 1 - j] = faces[1][i][j];
+				}
+			}
+		}
+		else if (qts == 3) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - j][i] = faces[1][i][j];
+				}
+			}
+		}
+
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				faces[1][i][j] = temp[i][j];
+			}
+		}
+	}
+	else if (layer == N - 1) {
+		int temp[cubeWidth][cubeWidth];
+		if (qts == 1) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - j][i] = faces[4][i][j];
+				}
+			}
+		}
+		else if (qts == 2) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - i][N - 1 - j] = faces[4][i][j];
+				}
+			}
+		}
+		else if (qts == 3) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[j][N - 1 - i] = faces[4][i][j];
+				}
+			}
+		}
+
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				faces[4][i][j] = temp[i][j];
+			}
+		}
+	}
+
+	// now move the bands 
+	int upBand[cubeWidth];
+	int backBand[cubeWidth];
+	int downBand[cubeWidth];
+	int frontBand[cubeWidth];
+
+	for (int i = 0; i < N; ++i) {
+		upBand[i] = faces[2][N - 1 - i][N - 1 - layer];
+		backBand[i] = faces[5][i][layer];
+		downBand[i] = faces[3][N - 1 - i][N - 1 - layer];
+		frontBand[i] = faces[0][N - 1 - i][N - 1 - layer];
+	}
+
+	if (qts == 1) {
+		for (int i = 0; i < N; ++i) {
+			faces[2][N - 1 - i][N - 1 - layer] = frontBand[i];
+			faces[5][i][layer] = upBand[i];
+			faces[3][N - 1 - i][N - 1 - layer] = backBand[i];
+			faces[0][N - 1 - i][N - 1 - layer] = downBand[i];
+		}
+	}
+	else if (qts == 2) {
+		for (int i = 0; i < N; ++i) {
+			faces[2][N - 1 - i][N - 1 - layer] = downBand[i];
+			faces[5][i][layer] = frontBand[i];
+			faces[3][N - 1 - i][N - 1 - layer] = upBand[i];
+			faces[0][N - 1 - i][N - 1 - layer] = backBand[i];
+		}
+	}
+	else {
+		for (int i = 0; i < N; ++i) {
+			faces[2][N - 1 - i][N - 1 - layer] = backBand[i];
+			faces[5][i][layer] = downBand[i];
+			faces[3][N - 1 - i][N - 1 - layer] = frontBand[i];
+			faces[0][N - 1 - i][N - 1 - layer] = upBand[i];
+		}
+	}
+}
+
+void Solver::turnTop(int layer, int qts) {
 
 }
 
-void Solver::turnTop() {
+void Solver::turnBottom(int layer, int qts) {
 
 }
 
-void Solver::turnBottom() {
+void Solver::turnLeft(int layer, int qts) {
 
 }
 
-void Solver::turnLeft() {
+void Solver::turnBack(int layer, int qts) {
+	qts = ((qts % 4) + 4) % 4;
+	if (qts == 0) {
+		return;
+	}
 
-}
+	if (layer == 0) {
+		int temp[cubeWidth][cubeWidth];
+		if (qts == 1) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[j][N - 1 - i] = faces[5][i][j];
+				}
+			}
+		}
+		else if (qts == 2) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - i][N - 1 - j] = faces[5][i][j];
+				}
+			}
+		}
+		else if (qts == 3) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - j][i] = faces[5][i][j];
+				}
+			}
+		}
 
-void Solver::turnBack() {
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				faces[5][i][j] = temp[i][j];
+			}
+		}
+	}
+	else if (layer == N - 1) {
+		int temp[cubeWidth][cubeWidth];
+		if (qts == 1) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - j][i] = faces[0][i][j];
+				}
+			}
+		}
+		else if (qts == 2) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[N - 1 - i][N - 1 - j] = faces[0][i][j];
+				}
+			}
+		}
+		else if (qts == 3) {
+			for (int i = 0; i < N; ++i) {
+				for (int j = 0; j < N; ++j) {
+					temp[j][N - 1 - i] = faces[0][i][j];
+				}
+			}
+		}
 
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				faces[0][i][j] = temp[i][j];
+			}
+		}
+	}
+
+	// now move the bands 
+	int upBand[cubeWidth];
+	int leftBand[cubeWidth];
+	int downBand[cubeWidth];
+	int rightBand[cubeWidth];
+
+	for (int i = 0; i < N; ++i) {
+		upBand[i] = faces[2][layer][N - 1 - i];
+		leftBand[i] = faces[4][i][layer];
+		downBand[i] = faces[3][N - 1 - layer][i];
+		rightBand[i] = faces[1][N - 1 - i][N - 1 - layer];
+	}
+
+	if (qts == 1) {
+		for (int i = 0; i < N; ++i) {
+			faces[2][layer][N - 1 - i] = rightBand[i];
+			faces[4][i][layer] = upBand[i];
+			faces[3][N - 1 - layer][i] = leftBand[i];
+			faces[1][N - 1 - i][N - 1 - layer] = downBand[i];
+		}
+	}
+	else if (qts == 2) {
+		for (int i = 0; i < N; ++i) {
+			faces[2][layer][N - 1 - i] = downBand[i];
+			faces[4][i][layer] = rightBand[i];
+			faces[3][N - 1 - layer][i] = upBand[i];
+			faces[1][N - 1 - i][N - 1 - layer] = leftBand[i];
+		}
+	}
+	else {
+		for (int i = 0; i < N; ++i) {
+			faces[2][layer][N - 1 - i] = leftBand[i];
+			faces[4][i][layer] = downBand[i];
+			faces[3][N - 1 - layer][i] = rightBand[i];
+			faces[1][N - 1 - i][N - 1 - layer] = upBand[i];
+		}
+	}
 }
 
 void Solver::solve() {

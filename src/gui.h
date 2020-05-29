@@ -88,7 +88,7 @@ private:
 	float camera_distance_ = cubeWidth * 3;
 	//float pan_speed_ = 0.1f;
 	float pan_speed_ = 0.5f;
-	float rotation_speed_ = 3.0f; // how fast quarter turn rotations graphically are
+	float rotation_speed_ = 10.0f; // how fast quarter turn rotations graphically are
 	float drag_speed_ = 0.02f;
 	float zoom_speed_ = 0.5f;
 	float aspect_;

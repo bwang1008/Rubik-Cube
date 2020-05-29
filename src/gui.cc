@@ -215,7 +215,7 @@ void GUI::scrambleCube()
 {
 	int N = cubeWidth;
 	srand(1);
-	int numberMoves = std::min(3 * N * N, 15);
+	int numberMoves = std::min(3 * N * N, 30);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;

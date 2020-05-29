@@ -321,12 +321,9 @@ int main(int argc, char* argv[]) {
 
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver -> currentState() == 0) {
 			solver->incr();
-			std::cout << "COPYING cuz " << gui.getCurrentMove()[0] << std::endl;
+			std::cout << "COPYING " << std::endl;
 			solver->copyConfiguration(cube_centers, cube_types);
-		}
-		else {
-			glm::ivec3 myMove = gui.getCurrentMove();
-			//std::cout << "gui get currentmove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+			solver->turnRight(0, 1);
 		}
 		if (solver->currentState() == 1) {
 			solver->print();
