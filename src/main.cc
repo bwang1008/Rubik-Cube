@@ -107,8 +107,9 @@ int main(int argc, char* argv[]) {
 	// tell GLFW to capture our mouse
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	Solver* solver = new Solver();
-	gui.loadSolver(solver);
+	Solver* solver = new Solver(); // create solver
+	gui.loadSolver(solver); // hand it to gui
+	gui.setDeque(); // hand solver the deque from gui
 
 	// Rotation matrices;
 	glm::mat4 matX1 = glm::mat4(1.0f);
@@ -278,7 +279,7 @@ int main(int argc, char* argv[]) {
 	//gui.addMove(glm::vec3(2, 0, 1));
 	//gui.addMove(glm::vec3(1, 1, 1));
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
-
+	gui.setRotatingSpeed(30.0f);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -319,14 +320,29 @@ int main(int argc, char* argv[]) {
 		glfwSetWindowTitle(window, title.str().data());
 		glViewport(0, 0, window_width, window_height);
 
-		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver -> currentState() == 0) {
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver -> currentState() == 0) { // done scrambling
 			solver->incr();
 			std::cout << "COPYING " << std::endl;
 			solver->copyConfiguration(cube_centers, cube_types);
-			solver->turnDown(1, 1);
+			std::cout << "COPYING FINISHED" << std::endl;
+			gui.resetCount();
+			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 		}
+		/*
 		if (solver->currentState() == 1) {
 			solver->print();
+			solver->incr();
+		}*/
+
+		if (solver->currentState() == 2) {
+			solver->incr();
+			gui.setRotatingSpeed(50.0f);
+			solver->solveCenter0();
+		}
+
+		if (gui.getSize() == 0 && solver->currentState() == 3) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 			solver->incr();
 		}
 

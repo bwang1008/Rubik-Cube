@@ -40,15 +40,6 @@ struct Cube {
 		return pos;
 	}
 
-	/*
-	void setTrans(glm::mat4 mat) {
-		for(int i = 0; i < 4; ++i) {
-			for(int j = 0; j < 4; ++j) {
-				trans[i][j] = mat[i][j];
-			}
-		}
-	}
-	*/
 
 	void create_cube(std::vector<glm::vec4>& cube_vertices, 
 							 std::vector<glm::uvec3>& cube_faces,

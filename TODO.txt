@@ -7,12 +7,12 @@ v Implement turns
 v Implement quarter turns
 v Implement stopping quarter turns and move onto next move
 v Ensure face colors are preserved after all quarter turns
-- Double check all possible turns are correct
+v Double check all possible turns are correct
 v Optimize quarter turns to not updateVBO every render cycle
 - BVH? (Bounding Volume Hierarchy data structure)
 v Deque for storing all moves
 - Key bindings for 6 possible turns
-- Add black box to hide the fact that large cube is in fact hollow
+- Add black trianges to hide the fact that large cube is in fact hollow
 - Scramble Cube
 - Implement solver
 	- Idea: recursively solve 3x3x3 cubes

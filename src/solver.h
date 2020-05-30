@@ -5,12 +5,14 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <deque>
 #include <glm/glm.hpp>
 #include "config.h"
 
 class Solver {
 public:
 	Solver();
+	void setDequePtr(std::deque<glm::ivec3>* deque);
 	int getFaceColor(int face);
 	int getSticker(int face, int row, int col);
 	void copyConfiguration(std::vector<glm::vec3>& centers, std::vector<int>& types);
@@ -22,11 +24,16 @@ public:
 	void turnLeft(int layer, int qt);
 	void turnBack(int layer, int qt);
 
-	void solve();
+	void exec(int face, int layer, int qt);
+	void exec(glm::vec3 move);
+
+	void getPossiblePositions(int row, int col, std::vector<glm::ivec2>& container);
+
 	void print();
-	void incr() { state++; }
-	int currentState() { return state; }
+	void incr();
+	int currentState();
 	
+	void solveCenter0();
 
 private:
 	int N;
@@ -34,7 +41,13 @@ private:
 	// front, right, top, bottom, left, back
 	// green, red, white, yellow, orange, blue
 
-	int state;
+	std::deque<glm::ivec3>* dequePtr;
+
+	int state; // current state that cube is in
+	// 0 = scrambling
+	// copy stickers
+	// 1 = wait for ENTER key to proceed
+	// 2 = solve bottom center
 };
 
 #endif

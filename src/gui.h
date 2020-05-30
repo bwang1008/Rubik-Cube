@@ -27,6 +27,7 @@ public:
 
 	Solver* solver;
 	void loadSolver(Solver* s) { solver = s; }
+	void setDeque() { solver->setDequePtr(&allMoves);  }
 
 	void keyCallback(int key, int scancode, int action, int mods);
 	void mousePosCallback(double mouse_x, double mouse_y);
@@ -55,6 +56,9 @@ public:
 		else {
 			currentMove = allMoves.front();
 			allMoves.pop_front();
+
+			countMoves++;
+			countQT += std::abs(currentMove[2]);
 		}
 	}
 	void setCurrentMove(glm::ivec3 v) { currentMove[0] = v[0]; currentMove[1] = v[1]; currentMove[2] = v[2]; }
@@ -69,9 +73,14 @@ public:
 	bool isQuarterTurning() { return quarter_turning; }
 	void setQuarterTurning(bool b) { quarter_turning = b; }
 	float getRotatingSpeed() { return rotation_speed_; }
+	void setRotatingSpeed(float f) { rotation_speed_ = f; }
 
 	void scrambleCube();
 	size_t getSize() { return allMoves.size(); }
+
+	long long getCountMoves() { return countMoves; }
+	long long getCountQT() { return countQT; }
+	void resetCount() { countMoves = 0; countQT = 0; }
 	
 private:
 	GLFWwindow* window_;
@@ -119,6 +128,9 @@ private:
 	bool play_ = false;
 	double offset = 0;
 	std::chrono::time_point<std::chrono::system_clock> start_time;
+
+	long long countMoves = 0;
+	long long countQT = 0;
 
 };
 

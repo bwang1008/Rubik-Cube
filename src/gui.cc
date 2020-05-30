@@ -106,6 +106,12 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 	else if (key == GLFW_KEY_B && action == GLFW_RELEASE) {
 		allMoves.push_back(glm::vec3(5, 0, 1));
 	}
+	else if (key == GLFW_KEY_ENTER && action == GLFW_RELEASE) {
+		if (solver->currentState() & 1) { // if current state is odd, then valid
+			solver->incr();
+			std::cout << "state = " << solver->currentState() << std::endl;
+		}
+	}
 	// FIXME: implement other controls here.
 }
 
@@ -215,7 +221,7 @@ void GUI::scrambleCube()
 {
 	int N = cubeWidth;
 	srand(1);
-	int numberMoves = std::min(3 * N * N, 30);
+	int numberMoves = std::min(3 * N * N, 300);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;
