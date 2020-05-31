@@ -260,7 +260,7 @@ int main(int argc, char* argv[]) {
 
 
 	bool draw_cube = true;
-	bool draw_sky = true;
+	bool draw_sky = false;
 
 	if(argc == 3){
 		std::string s(argv[2]);
@@ -336,7 +336,7 @@ int main(int argc, char* argv[]) {
 
 		if (solver->currentState() == 2) {
 			solver->incr();
-			gui.setRotatingSpeed(50.0f);
+			gui.setRotatingSpeed(30.0f);
 			solver->solveCenter0();
 		}
 
