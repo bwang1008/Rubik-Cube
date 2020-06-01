@@ -912,422 +912,442 @@ void Solver::solveCenter0() {
 		// turn band so it is parallel to down
 		exec(0, 0, -1);
 
-		// update stickers in band
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
-		}
-
-		// get stickers from front
-		for (int j = 1; j < N - 1; ++j) {
-			if (band[j] != color) {
-				int row = N - 1 - i;
-				int col = N - 1 - j;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
-
-					// if the down face, at those possible 4 locations, has the color desired,
-					// and is not in same row as the band is currently in
-					if (faces[0][r][c] == color && r != row) {
-						// current position of sticker on front face
-						int r2 = r;
-						int c2 = c;
-
-						// now rotate the desired sticker from front to right
-						exec(2, r2, -1);
-
-						// need to undo above
-						int qt = 1;
-						if (N - 1 - c2 != r2) {
-							qt = -1;
-						}
-						
-						exec(1, 0, qt); // first rotate right face out of the way
-						exec(2, r2, 1); // undo above
-						exec(1, 0, -qt); // undo getting out of way
+		bool completed = false;
+		while (!completed) {
 
 
-						// rotate right face until in right position
-						// while the row of desired sticker != jth item of band in pos (j, N-1-i)
-						while (r2 != j || c2 != N - 1 - i) {
-							exec(1, 0, 1);
-							int r3 = c2;
-							int c3 = N - 1 - r2;
-							r2 = r3;
-							c2 = c3;
-						}
 
-						// put band, which is currently facing bottom, to face right
-						exec(0, 0, -1);
-
-						// move that sticker into the band
-						exec(2, j, 1);
-
-						// put band, which is parallel to right, down so it is parallel to down
-						exec(0, 0, 1);
-
-						break; // we only need one sticker
-					}
-				}
+			// update stickers in band
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
 			}
-		}
 
-		// update stickers in band
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
-		}
+			// get stickers from front
+			for (int j = 1; j < N - 1; ++j) {
+				if (band[j] != color) {
+					int row = N - 1 - i;
+					int col = N - 1 - j;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
 
-		// rotate band until parallel to left
-		exec(0, 0, 1);
+						// if the down face, at those possible 4 locations, has the color desired,
+						// and is not in same row as the band is currently in
+						if (faces[0][r][c] == color && r != row) {
+							// current position of sticker on front face
+							int r2 = r;
+							int c2 = c;
 
-		// get appropriate stickers from Left face
-		for (int j = 1; j < N - 1; ++j) { // find appropriate missing stickers
-			if (band[j] != color) {
-				int row = N - 1 - j;
-				int col = i;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
+							// now rotate the desired sticker from front to right
+							exec(2, r2, -1);
 
-					// if the left face, at those possible 4 locations, has the color desired,
-					if (faces[4][r][c] == color) {
-						// if k > 0, may need to rotate Left face to get the sticker in desired position before sticking in band
-						exec(4, 0, -k);
-
-						// rotate sticker into band
-						exec(2, row, -1);
-
-						int qt = 1;
-						if (N - 1 - col != row) {
-							qt = -1;
-						}
-
-						// first rotate front before
-						exec(0, 0, qt);
-						// turning back the above above rotation
-						exec(2, row, 1);
-						exec(0, 0, -qt);
-
-						break; // we only need one sticker in this position
-					}
-				}
-			}
-		}
-
-		// get stickers from Up face
-		// first turn front face
-		exec(0, 0, 1);
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][i][j];
-		}
-
-		for (int j = 1; j < N - 1; ++j) {
-			if (band[j] != color) {
-				int row = i;
-				int col = j;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
-
-					// if we have desired sticker on Up face,
-					if (faces[2][r][c] == color) {
-						// rotate Up face to get the sticker in desired position
-						exec(2, 0, -k);
-
-						// rotate sticker into band
-						exec(4, j, 1);
-
-						// since rotating band down might mess with done bands on bottom,
-						// need to fix when done
-						int qt = 1;
-						if (row != j)
-							qt = -1;
-						exec(0, 0, qt);
-						exec(4, j, -1);
-						exec(0, 0, -qt);
-						break;
-					}
-				}
-			}
-		}
-		
-		// get stickers from right
-		// first turn Front face clockwise so it is parallel to right
-		exec(0, 0, 1);
-		// update stickers in band
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][j][cubeWidth - 1 - i];
-		}
-
-		for (int j = 1; j < N - 1; ++j) { // find appropriate missing stickers
-			if (band[j] != color) {
-				int row = j;
-				int col = N - 1 - i;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
-
-					// if the right face, at those possible 4 locations, has the color desired,
-					if (faces[1][r][c] == color) {
-						// if k > 0, may need to rotate Left face to get the sticker in desired position before sticking in band
-						exec(1, 0, -k);
-
-						// rotate sticker into band
-						exec(2, j, 1);
-
-						// might have pushed some color from front to left
-						// so first rotate front, then rotate the above back
-						int qt = 1;
-						if (N - 1 - col != j) {
-							qt = -1;
-						}
-						exec(0, 0, qt);
-						exec(2, j, -1);
-						exec(0, 0, -qt);
-
-						break; // we only need one sticker in this position
-					}
-				}
-			}
-		}
-
-		// update stickers in band
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][j][cubeWidth - 1 - i];
-		}
-		
-		// get stickers from back
-		for (int j = 1; j < N - 1; ++j) { // find appropriate missing stickers
-			if (band[j] != color) {
-				int row = j;
-				int col = N - 1 - i;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
-
-					// if the right face, at those possible 4 locations, has the color desired,
-					if (faces[5][r][c] == color) {
-						// if k > 0, may need to rotate Left face to get the sticker in desired position before sticking in band
-						exec(5, 0, -k);
-
-						// rotate sticker into band
-						exec(2, j, 2);
-
-						// might have pushed some color front front to back
-						// so first rotate front, then rotate the above back
-						int qt = 1;
-						if (N - 1 - col != j) {
-							qt = -1;
-						}
-						exec(0, 0, qt);
-						exec(2, j, -2);
-						exec(0, 0, -qt);
-
-						break; // we only need one sticker in this position
-					}
-				}
-			}
-		}
-
-		// update stickers in band
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][j][cubeWidth - 1 - i];
-		}
-
-		// turn front face so that band is horizontal, facing bottom
-		exec(0, 0, 1);
-
-		
-
-		// get stickers from bottom; band is still parallel to bottom
-		for (int j = 1; j < N - 1; ++j) {
-			if (band[j] != color) {
-				int row = N - 1 - i;
-				int col = N - 1 - j;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
-
-					// if the down face, at those possible 4 locations, has the color desired, and is NOT already taken
-					if (faces[3][r][c] == color && c >= i) {
-
-						if (k % 2 == 0) { // only rotate if even
-							// if k > 0, may need to rotate Down face to get the sticker in desired position before sticking in band
-							exec(3, 0, -k);
-
-							// rotate sticker into band
-							exec(1, j, 1);
-
-							// above may have pushed some good stickers on front onto top
+							// need to undo above
 							int qt = 1;
-							if (N - 1 - row != j) {
+							if (N - 1 - c2 != r2) {
 								qt = -1;
 							}
 
+							exec(1, 0, qt); // first rotate right face out of the way
+							exec(2, r2, 1); // undo above
+							exec(1, 0, -qt); // undo getting out of way
+
+
+							// rotate right face until in right position
+							// while the row of desired sticker != jth item of band in pos (j, N-1-i)
+							while (r2 != j || c2 != N - 1 - i) {
+								exec(1, 0, 1);
+								int r3 = c2;
+								int c3 = N - 1 - r2;
+								r2 = r3;
+								c2 = c3;
+							}
+
+							// put band, which is currently facing bottom, to face right
+							exec(0, 0, -1);
+
+							// move that sticker into the band
+							exec(2, j, 1);
+
+							// put band, which is parallel to right, down so it is parallel to down
+							exec(0, 0, 1);
+
+							break; // we only need one sticker
+						}
+					}
+				}
+			}
+
+			// update stickers in band
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
+			}
+
+			// rotate band until parallel to left
+			exec(0, 0, 1);
+
+			// get appropriate stickers from Left face
+			for (int j = 1; j < N - 1; ++j) { // find appropriate missing stickers
+				if (band[j] != color) {
+					int row = N - 1 - j;
+					int col = i;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
+
+						// if the left face, at those possible 4 locations, has the color desired,
+						if (faces[4][r][c] == color) {
+							// if k > 0, may need to rotate Left face to get the sticker in desired position before sticking in band
+							exec(4, 0, -k);
+
+							// rotate sticker into band
+							exec(2, row, -1);
+
+							int qt = 1;
+							if (N - 1 - col != row) {
+								qt = -1;
+							}
+
+							// first rotate front before
 							exec(0, 0, qt);
-							exec(1, j, -1); // reverse action from above
+							// turning back the above above rotation
+							exec(2, row, 1);
 							exec(0, 0, -qt);
 
-							// rotate Down face back to where it was
-							exec(3, 0, k);
+							break; // we only need one sticker in this position
 						}
-						else { // rotate front face away
-							if (i != c) { // if turning front clockwise is valid
-								exec(0, 0, 1);
-
-								// rotate sticker into front face
-								exec(1, N - 1 - c, 1);
-
-								exec(0, 0, -1);
-
-								// new position of sticker on front face
-								int r2 = N - 1 - c;
-								int c2 = r;
-
-								// now rotate the desired sticker from front to right
-								exec(2, r2, -1);
-
-								exec(0, 0, 1);
-								exec(1, N - 1 - c, -1); // reverse above to restore bottom
-								exec(0, 0, -1);
-
-
-								// put band, which is currently facing bottom, to face right
-								exec(0, 0, -1);
-
-								// rotate right face until in right position
-								// while the row of desired sticker != jth item of band in pos (j, N-1-i)
-								while (r2 != j || c2 != N - 1 - i) {
-									exec(1, 0, 1);
-									int r3 = c2;
-									int c3 = N - 1 - r2;
-									r2 = r3;
-									c2 = c3;
-								}
-
-								// move that sticker into the band
-								exec(2, j, 1);
-
-								// put band, which is parallel to right, down so it is parallel to down
-								exec(0, 0, 1);
-							}
-							else { // turn front face counterclockwise
-								exec(0, 0, -1);
-
-								// rotate sticker into front face
-								exec(1, N - 1 - c, 1);
-
-								exec(0, 0, 1);
-
-								// new position of sticker on front face
-								int r2 = c;
-								int c2 = N - 1 - r;
-
-								// now rotate the desired sticker from front to right
-								exec(2, r2, -1);
-
-								exec(0, 0, -1);
-								exec(1, N - 1 - c, -1);
-								exec(0, 0, 1);
-
-								// put band, which is currently facing bottom, to face right
-								exec(0, 0, -1);
-
-								// rotate right face until in right position
-								// while the row of desired sticker != jth item of band in pos (j, N-1-i)
-								while (r2 != j || c2 != N - 1 - i) {
-									exec(1, 0, 1);
-									int r3 = c2;
-									int c3 = N - 1 - r2;
-									r2 = r3;
-									c2 = c3;
-								}
-
-								// move that sticker into the band
-								exec(2, j, 1);
-
-								// put band, which is parallel to right, down so it is parallel to down
-								exec(0, 0, 1);
-
-							}
-						}
-
-
-						break; // we only need one sticker in this position
 					}
 				}
 			}
-		}
 
-		// update stickers in band
-		for (int j = 0; j < N; ++j) {
-			band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
-		}
+			// get stickers from Up face
+			// first turn front face
+			exec(0, 0, 1);
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][i][j];
+			}
 
-		// get stickers from front AGAIN
-		for (int j = 1; j < N - 1; ++j) {
-			if (band[j] != color) {
-				int row = N - 1 - i;
-				int col = N - 1 - j;
-				std::vector<glm::ivec2> possible;
-				getPossiblePositions(row, col, possible);
-				for (size_t k = 0; k < possible.size(); ++k) {
-					glm::ivec2 temp = possible[k];
-					int r = temp[0];
-					int c = temp[1];
+			for (int j = 1; j < N - 1; ++j) {
+				if (band[j] != color) {
+					int row = i;
+					int col = j;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
 
-					// if the down face, at those possible 4 locations, has the color desired,
-					// and is not in same row as the band is currently in
-					if (faces[0][r][c] == color && r != row) {
-						// current position of sticker on front face
-						int r2 = r;
-						int c2 = c;
+						// if we have desired sticker on Up face,
+						if (faces[2][r][c] == color) {
+							// rotate Up face to get the sticker in desired position
+							exec(2, 0, -k);
 
-						// now rotate the desired sticker from front to right
-						exec(2, r2, -1);
+							// rotate sticker into band
+							exec(4, j, 1);
 
-						// put band, which is currently facing bottom, to face right
-						exec(0, 0, -1);
-
-						// rotate right face until in right position
-						// while the row of desired sticker != jth item of band in pos (j, N-1-i)
-						while (r2 != j || c2 != N - 1 - i) {
-							exec(1, 0, 1);
-							int r3 = c2;
-							int c3 = N - 1 - r2;
-							r2 = r3;
-							c2 = c3;
+							// since rotating band down might mess with done bands on bottom,
+							// need to fix when done
+							int qt = 1;
+							if (row != j)
+								qt = -1;
+							exec(0, 0, qt);
+							exec(4, j, -1);
+							exec(0, 0, -qt);
+							break;
 						}
-
-						// move that sticker into the band
-						exec(2, j, 1);
-
-						// put band, which is parallel to right, down so it is parallel to down
-						exec(0, 0, 1);
-
-						break; // we only need one sticker
 					}
 				}
 			}
-		}
+
+			// get stickers from right
+			// first turn Front face clockwise so it is parallel to right
+			exec(0, 0, 1);
+			// update stickers in band
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][j][cubeWidth - 1 - i];
+			}
+
+			for (int j = 1; j < N - 1; ++j) { // find appropriate missing stickers
+				if (band[j] != color) {
+					int row = j;
+					int col = N - 1 - i;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
+
+						// if the right face, at those possible 4 locations, has the color desired,
+						if (faces[1][r][c] == color) {
+							// if k > 0, may need to rotate Left face to get the sticker in desired position before sticking in band
+							exec(1, 0, -k);
+
+							// rotate sticker into band
+							exec(2, j, 1);
+
+							// might have pushed some color from front to left
+							// so first rotate front, then rotate the above back
+							int qt = 1;
+							if (N - 1 - col != j) {
+								qt = -1;
+							}
+							exec(0, 0, qt);
+							exec(2, j, -1);
+							exec(0, 0, -qt);
+
+							break; // we only need one sticker in this position
+						}
+					}
+				}
+			}
+
+			// update stickers in band
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][j][cubeWidth - 1 - i];
+			}
+
+			// get stickers from back
+			for (int j = 1; j < N - 1; ++j) { // find appropriate missing stickers
+				if (band[j] != color) {
+					int row = j;
+					int col = N - 1 - i;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
+
+						// if the right face, at those possible 4 locations, has the color desired,
+						if (faces[5][r][c] == color) {
+							// if k > 0, may need to rotate Left face to get the sticker in desired position before sticking in band
+							exec(5, 0, -k);
+
+							// rotate sticker into band
+							exec(2, j, 2);
+
+							// might have pushed some color front front to back
+							// so first rotate front, then rotate the above back
+							int qt = 1;
+							if (N - 1 - col != j) {
+								qt = -1;
+							}
+							exec(0, 0, qt);
+							exec(2, j, -2);
+							exec(0, 0, -qt);
+
+							break; // we only need one sticker in this position
+						}
+					}
+				}
+			}
+
+			// update stickers in band
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][j][cubeWidth - 1 - i];
+			}
+
+			// turn front face so that band is horizontal, facing bottom
+			exec(0, 0, 1);
+
+
+
+			// get stickers from bottom; band is still parallel to bottom
+			for (int j = 1; j < N - 1; ++j) {
+				if (band[j] != color) {
+					int row = N - 1 - i;
+					int col = N - 1 - j;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
+
+						// if the down face, at those possible 4 locations, has the color desired, and is NOT already taken
+						if (faces[3][r][c] == color && c >= i) {
+
+							if (k % 2 == 0) { // only rotate if even
+								// if k > 0, may need to rotate Down face to get the sticker in desired position before sticking in band
+								exec(3, 0, -k);
+
+								// rotate sticker into band
+								exec(1, j, 1);
+
+								// above may have pushed some good stickers on front onto top
+								int qt = 1;
+								if (N - 1 - row != j) {
+									qt = -1;
+								}
+
+								exec(0, 0, qt);
+								exec(1, j, -1); // reverse action from above
+								exec(0, 0, -qt);
+
+								// rotate Down face back to where it was
+								exec(3, 0, k);
+							}
+							else { // rotate front face away
+								if (i != c) { // if turning front clockwise is valid
+									exec(0, 0, 1);
+
+									// rotate sticker into front face
+									exec(1, N - 1 - c, 1);
+
+									exec(0, 0, -1);
+
+									// new position of sticker on front face
+									int r2 = N - 1 - c;
+									int c2 = r;
+
+									// now rotate the desired sticker from front to right
+									exec(2, r2, -1);
+
+									exec(0, 0, 1);
+									exec(1, N - 1 - c, -1); // reverse above to restore bottom
+									exec(0, 0, -1);
+
+
+									// put band, which is currently facing bottom, to face right
+									exec(0, 0, -1);
+
+									// rotate right face until in right position
+									// while the row of desired sticker != jth item of band in pos (j, N-1-i)
+									while (r2 != j || c2 != N - 1 - i) {
+										exec(1, 0, 1);
+										int r3 = c2;
+										int c3 = N - 1 - r2;
+										r2 = r3;
+										c2 = c3;
+									}
+
+									// move that sticker into the band
+									exec(2, j, 1);
+
+									// put band, which is parallel to right, down so it is parallel to down
+									exec(0, 0, 1);
+								}
+								else { // turn front face counterclockwise
+									exec(0, 0, -1);
+
+									// rotate sticker into front face
+									exec(1, N - 1 - c, 1);
+
+									exec(0, 0, 1);
+
+									// new position of sticker on front face
+									int r2 = c;
+									int c2 = N - 1 - r;
+
+									// now rotate the desired sticker from front to right
+									exec(2, r2, -1);
+
+									exec(0, 0, -1);
+									exec(1, N - 1 - c, -1);
+									exec(0, 0, 1);
+
+									// put band, which is currently facing bottom, to face right
+									exec(0, 0, -1);
+
+									// rotate right face until in right position
+									// while the row of desired sticker != jth item of band in pos (j, N-1-i)
+									while (r2 != j || c2 != N - 1 - i) {
+										exec(1, 0, 1);
+										int r3 = c2;
+										int c3 = N - 1 - r2;
+										r2 = r3;
+										c2 = c3;
+									}
+
+									// move that sticker into the band
+									exec(2, j, 1);
+
+									// put band, which is parallel to right, down so it is parallel to down
+									exec(0, 0, 1);
+
+								}
+							}
+
+
+							break; // we only need one sticker in this position
+						}
+					}
+				}
+			}
+
+			// update stickers in band; band still parallel to down face
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
+			}
+
+			// get stickers from front AGAIN
+			for (int j = 1; j < N - 1; ++j) {
+				if (band[j] != color) {
+					int row = N - 1 - i;
+					int col = N - 1 - j;
+					std::vector<glm::ivec2> possible;
+					getPossiblePositions(row, col, possible);
+					for (size_t k = 0; k < possible.size(); ++k) {
+						glm::ivec2 temp = possible[k];
+						int r = temp[0];
+						int c = temp[1];
+
+						// if the down face, at those possible 4 locations, has the color desired,
+						// and is not in same row as the band is currently in
+						if (faces[0][r][c] == color && r != row) {
+							// current position of sticker on front face
+							int r2 = r;
+							int c2 = c;
+
+							// now rotate the desired sticker from front to right
+							exec(2, r2, -1);
+
+							// put band, which is currently facing bottom, to face right
+							exec(0, 0, -1);
+
+							// rotate right face until in right position
+							// while the row of desired sticker != jth item of band in pos (j, N-1-i)
+							while (r2 != j || c2 != N - 1 - i) {
+								exec(1, 0, 1);
+								int r3 = c2;
+								int c3 = N - 1 - r2;
+								r2 = r3;
+								c2 = c3;
+							}
+
+							// move that sticker into the band
+							exec(2, j, 1);
+
+							// put band, which is parallel to right, down so it is parallel to down
+							exec(0, 0, 1);
+
+							break; // we only need one sticker
+						}
+					}
+				}
+			}
+
+			completed = true; 
+			// update stickers in band; band still parallel to down face
+			for (int j = 0; j < N; ++j) {
+				band[j] = faces[0][cubeWidth - 1 - i][cubeWidth - 1 - j];
+				if (0 < j && j < N-1 && band[j] != color) {
+					completed = false;
+				}
+			}
+			//completed = true;
+			//std::cout << "completed = " << completed << std::endl;
+			//std::cout << "true, false = " << true << " " << false << std::endl;
+
+
+		} // end while; band parallel to down face
 
 		// orient band back to original
 		exec(0, 0, 1);
