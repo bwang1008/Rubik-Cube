@@ -335,11 +335,6 @@ int main(int argc, char* argv[]) {
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
 		}
-		/*
-		if (solver->currentState() == 1) {
-			solver->print();
-			solver->incr();
-		}*/
 
 		// Finished solving first center
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 2) {
@@ -360,10 +355,36 @@ int main(int argc, char* argv[]) {
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 
 			gui.resetCount();
-			//solver->solveCenter1();
-			gui.setRotatingSpeed(5.0f); // to solve 3rd center
+			solver->solveCenter2();
+			gui.setRotatingSpeed(100.0f); // to solve 3rd center
 
-			//std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
+			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
+			solver->incr();
+		}
+
+		// Finished solving third center
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 6) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			gui.resetCount();
+			solver->solveCenter3();
+			gui.setRotatingSpeed(100.0f); // to solve 4th center
+
+			std::cout << "Click on animation window and press ENTER to proceed (4)" << std::endl;
+			solver->incr();
+		}
+
+		// Finished solving fourth center
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 8) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			gui.resetCount();
+			//solver->solveCenter3();
+			gui.setRotatingSpeed(5.0f); // to solve 5th center
+
+			std::cout << "Click on animation window and press ENTER to proceed (5)" << std::endl;
 			solver->incr();
 		}
 

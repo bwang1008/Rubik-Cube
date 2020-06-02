@@ -36,6 +36,8 @@ public:
 	void solveCenter0();
 	void solveCenter1();
 	void solveCenter2();
+	void solveCenter3();
+
 
 private:
 	int N;
