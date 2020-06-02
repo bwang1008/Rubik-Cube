@@ -34,20 +34,27 @@ public:
 	int currentState();
 	
 	void solveCenter0();
+	void solveCenter1();
+	void solveCenter2();
 
 private:
 	int N;
-	int faces[6][cubeWidth][cubeWidth];
+	int faces[6][cubeWidth][cubeWidth]; // internal representation
+	// 0 1 2 3 4 5
 	// front, right, top, bottom, left, back
 	// green, red, white, yellow, orange, blue
 
-	std::deque<glm::ivec3>* dequePtr;
+	std::deque<glm::ivec3>* dequePtr; // pointer to the deque of moves to fill
 
 	int state; // current state that cube is in
 	// 0 = scrambling
 	// copy stickers
 	// 1 = wait for ENTER key to proceed
 	// 2 = solve bottom center
+	// 3 = wait for ENTER key to proceed
+	// 4 = solve top center
+	// 5 = wait for ENTER key to proceed
+
 };
 
 #endif

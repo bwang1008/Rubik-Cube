@@ -50,7 +50,7 @@ public:
 
 	glm::ivec3 getCurrentMove() { return currentMove; }
 	void setCurrentMove() {
-		if(allMoves.size() == 0) {
+		if(solver->currentState() % 2 == 1 || allMoves.size() == 0) {
 			currentMove = glm::ivec3(-1, 0, 0);
 		}
 		else {

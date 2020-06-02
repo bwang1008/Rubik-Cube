@@ -124,51 +124,54 @@ int main(int argc, char* argv[]) {
 	glm::mat4 matY3 = glm::mat4(1.0f);
 	glm::mat4 matZ3 = glm::mat4(1.0f);
 
-	// sin(pi/2) = 1 to make counter clockwise; so negate for clockwise
-	matX1[1][1] = 0.0f;
-	matX1[2][1] = 1.0f;
-	matX1[1][2] = -1.0f;
-	matX1[2][2] = 0.0f;
+	// edit entries to make proper rotation matrices
+	{
+		// sin(pi/2) = 1 to make counter clockwise; so negate for clockwise
+		matX1[1][1] = 0.0f;
+		matX1[2][1] = 1.0f;
+		matX1[1][2] = -1.0f;
+		matX1[2][2] = 0.0f;
 
-	matY1[0][0] = 0.0f;
-	matY1[2][0] = -1.0f;
-	matY1[0][2] = 1.0f;
-	matY1[2][2] = 0.0f;
+		matY1[0][0] = 0.0f;
+		matY1[2][0] = -1.0f;
+		matY1[0][2] = 1.0f;
+		matY1[2][2] = 0.0f;
 
-	matZ1[0][0] = 0.0f;
-	matZ1[1][0] = 1.0f;
-	matZ1[0][1] = -1.0f;
-	matZ1[1][1] = 0.0f;
+		matZ1[0][0] = 0.0f;
+		matZ1[1][0] = 1.0f;
+		matZ1[0][1] = -1.0f;
+		matZ1[1][1] = 0.0f;
 
-	matX2[1][1] = -1.0f;
-	matX2[2][1] = 0.0f;
-	matX2[1][2] = 0.0f;
-	matX2[2][2] = -1.0f;
+		matX2[1][1] = -1.0f;
+		matX2[2][1] = 0.0f;
+		matX2[1][2] = 0.0f;
+		matX2[2][2] = -1.0f;
 
-	matY2[0][0] = -1.0f;
-	matY2[2][0] = 0.0f;
-	matY2[0][2] = 0.0f;
-	matY2[2][2] = -1.0f;
+		matY2[0][0] = -1.0f;
+		matY2[2][0] = 0.0f;
+		matY2[0][2] = 0.0f;
+		matY2[2][2] = -1.0f;
 
-	matZ2[0][0] = -1.0f;
-	matZ2[1][0] = 0.0f;
-	matZ2[0][1] = 0.0f;
-	matZ2[1][1] = -1.0f;
+		matZ2[0][0] = -1.0f;
+		matZ2[1][0] = 0.0f;
+		matZ2[0][1] = 0.0f;
+		matZ2[1][1] = -1.0f;
 
-	matX3[1][1] = 0.0f;
-	matX3[2][1] = -1.0f;
-	matX3[1][2] = 1.0f;
-	matX3[2][2] = 0.0f;
+		matX3[1][1] = 0.0f;
+		matX3[2][1] = -1.0f;
+		matX3[1][2] = 1.0f;
+		matX3[2][2] = 0.0f;
 
-	matY3[0][0] = 0.0f;
-	matY3[2][0] = 1.0f;
-	matY3[0][2] = -1.0f;
-	matY3[2][2] = 0.0f;
+		matY3[0][0] = 0.0f;
+		matY3[2][0] = 1.0f;
+		matY3[0][2] = -1.0f;
+		matY3[2][2] = 0.0f;
 
-	matZ3[0][0] = 0.0f;
-	matZ3[1][0] = -1.0f;
-	matZ3[0][1] = 1.0f;
-	matZ3[1][1] = 0.0f;
+		matZ3[0][0] = 0.0f;
+		matZ3[1][0] = -1.0f;
+		matZ3[0][1] = 1.0f;
+		matZ3[1][1] = 0.0f;
+	}
 
 	// Information for cubes
 	std::vector<Cube*> cubes; // actual Cube objects
@@ -279,7 +282,7 @@ int main(int argc, char* argv[]) {
 	//gui.addMove(glm::vec3(2, 0, 1));
 	//gui.addMove(glm::vec3(1, 1, 1));
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
-	gui.setRotatingSpeed(30.0f);
+	gui.setRotatingSpeed(100.0f);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -320,13 +323,17 @@ int main(int argc, char* argv[]) {
 		glfwSetWindowTitle(window, title.str().data());
 		glViewport(0, 0, window_width, window_height);
 
-		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver -> currentState() == 0) { // done scrambling
-			solver->incr();
+		// Finished scrambling
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 0) {
 			std::cout << "COPYING " << std::endl;
 			solver->copyConfiguration(cube_centers, cube_types);
 			std::cout << "COPYING FINISHED" << std::endl;
+
 			gui.resetCount();
+			solver->solveCenter0();
+			gui.setRotatingSpeed(100.0f); // to solve 1st center
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
+			solver->incr(); // state == 1
 		}
 		/*
 		if (solver->currentState() == 1) {
@@ -334,15 +341,29 @@ int main(int argc, char* argv[]) {
 			solver->incr();
 		}*/
 
-		if (solver->currentState() == 2) {
-			solver->incr();
-			gui.setRotatingSpeed(30.0f);
-			solver->solveCenter0();
-		}
-
-		if (gui.getSize() == 0 && solver->currentState() == 3) {
+		// Finished solving first center
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 2) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+			
+			gui.resetCount();
+			solver->solveCenter1();
+			gui.setRotatingSpeed(100.0f); // to solve 2nd center
+
+			std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
+			solver->incr();
+		}
+
+		// Finished solving second center
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 4) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			gui.resetCount();
+			//solver->solveCenter1();
+			gui.setRotatingSpeed(5.0f); // to solve 3rd center
+
+			//std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
 			solver->incr();
 		}
 

@@ -204,3 +204,17 @@ Commit "Internal representation rotation of left, up, down working correctly" - 
 - Can now do turnLeft, turnUp(), turnDown()
 - Need to write to allMoves and have a structured state so that there is pause between scrambling and solving
 - Then we are ready to do actual solving!
+
+Commit "Solving bottom center is almost complete" - May 30, 2020
+- Added deque pointer to Solver to access allMoves
+- In main, have user press ENTER to go to next section (scrambling -> solve first center -> ...)
+- Can set rotation speed (before program is run)
+- Function exec() as wrapper function for turnLeft, turnFront,...
+- added solveCenter0() to begin solving the bottom layer (yellow when N is even)
+
+Commit "Yellow face center almost complete" - May 31, 2020
+- Completed solveCenter0(), some bug fixes
+
+Commit "Bottom center face solved" - June 1, 2020
+- Added a while loop, so that the random pieces that get thrown around get solved in the next iteration
+
