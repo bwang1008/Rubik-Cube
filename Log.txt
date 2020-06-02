@@ -218,3 +218,9 @@ Commit "Yellow face center almost complete" - May 31, 2020
 Commit "Bottom center face solved" - June 1, 2020
 - Added a while loop, so that the random pieces that get thrown around get solved in the next iteration
 
+Commit "Up center solved as well" - June 1, 2020
+- Used a lot of the same code to get the Up face center to be solved as well
+- Problematic when N is odd: first pass, solve all columns but the middle one
+	 - then rotate Up face sideways, so all but middle row is solved
+	 - second pass, solve all columns but the middle one
+
