@@ -381,10 +381,23 @@ int main(int argc, char* argv[]) {
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 
 			gui.resetCount();
-			//solver->solveCenter3();
-			gui.setRotatingSpeed(5.0f); // to solve 5th center
+			solver->solveLastCenters();
+			gui.setRotatingSpeed(100.0f); // to solve 5th, 6th centers
 
 			std::cout << "Click on animation window and press ENTER to proceed (5)" << std::endl;
+			solver->incr();
+		}
+
+		// Finished solving all centers
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 10) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			gui.resetCount();
+			//solver->solveLastCenters();
+			gui.setRotatingSpeed(50.0f); 
+
+			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
 			solver->incr();
 		}
 

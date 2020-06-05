@@ -39,9 +39,9 @@ void main() {
 	vec4 yellow = vec4(1.0, 1.0, 0.0, 1.0); // yellow
 	vec4 red = vec4(1.0, 0.0, 0.0, 1.0); // red
 	vec4 orange = vec4(255.0f/255.0, 140.0f/255.0, 0.0, 1.0); // orange
-	//vec4 green = vec4(34.0/256, 139.0/256, 34.0/256, 1.0); // green
+	vec4 green = vec4(34.0/256, 139.0/256, 34.0/256, 1.0); // green
 	//46,139,87
-	vec4 green = vec4(46.0/256, 139.0/256, 87.0/256, 1.0);
+	//vec4 green = vec4(46.0/256, 139.0/256, 87.0/256, 1.0);
 	vec4 blue = vec4(0.0, 0.0, 1.0, 1.0); // blue
 
 	int myAxis = 0;

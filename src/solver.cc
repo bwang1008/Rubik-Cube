@@ -2300,3 +2300,45 @@ void Solver::solveCenter3() {
 
 	} // end for loop with numTimes
 }
+
+// solve Right face of cube after solving Down, Up, Back, Left face (on even sized cubes, this right color is red)
+// https://www.youtube.com/watch?v=4UnzSSNxcRc - JRCuber
+// I personally take no credit for being able to solve the last two centers, tho I did learn something new
+void Solver::solveLastCenters() {
+	int colorF = getFaceColor(0);
+	int colorR = getFaceColor(1);
+
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			for (int j = 1; j < N - 1; ++j) {
+				// if two stickers in the same row,col on both faces need to be swapped
+				if (faces[0][i][j] == colorR && faces[1][i][j] == colorF) {
+					// swapping algorithm learned in the video by JRCuber
+					exec(2, i, -1); // replace sticker on right face
+
+					int qt = -1;
+					int r2 = N - 1 - j;
+					int c2 = i;
+
+					if (i != j) {
+						qt = 1;
+						r2 = j;
+						c2 = N - 1 - i;
+					}
+					exec(1, 0, qt); // move right face out of the way
+					exec(2, r2, -1); // intersect it with another layer to the right
+					exec(1, 0, -qt); // reverse the moving out of the way
+
+					exec(2, i, 1); // undo bringing the first layer in
+					exec(1, 0, qt); 
+					exec(2, r2, 1); // undo bringing second layer in
+					exec(1, 0, -qt);
+					
+					// other faces untouched; stickers are swapped
+				}
+			}
+		}
+
+		exec(1, 0, 1); // repeat four times, with turning right face between each 4
+	}	
+}

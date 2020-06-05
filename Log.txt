@@ -224,3 +224,7 @@ Commit "Up center solved as well" - June 1, 2020
 	 - then rotate Up face sideways, so all but middle row is solved
 	 - second pass, solve all columns but the middle one
 
+Commit "Down, Up, LBack, Left centers are solved" - June 2, 2020
+- Used a lot of the same code to get the Back center
+	- use rows from back and bring to front to fill in with stickers
+- Same with Left center
