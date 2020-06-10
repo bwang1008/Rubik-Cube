@@ -46,8 +46,7 @@ Commit "Setup for rotation quarterturn" - May 16, 2020
 - Originally put transformation matrix as a field of cube.h; changed my mind later and just made it a vector<glm::mat4> in main
 - Before, I used cube_vertex_shader for the sky, but later created separate sky_vertex_shader for sky, since cube_vertex_shader
 	was getting changed so much
-- cube_vertex_shader now has gl_Position = projection * view * trans * vertex_position, where trans is created from the 4 columns
-	passed in
+- cube_vertex_shader now has gl_Position = projection * view * trans * vertex_position, where trans is created from the 4 columns passed in
 
 Commit "setup a bit of main for updating VBO" - May 16, 2020
 - Idea is every render iteration of main, you update the transformation matrix appropriately, before sending to vertex shader
@@ -152,7 +151,7 @@ Commit "FIXED QUARTER TURNS AND COLORSgit add .!" - May 21, 2020
 	- to change the vectors: originally cube was oriented this way; after this quarter turn, now oriented this way
 - updateVBO of cube_types
 - rebuild axes in cube fragment shader, and knowing where fragment is located (like in +Y direction),
-	- I compare with with the axes, and then I know oh this fragment is the cube's left,
+	- I compare with the axes, and then I know oh this fragment is the cube's left,
 	- and I know the left of cubes are always orange, so I color it orange
 
 Commit "Removed some print statements, but quarter turns workgit add .!" - May 21, 2020

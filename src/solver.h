@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <deque>
+#include <utility>
 #include <glm/glm.hpp>
 #include "config.h"
 
@@ -38,6 +39,7 @@ public:
 	void solveCenter2();
 	void solveCenter3();
 	void solveLastCenters();
+	void solveEdges();
 
 private:
 	int N;
@@ -56,6 +58,13 @@ private:
 	// 3 = wait for ENTER key to proceed
 	// 4 = solve top center
 	// 5 = wait for ENTER key to proceed
+	// 6 = solve back center
+	// 7 = wait for ENTER key to proceed
+	// 8 = solve left center
+	// 9 = wait for ENTER key to proceed
+	// 10 = solve front and right face simultaneously
+	// 11 = wait for ENTER key to proceed
+	// 12 = solve edges
 
 };
 

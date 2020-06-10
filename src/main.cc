@@ -4,7 +4,7 @@
 #include "render_pass.h"
 #include "config.h"
 #include "gui.h"
-#include "texture_to_render.h"
+//#include "texture_to_render.h"
 #include "cube.h"
 #include "solver.h"
 
@@ -25,8 +25,8 @@
 #include <jpegio.h>
 #include <cmath>
 
-int window_width = 720; //1280;
-int window_height = 720;
+int window_width = 800; //1280;
+int window_height = 800;
 
 const std::string window_title = "Rubik's Cube";
 
@@ -174,21 +174,20 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Information for cubes
-	std::vector<Cube*> cubes; // actual Cube objects
 	std::vector<glm::vec4> cube_vertices; // list of all vertices of cubes in world coord
 	std::vector<glm::uvec3> cube_faces; // all triangular faces making up all cubes
 	std::vector<int> cube_types; // specify which faces of cube to actually color
 	std::vector<glm::vec3> cube_centers; // centers of each cube
 
 	// Pass containers into method to populate the vectors appropriately 
-	create_rubik(cubes, cube_vertices, cube_faces, cube_types, cube_centers);
+	create_rubik(cube_vertices, cube_faces, cube_types, cube_centers);
 
 	std::vector<int> cube_rotating; // which cubes should be rotating with gui.getCurrentMove()
-	for(size_t i = 0; i < 8 * cubes.size(); ++i) {
+	for(size_t i = 0; i < cube_vertices.size(); ++i) {
 		cube_rotating.push_back(0);
 	}
 
-	std::cout << "Num cubes = " << cubes.size() << std::endl;
+	std::cout << "Num cubes = " << cube_vertices.size() / 8 << std::endl;
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
 
@@ -282,7 +281,7 @@ int main(int argc, char* argv[]) {
 	//gui.addMove(glm::vec3(2, 0, 1));
 	//gui.addMove(glm::vec3(1, 1, 1));
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
-	gui.setRotatingSpeed(100.0f);
+	gui.setRotatingSpeed(200.0f);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -331,9 +330,14 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter0();
-			gui.setRotatingSpeed(100.0f); // to solve 1st center
+			//solver->solveEdges();
+			gui.setRotatingSpeed(200.0f); // to solve 1st center
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
+
+			//for (int i = 0; i < 20; i++)
+			//	solver->incr();
+
 		}
 
 		// Finished solving first center
@@ -343,7 +347,7 @@ int main(int argc, char* argv[]) {
 			
 			gui.resetCount();
 			solver->solveCenter1();
-			gui.setRotatingSpeed(100.0f); // to solve 2nd center
+			gui.setRotatingSpeed(200.0f); // to solve 2nd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
 			solver->incr();
@@ -356,7 +360,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter2();
-			gui.setRotatingSpeed(100.0f); // to solve 3rd center
+			gui.setRotatingSpeed(200.0f); // to solve 3rd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
 			solver->incr();
@@ -369,7 +373,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter3();
-			gui.setRotatingSpeed(100.0f); // to solve 4th center
+			gui.setRotatingSpeed(200.0f); // to solve 4th center
 
 			std::cout << "Click on animation window and press ENTER to proceed (4)" << std::endl;
 			solver->incr();
@@ -382,7 +386,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveLastCenters();
-			gui.setRotatingSpeed(100.0f); // to solve 5th, 6th centers
+			gui.setRotatingSpeed(200.0f); // to solve 5th, 6th centers
 
 			std::cout << "Click on animation window and press ENTER to proceed (5)" << std::endl;
 			solver->incr();
@@ -394,8 +398,21 @@ int main(int argc, char* argv[]) {
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 
 			gui.resetCount();
+			solver->solveEdges();
+			gui.setRotatingSpeed(50.0f); // to solve edges
+
+			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
+			solver->incr();
+		}
+
+		// Finished solving all edges
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 12) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			gui.resetCount();
 			//solver->solveLastCenters();
-			gui.setRotatingSpeed(50.0f); 
+			gui.setRotatingSpeed(50.0f);
 
 			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
 			solver->incr();
@@ -585,7 +602,7 @@ int main(int argc, char* argv[]) {
 
 			if (myMove[0] >= 0) { // only rotate if valid face
 				gui.setStartTime(); // set time at 0
-				update_rubik2(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
+				update_rubik(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
 				//std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
 
 				cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
@@ -610,13 +627,7 @@ int main(int argc, char* argv[]) {
 		glfwSwapBuffers(window);
 	}
 
-	// free memory
-	for(auto ptr : cubes)
-		delete ptr;
-	cubes.clear();
-
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
-
 }

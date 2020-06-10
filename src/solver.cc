@@ -2301,7 +2301,7 @@ void Solver::solveCenter3() {
 	} // end for loop with numTimes
 }
 
-// solve Right face of cube after solving Down, Up, Back, Left face (on even sized cubes, this right color is red)
+// solve Right and Front face of cube after solving Down, Up, Back, Left face (on even sized cubes, this right = red, front = green)
 // https://www.youtube.com/watch?v=4UnzSSNxcRc - JRCuber
 // I personally take no credit for being able to solve the last two centers, tho I did learn something new
 void Solver::solveLastCenters() {
@@ -2341,4 +2341,281 @@ void Solver::solveLastCenters() {
 
 		exec(1, 0, 1); // repeat four times, with turning right face between each 4
 	}	
+}
+
+void Solver::solveEdges() {
+	// colors: 0,1,2,3,4,5 -> green, red, white, yellow, orange, blue
+	// make all possible pairs of colors that correspond to edges
+	std::vector<std::pair<int, int>> colorPairs;
+	for (int i = 0; i < 6; ++i) {
+		for (int j = i + 1; j < 6; ++j) {
+			if (i + j != 5) {
+				colorPairs.push_back(std::make_pair(i, j));
+			}
+		}
+	}
+
+	// build edge on edge between Front and Right face
+
+	for(int numTimes = 0; numTimes < 4; ++numTimes) {
+		int colorF = colorPairs[numTimes].first;
+		int colorR = colorPairs[numTimes].second;
+
+		for (int i = 1; i < N - 1; ++i) {
+			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
+				continue;
+			}
+			
+			// edge between front and up
+			if (faces[0][0][i] == colorF && faces[2][N - 1][i] == colorR) {
+				exec(2, i, 1);
+				exec(4, 0, -1);
+
+				exec(2, 0, 1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[2][N - 1][N - 1 - i] == colorF && faces[0][0][N - 1 - i] == colorR) {
+				exec(2, i, 2);
+				exec(4, 0, 1);
+
+				exec(2, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between left and up
+			else if (faces[4][0][i] == colorF && faces[2][i][0] == colorR) {
+				exec(2, 0, 1);
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[2][N - 1 - i][0] == colorF && faces[4][0][N - 1 - i] == colorR) {
+				exec(2, 0, 1);
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, -1);
+				
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between back and up
+			else if (faces[5][0][i] == colorF && faces[2][0][N - 1 - i] == colorR) {
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[2][0][i] == colorF && faces[5][0][N - 1 - i] == colorR) {
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, -1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between right and up
+			else if (faces[1][0][i] == colorF && faces[2][N - 1 - i][N - 1] == colorR) {
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, 2);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[2][i][N - 1] == colorF && faces[1][0][N - 1 - i] == colorR) {
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 2);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between front and left
+			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// other one
+			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, 1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// edge between left and back
+			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
+				exec(5, 0, -1);
+				exec(2, 0, 1);
+				exec(5, 0, 1);
+				exec(2, 0, -1);
+
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, -1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// other one
+			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
+				exec(5, 0, -1);
+				exec(2, 0, 1);
+				exec(5, 0, 1);
+				exec(2, 0, -1);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// edge between right and back
+			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
+				exec(5, 0, 1);
+				exec(2, 0, -1);
+				exec(5, 0, -1);
+				exec(2, 0, 1);
+				
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, -1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// other one
+			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
+				exec(5, 0, 1);
+				exec(2, 0, -1);
+				exec(5, 0, -1);
+				exec(2, 0, 1);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// edge between down and front
+			else if (faces[0][N - 1][N - 1 - i] == colorF && faces[3][0][N - 1 - i] == colorR) {
+				exec(0, 0, 2);
+				exec(2, 0, -1);
+				exec(0, 0, -2);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, 2);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[3][0][i] == colorF && faces[0][N - 1][i] == colorR) {
+				exec(0, 0, 2);
+				exec(2, 0, -1);
+				exec(0, 0, -2);
+
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 2);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between down and left
+			else if (faces[4][N - 1][N - 1 - i] == colorF && faces[3][i][0] == colorR) {
+				exec(4, 0, 2);
+				exec(2, 0, -1);
+				exec(4, 0, -2);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, 1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[3][N - 1 - i][0] == colorF && faces[4][N - 1][i] == colorR) {
+				exec(4, 0, 2);
+				exec(2, 0, -1);
+				exec(4, 0, -2);
+
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between down and back
+			else if (faces[5][N - 1][N - 1 - i] == colorF && faces[3][N - 1][i] == colorR) {
+				exec(5, 0, 2);
+				exec(2, 0, 1);
+				exec(5, 0, -2);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, 2);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[3][N - 1][N - 1 - i] == colorF && faces[5][N - 1][i] == colorR) {
+				exec(5, 0, 2);
+				exec(2, 0, 1);
+				exec(5, 0, -2);
+
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 2);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between down and right
+			else if (faces[1][N - 1][N - 1 - i] == colorF && faces[3][N - 1 - i][N - 1] == colorR) {
+				exec(1, 0, 2);
+				exec(2, 0, 1);
+				exec(1, 0, -2);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, 1);
+				exec(4, 0, 1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[3][i][N - 1] == colorF && faces[1][N - 1][i] == colorR) {
+				exec(1, 0, 2);
+				exec(2, 0, 1);
+				exec(1, 0, -2);
+
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
+		}
+
+		exec(3, 0, 1);
+		exec(0, 0, 1);
+
+		if (numTimes == 3) {
+			exec(0, 0, 2);
+			exec(1, 0, 2);
+			exec(4, 0, 2);
+			exec(5, 0, 2);
+		}
+	}
 }
