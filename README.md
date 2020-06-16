@@ -4,7 +4,7 @@ OpenGL exercise to render a Rubik's Cube and solves a scrambled version.
 
 I am aware that many such online Rubik's Cube solvers exist elsewhere. Inspiration for this project is from https://www.youtube.com/watch?v=f9smvQ5fc7Q and https://www.youtube.com/watch?v=IM2czqavlWM by Code Bullet. I did not view Code Bullet's source code aside from the brief moments shown in the video. The general outline followed is the reduction method, given by https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/. 
 
-Supported cube sizes are from 1 to 200. Larger cube sizes demand more computer resources.
+Supported cube sizes are from 1 to 200. Change this value on line 18 of src/config.h. Larger cube sizes demand more computer resources and take longer to solve.
 
 Use right mouse button to click and drag the cube around its center. Use W to zoom in, S to zoom out. Press V to readjust the camera. Press ENTER between stages to proceed to the next one. Press ESCAPE to exit.
 

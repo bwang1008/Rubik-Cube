@@ -13,8 +13,9 @@ v Optimize quarter turns to not updateVBO every render cycle
 v Deque for storing all moves
 - Key bindings for 6 possible turns
 - Add black trianges to hide the fact that large cube is in fact hollow
-- Scramble Cube
+v Scramble Cube
 - Implement solver
-	- Idea: recursively solve 3x3x3 cubes
+	- Idea: Solve centers, then edges, then all as a 3x3x3
 - Implement reader-writer system where solver writes, graphical rendering pulls first for current move
-- Use a thread for above?
+	- Use a thread for above?
+- Write moves to JSON file, copy sticker color from JSON file

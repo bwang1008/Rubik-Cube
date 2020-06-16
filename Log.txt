@@ -227,3 +227,13 @@ Commit "Down, Up, LBack, Left centers are solved" - June 2, 2020
 - Used a lot of the same code to get the Back center
 	- use rows from back and bring to front to fill in with stickers
 - Same with Left center
+
+Commit "All centers solved" - June 5, 2020
+- Credits to https://www.youtube.com/watch?v=4UnzSSNxcRc - JRCuber
+- Swapping method to switch incorrect stickers
+
+Commit "Solved 4 edges; removed Cube pointers" - June 9, 2020
+- Made animation window slightly bigger
+- Removed Cube pointers in main, as they were unused
+- Found rotating speed about 200.0 just about the limit of how fast the rendering is
+- Solves first 4 out of 12 edges of the Rubik's cube, puts them onto Up face when finished

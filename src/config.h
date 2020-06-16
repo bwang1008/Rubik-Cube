@@ -15,6 +15,6 @@ const float kFov = 45.0f;
 const float kScrollSpeed = 64.0f;
 
 const float cubieWidth = 1.0f;
-const int cubeWidth = 100;
+const int cubeWidth = 9;
 
 #endif

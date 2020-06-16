@@ -277,9 +277,6 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "Begin generating scrambles" << std::endl;
 	gui.scrambleCube();
-	//gui.addMove(glm::vec3(5, 0, 3));
-	//gui.addMove(glm::vec3(2, 0, 1));
-	//gui.addMove(glm::vec3(1, 1, 1));
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
 	gui.setRotatingSpeed(200.0f);
 
@@ -399,7 +396,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveEdges();
-			gui.setRotatingSpeed(50.0f); // to solve edges
+			gui.setRotatingSpeed(250.0f); // to solve edges
 
 			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
 			solver->incr();

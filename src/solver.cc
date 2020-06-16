@@ -2343,20 +2343,9 @@ void Solver::solveLastCenters() {
 	}	
 }
 
-void Solver::solveEdges() {
-	// colors: 0,1,2,3,4,5 -> green, red, white, yellow, orange, blue
-	// make all possible pairs of colors that correspond to edges
-	std::vector<std::pair<int, int>> colorPairs;
-	for (int i = 0; i < 6; ++i) {
-		for (int j = i + 1; j < 6; ++j) {
-			if (i + j != 5) {
-				colorPairs.push_back(std::make_pair(i, j));
-			}
-		}
-	}
+void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 
 	// build edge on edge between Front and Right face
-
 	for(int numTimes = 0; numTimes < 4; ++numTimes) {
 		int colorF = colorPairs[numTimes].first;
 		int colorR = colorPairs[numTimes].second;
@@ -2606,16 +2595,376 @@ void Solver::solveEdges() {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
+			// other edge piece on edge between front and right
+			else if (faces[1][N - 1 - i][0] == colorF && faces[0][N - 1 - i][N - 1] == colorR) {
+				exec(2, N - 1 - i, 1);
+				exec(4, 0, -1);
+				exec(2, 0, -1);
+				exec(4, 0, 1);
+				exec(2, N - 1 - i, -1);
+
+				exec(2, i, 2);
+				exec(4, 0, 1);
+				exec(2, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+			}
 		}
 
-		exec(3, 0, 1);
 		exec(0, 0, 1);
+		exec(3, 0, 1);
+	}
 
-		if (numTimes == 3) {
-			exec(0, 0, 2);
-			exec(1, 0, 2);
-			exec(4, 0, 2);
-			exec(5, 0, 2);
+	exec(0, 0, 2);
+	exec(1, 0, 2);
+	exec(4, 0, 2);
+	exec(5, 0, 2);
+}
+
+void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
+
+	std::map<int, char> myMap;
+	myMap[0] = 'G';
+	myMap[1] = 'R';
+	myMap[2] = 'W';
+	myMap[3] = 'Y';
+	myMap[4] = 'O';
+	myMap[5] = 'B';
+
+	// build edge on edge between Front and Right face
+	// top edges are all solved
+	for (int numTimes = 4; numTimes < 8; ++numTimes) {
+		int colorF = colorPairs[numTimes].first;
+		int colorR = colorPairs[numTimes].second;
+
+		std::cout << "FR = " << myMap[colorF] << " " << myMap[colorR] << std::endl;
+
+		for (int i = 1; i < N - 1; ++i) {
+			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
+				continue;
+			}
+
+			//std::cout << "i = " << i << std::endl;
+
+			// edge between front and left
+			if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
+				//std::cout << "opt1 " << std::endl;
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -1);
+				exec(5, 0, -1);
+				exec(3, 0, 2);
+				exec(5, 0, 1);
+				exec(2, i, 1);
+
+				exec(1, 0, 1);
+				exec(3, 0, 1);
+				exec(1, 0, -1);
+				exec(3, 0, -1);
+				exec(4, 0, 1);
+				exec(3, 0, 2);
+				exec(4, 0, -1);
+				exec(3, 0, 1);
+			}
+			// other one
+			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
+				//std::cout << "opt2 " << std::endl;
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+				exec(5, 0, 1);
+				exec(3, 0, 2);
+				exec(5, 0, -1);
+				exec(2, i, 2);
+				
+				exec(1, 0, 1);
+				exec(3, 0, 1);
+				exec(1, 0, -1);
+				exec(3, 0, -1);
+				exec(4, 0, 1);
+				exec(3, 0, 2);
+				exec(4, 0, -1);
+				exec(3, 0, 1);
+			}
+			// edge between left and back
+			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
+				//std::cout << "left + back " << std::endl;
+				exec(3, 0, 2);
+				exec(5, 0, 1);
+				exec(4, 0, 1);
+				exec(2, 0, -1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+
+				// now do front + left
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -1);
+				exec(5, 0, -1);
+				exec(3, 0, 2);
+				exec(5, 0, 1);
+				exec(2, i, 1);
+				
+				exec(4, 0, 1);
+				exec(3, 0, -1);
+				exec(4, 0, -1);
+				exec(3, 0, 1);
+			}
+			// other one
+			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
+				//std::cout << "left + back part 2" << std::endl;
+				exec(3, 0, 2);
+				exec(5, 0, 1);
+				exec(4, 0, 1);
+				exec(2, 0, -1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+
+				// now do front + left
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+				exec(5, 0, 1);
+				exec(3, 0, 2);
+				exec(5, 0, -1);
+				exec(2, i, 2);
+				
+				exec(4, 0, 1);
+				exec(3, 0, -1);
+				exec(4, 0, -1);
+				exec(3, 0, 1);
+			}
+			
+			// edge between right and back
+			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
+				//std::cout << "right + back" << std::endl;
+				exec(5, 0, -1);
+				exec(3, 0, -1);
+				exec(5, 0, 1);
+				exec(2, i, 2);
+				exec(4, 0, -1);
+				exec(3, 0, 2);
+				exec(4, 0, 1);
+				exec(2, i, -2);
+
+				exec(0, 0, -1);
+				exec(3, 0, 2);
+				exec(5, 0, -1);
+				exec(3, 0, 1);
+				exec(5, 0, 1);
+				exec(3, 0, 2);
+				exec(0, 0, 1);
+				exec(3, 0, 2);
+			}
+			// other one
+			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
+				//std::cout << "right + back part 2" << std::endl;
+				exec(5, 0, -1);
+				exec(3, 0, -1);
+				exec(5, 0, 1);
+				exec(2, i, 1);
+				exec(4, 0, 1);
+				exec(3, 0, 2);
+				exec(4, 0, -1);
+				exec(2, i, -1);
+
+				exec(0, 0, -1);
+				exec(3, 0, 2);
+				exec(5, 0, -1);
+				exec(3, 0, 1);
+				exec(5, 0, 1);
+				exec(3, 0, 2);
+				exec(0, 0, 1);
+				exec(3, 0, 2);
+			}
+			// edge between down and front
+			else if (faces[0][N - 1][N - 1 - i] == colorF && faces[3][0][N - 1 - i] == colorR) {
+				//std::cout << "down + front" << std::endl;
+				exec(2, i, 1);
+				exec(4, 0, 1);
+				exec(3, 0, -1);
+				exec(4, 0, -1);
+				exec(2, i, -1);
+				
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+			}
+			// other one
+			else if (faces[3][0][i] == colorF && faces[0][N - 1][i] == colorR) {
+				//std::cout << "down + front part 2" << std::endl;
+				exec(2, i, 2);
+				exec(4, 0, -1);
+				exec(3, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, -2);
+				
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+			}
+			
+			// edge between down and left
+			else if (faces[4][N - 1][N - 1 - i] == colorF && faces[3][i][0] == colorR) {
+				//std::cout << "down + left" << std::endl;
+
+				exec(3, 0, 1);
+
+				// do down + front
+				exec(2, i, 1);
+				exec(4, 0, 1);
+				exec(3, 0, -1);
+				exec(4, 0, -1);
+				exec(2, i, -1);
+
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+
+				exec(3, 0, -1);
+			}
+			// other one
+			else if (faces[3][N - 1 - i][0] == colorF && faces[4][N - 1][i] == colorR) {
+				//std::cout << "down + left part 2" << std::endl;
+				exec(3, 0, 1);
+
+				// do down + front
+				exec(2, i, 2);
+				exec(4, 0, -1);
+				exec(3, 0, -1);
+				exec(4, 0, 1);
+				exec(2, i, -2);
+				
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+
+				exec(3, 0, -1);
+			}
+			
+			// edge between down and back
+			else if (faces[5][N - 1][N - 1 - i] == colorF && faces[3][N - 1][i] == colorR) {
+				//std::cout << "down + back" << std::endl;
+				exec(2, i, 1);
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+				exec(3, 0, -1);
+				exec(2, i, -1);
+			}
+			// other one
+			else if (faces[3][N - 1][N - 1 - i] == colorF && faces[5][N - 1][i] == colorR) {
+				//std::cout << "down + back part 2" << std::endl;
+				exec(2, i, 2);
+				exec(4, 0, -1);
+				exec(3, 0, 1);
+				exec(4, 0, 1);
+				exec(3, 0, -1);
+				exec(2, i, -2);
+			}
+			// edge between down and right
+			else if (faces[1][N - 1][N - 1 - i] == colorF && faces[3][N - 1 - i][N - 1] == colorR) {
+				//std::cout << "down + right" << std::endl;
+				exec(2, i, 2);
+				exec(5, 0, 1);
+				exec(3, 0, 1);
+				exec(5, 0, -1);
+				exec(3, 0, -1);
+				exec(2, i, -2);
+			}
+			// other one
+			else if (faces[3][i][N - 1] == colorF && faces[1][N - 1][i] == colorR) {
+				//std::cout << "down + right part 2" << std::endl;
+				exec(2, i, -1);
+				exec(5, 0, -1);
+				exec(3, 0, 1);
+				exec(5, 0, 1);
+				exec(3, 0, -1);
+				exec(2, i, 1);
+			}
+			// other edge piece on edge between front and right
+			else if (faces[1][N - 1 - i][0] == colorF && faces[0][N - 1 - i][N - 1] == colorR) {
+				//std::cout << "reversed: front + right" << std::endl;
+				
+				exec(2, N - 1 - i, 1);
+				if (i != N - 1 - i) {
+					exec(2, i, 1);
+				}
+				exec(4, 0, 2);
+				exec(2, i, -2);
+				if (i != N - 1 - i) {
+					exec(2, N - 1 - i, -2);
+				}
+
+				exec(4, 0, -2);
+
+				exec(2, i, 1);
+				if (i != N - 1 - i) {
+					exec(2, N - 1 - i, 1);
+				}
+
+				// now handle using front + left
+
+				exec(4, 0, 1);
+				exec(3, 0, 1);
+				exec(4, 0, -1);
+				exec(2, i, -2);
+				exec(5, 0, 1);
+				exec(3, 0, 2);
+				exec(5, 0, -1);
+				exec(2, i, 2);
+
+				exec(1, 0, 1);
+				exec(3, 0, 1);
+				exec(1, 0, -1);
+				exec(3, 0, -1);
+				exec(4, 0, 1);
+				exec(3, 0, 2);
+				exec(4, 0, -1);
+				exec(3, 0, 1);
+			}
+			
+		}
+
+		
+		if (numTimes < 7) {
+			exec(0, 0, 1);
+			exec(3, 0, 1);
+			exec(0, 0, -1);
+		}
+		
+	}
+
+	
+	// top 4 edges are solved, 3 of bottom edges are solved, and 8th solved edge on edge between front and right
+	// need to get it so that top 4 edges are solved, bottom 4 edges are solved
+	exec(1, 0, -1); // now top = 3, bot = 3, right has 3 (froms U shape)
+	exec(3, 0, 1); // now solved top edges and bottom edges are parallel to each other; two vertical edges on right
+	exec(1, 0, 1); // place both vertical edges on right into two horizontal edges, one on top, one on bottom -> top has 4, bot has 4
+	
+}
+
+void Solver::solveEdges2(std::vector<std::pair<int, int>>& colorPairs) {
+
+}
+
+void Solver::solveEdges() {
+	// colors: 0,1,2,3,4,5 -> green, red, white, yellow, orange, blue
+	// make all possible pairs of colors that correspond to edges
+	std::vector<std::pair<int, int>> colorPairs;
+	for (int i = 0; i < 6; ++i) {
+		for (int j = i + 1; j < 6; ++j) {
+			if (i + j != 5) {
+				colorPairs.push_back(std::make_pair(i, j));
+			}
 		}
 	}
+
+	solveEdges0(colorPairs);
+	solveEdges1(colorPairs);
+	solveEdges2(colorPairs);
 }

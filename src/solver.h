@@ -39,6 +39,9 @@ public:
 	void solveCenter2();
 	void solveCenter3();
 	void solveLastCenters();
+	void solveEdges0(std::vector<std::pair<int, int>>& colorPairs);
+	void solveEdges1(std::vector<std::pair<int, int>>& colorPairs);
+	void solveEdges2(std::vector<std::pair<int, int>>& colorPairs);
 	void solveEdges();
 
 private:
