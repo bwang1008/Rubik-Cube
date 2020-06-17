@@ -25,8 +25,8 @@
 #include <jpegio.h>
 #include <cmath>
 
-int window_width = 800; //1280;
-int window_height = 800;
+int window_width = 900; //1280;
+int window_height = 900;
 
 const std::string window_title = "Rubik's Cube";
 
@@ -278,7 +278,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Begin generating scrambles" << std::endl;
 	gui.scrambleCube();
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
-	gui.setRotatingSpeed(200.0f);
+	gui.setRotatingSpeed(250.0f);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -328,7 +328,7 @@ int main(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solveCenter0();
 			//solver->solveEdges();
-			gui.setRotatingSpeed(200.0f); // to solve 1st center
+			gui.setRotatingSpeed(250.0f); // to solve 1st center
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
 
@@ -344,7 +344,7 @@ int main(int argc, char* argv[]) {
 			
 			gui.resetCount();
 			solver->solveCenter1();
-			gui.setRotatingSpeed(200.0f); // to solve 2nd center
+			gui.setRotatingSpeed(250.0f); // to solve 2nd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
 			solver->incr();
@@ -357,7 +357,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter2();
-			gui.setRotatingSpeed(200.0f); // to solve 3rd center
+			gui.setRotatingSpeed(250.0f); // to solve 3rd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
 			solver->incr();
@@ -370,7 +370,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter3();
-			gui.setRotatingSpeed(200.0f); // to solve 4th center
+			gui.setRotatingSpeed(250.0f); // to solve 4th center
 
 			std::cout << "Click on animation window and press ENTER to proceed (4)" << std::endl;
 			solver->incr();
@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveLastCenters();
-			gui.setRotatingSpeed(200.0f); // to solve 5th, 6th centers
+			gui.setRotatingSpeed(250.0f); // to solve 5th, 6th centers
 
 			std::cout << "Click on animation window and press ENTER to proceed (5)" << std::endl;
 			solver->incr();

@@ -1369,6 +1369,11 @@ void Solver::solveCenter1() {
 				continue;
 			}
 
+			// handle the corner case where you accidentally put the piece you need back in Up
+			if (numTimes == 1 && faces[0][N / 2][N - 1 - i] == color) {
+				exec(0, 0, 1);
+			}
+
 			int band[cubeWidth];
 			for (int j = 0; j < N; ++j) {
 				band[j] = faces[2][N - 1 - j][i];
@@ -1815,6 +1820,11 @@ void Solver::solveCenter2() {
 				continue; // don't solve middle column explicitly
 			}
 
+			// handle the corner case where you accidentally put the piece you need back in Back
+			if (numTimes == 1 && faces[0][N - 1 - i][N / 2] == color) {
+				exec(0, 0, 1);
+			}
+
 			// doing row by row of back face
 			// bring band from back to front
 			exec(2, i, 2); // parallel to up
@@ -1987,48 +1997,50 @@ void Solver::solveCenter2() {
 					band[j] = faces[0][j][cubeWidth - 1 - i];
 				}
 
-				// find appropriate missing stickers from back; band parallel to right
-				for (int j = 1; j < N - 1; ++j) {
-					if (band[j] != color) {
-						int row = j;
-						int col = N - 1 - i;
-						std::vector<glm::ivec2> possible;
-						getPossiblePositions(row, col, possible);
-						for (size_t k = 0; k < possible.size(); ++k) {
-							glm::ivec2 temp = possible[k];
-							int r = temp[0];
-							int c = temp[1];
+				// find appropriate missing stickers from back; band parallel to right; only if first time
+				if (numTimes == 0) {
+					for (int j = 1; j < N - 1; ++j) {
+						if (band[j] != color) {
+							int row = j;
+							int col = N - 1 - i;
+							std::vector<glm::ivec2> possible;
+							getPossiblePositions(row, col, possible);
+							for (size_t k = 0; k < possible.size(); ++k) {
+								glm::ivec2 temp = possible[k];
+								int r = temp[0];
+								int c = temp[1];
 
-							// if the back face, at those possible 4 locations, has the color desired,
-							// and it is not already used
-							if (faces[5][r][c] == color && r >= i) {
-								int qt = 1;
-								if (N - 1 - col != r) {
-									qt = -1;
+								// if the back face, at those possible 4 locations, has the color desired,
+								// and it is not already used
+								if (faces[5][r][c] == color && r >= i) {
+									int qt = 1;
+									if (N - 1 - col != r) {
+										qt = -1;
+									}
+
+									exec(0, 0, qt);
+									// first bring sticker into right face
+									exec(2, r, 1);
+									exec(0, 0, -qt); // band parallel to right again
+
+									// if k > 0, may need to rotate Right face to get the sticker in desired position before sticking in band
+									exec(1, 0, -k);
+
+									// rotate sticker into band
+									exec(2, j, 1);
+
+									// might have messed with solved rows on back
+									// so first rotate front, then rotate the above back
+									qt = 1;
+									if (N - 1 - col != j) {
+										qt = -1;
+									}
+									exec(0, 0, qt);
+									exec(2, j, -1);
+									exec(0, 0, -qt);
+
+									break; // we only need one sticker in this position
 								}
-
-								exec(0, 0, qt);
-								// first bring sticker into right face
-								exec(2, r, 1);
-								exec(0, 0, -qt); // band parallel to right again
-								
-								// if k > 0, may need to rotate Right face to get the sticker in desired position before sticking in band
-								exec(1, 0, -k);
-
-								// rotate sticker into band
-								exec(2, j, 1);
-
-								// might have messed with solved rows on back
-								// so first rotate front, then rotate the above back
-								qt = 1;
-								if (N - 1 - col != j) {
-									qt = -1;
-								}
-								exec(0, 0, qt);
-								exec(2, j, -1);
-								exec(0, 0, -qt);
-
-								break; // we only need one sticker in this position
 							}
 						}
 					}
@@ -2081,6 +2093,11 @@ void Solver::solveCenter3() {
 
 			if (N % 2 == 1 && i == N / 2) {
 				continue; // don't solve middle column explicitly
+			}
+
+			// handle the corner case where you accidentally put the piece you need back in Left
+			if (numTimes == 1 && faces[0][N - 1 - i][N / 2] == color) {
+				exec(0, 0, 1);
 			}
 
 			// doing row by row of left face
@@ -2213,58 +2230,61 @@ void Solver::solveCenter3() {
 					band[j] = faces[0][j][cubeWidth - 1 - i];
 				}
 
-				// find appropriate missing stickers from left; band parallel to right
-				for (int j = 1; j < N - 1; ++j) {
-					if (band[j] != color) {
-						int row = j;
-						int col = N - 1 - i;
-						std::vector<glm::ivec2> possible;
-						getPossiblePositions(row, col, possible);
-						for (size_t k = 0; k < possible.size(); ++k) {
-							glm::ivec2 temp = possible[k];
-							int r = temp[0];
-							int c = temp[1];
+				// find appropriate missing stickers from left; band parallel to right; only if first time
+				if (numTimes == 0) {
 
-							// if the left face, at those possible 4 locations, has the color desired,
-							// and it is not already used
-							if (faces[4][r][c] == color && r >= i) {
-								int qt = 1;
-								if (N - 1 - col != r) {
-									qt = -1;
+					for (int j = 1; j < N - 1; ++j) {
+						if (band[j] != color) {
+							int row = j;
+							int col = N - 1 - i;
+							std::vector<glm::ivec2> possible;
+							getPossiblePositions(row, col, possible);
+							for (size_t k = 0; k < possible.size(); ++k) {
+								glm::ivec2 temp = possible[k];
+								int r = temp[0];
+								int c = temp[1];
+
+								// if the left face, at those possible 4 locations, has the color desired,
+								// and it is not already used
+								if (faces[4][r][c] == color && r >= i) {
+									int qt = 1;
+									if (N - 1 - col != r) {
+										qt = -1;
+									}
+
+									exec(0, 0, qt);
+									// first bring sticker into right face
+									exec(2, r, -2);
+
+									// to undo above,
+									int qt2 = 1;
+									if (N - 1 - c != r) {
+										qt2 = -1;
+									}
+									exec(1, 0, qt); // move desired sticker out of the way
+									exec(2, r, 2); // undo above
+									exec(1, 0, -qt); // move desired sticker back
+
+									exec(0, 0, -qt); // band parallel to right again
+
+									// if k > 0, may need to rotate Right face to get the sticker in desired position before sticking in band
+									exec(1, 0, -k);
+
+									// rotate sticker into band
+									exec(2, j, 1);
+
+									// might have messed with solved rows on back
+									// so first rotate front, then rotate the above back
+									qt = 1;
+									if (N - 1 - col != j) {
+										qt = -1;
+									}
+									exec(0, 0, qt);
+									exec(2, j, -1);
+									exec(0, 0, -qt); // band parallel to right again
+
+									break; // we only need one sticker in this position
 								}
-
-								exec(0, 0, qt);
-								// first bring sticker into right face
-								exec(2, r, -2);
-
-								// to undo above,
-								int qt2 = 1;
-								if (N - 1 - c != r) {
-									qt2 = -1;
-								}
-								exec(1, 0, qt); // move desired sticker out of the way
-								exec(2, r, 2); // undo above
-								exec(1, 0, -qt); // move desired sticker back
-
-								exec(0, 0, -qt); // band parallel to right again
-
-								// if k > 0, may need to rotate Right face to get the sticker in desired position before sticking in band
-								exec(1, 0, -k);
-
-								// rotate sticker into band
-								exec(2, j, 1);
-
-								// might have messed with solved rows on back
-								// so first rotate front, then rotate the above back
-								qt = 1;
-								if (N - 1 - col != j) {
-									qt = -1;
-								}
-								exec(0, 0, qt);
-								exec(2, j, -1);
-								exec(0, 0, -qt); // band parallel to right again
-
-								break; // we only need one sticker in this position
 							}
 						}
 					}
@@ -2929,14 +2949,12 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			}
 			
 		}
-
 		
 		if (numTimes < 7) {
 			exec(0, 0, 1);
 			exec(3, 0, 1);
 			exec(0, 0, -1);
-		}
-		
+		}		
 	}
 
 	
@@ -2945,7 +2963,6 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 	exec(1, 0, -1); // now top = 3, bot = 3, right has 3 (froms U shape)
 	exec(3, 0, 1); // now solved top edges and bottom edges are parallel to each other; two vertical edges on right
 	exec(1, 0, 1); // place both vertical edges on right into two horizontal edges, one on top, one on bottom -> top has 4, bot has 4
-	
 }
 
 void Solver::solveEdges2(std::vector<std::pair<int, int>>& colorPairs) {
