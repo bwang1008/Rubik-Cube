@@ -9,7 +9,6 @@
 #include <stdlib.h>
 
 #include "config.h"
-#include "texture_to_render.h"
 #include "solver.h"
 
 /*

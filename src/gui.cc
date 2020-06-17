@@ -71,7 +71,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) {
 		
 	} else if (key == GLFW_KEY_C && action != GLFW_RELEASE) {
-		fps_mode_ = !fps_mode_;
+		//fps_mode_ = !fps_mode_;
 	} else if (key == GLFW_KEY_P && action != GLFW_RELEASE){
 		play_ = !play_;
 		if(play_){
@@ -89,22 +89,22 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		camera_distance_ = cubeWidth * 3;
 	}
 	else if (key == GLFW_KEY_U && action == GLFW_RELEASE) {
-		allMoves.push_back(glm::vec3(2, 0, 1));
+		//allMoves.push_back(glm::vec3(2, 0, 1));
 	}
 	else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-		allMoves.push_back(glm::vec3(3, 0, 1));
+		//allMoves.push_back(glm::vec3(3, 0, 1));
 	}
 	else if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
-		allMoves.push_back(glm::vec3(4, 0, 1));
+		//allMoves.push_back(glm::vec3(4, 0, 1));
 	}
 	else if (key == GLFW_KEY_R && action == GLFW_RELEASE) {
-		allMoves.push_back(glm::vec3(1, 0, 1));
+		//allMoves.push_back(glm::vec3(1, 0, 1));
 	}
 	else if (key == GLFW_KEY_F && action == GLFW_RELEASE) {
-		allMoves.push_back(glm::vec3(0, 0, 1));
+		//allMoves.push_back(glm::vec3(0, 0, 1));
 	}
 	else if (key == GLFW_KEY_B && action == GLFW_RELEASE) {
-		allMoves.push_back(glm::vec3(5, 0, 1));
+		//allMoves.push_back(glm::vec3(5, 0, 1));
 	}
 	else if (key == GLFW_KEY_ENTER && action == GLFW_RELEASE) {
 		if (solver->currentState() & 1) { // if current state is odd, then valid
@@ -133,7 +133,7 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 	glm::vec2 mouse_end = glm::vec2(current_x_, current_y_);
 	glm::uvec4 viewport = glm::uvec4(0, 0, view_width_, view_height_);
 
-	bool drag_camera = drag_state_ && current_button_ == GLFW_MOUSE_BUTTON_RIGHT;
+	bool drag_camera = drag_state_ && current_button_ == GLFW_MOUSE_BUTTON_LEFT;
 
 	glm::vec3 posVec = glm::unProject(glm::vec3(current_x_, current_y_,0.0), 
 		view_matrix_, projection_matrix_, glm::vec4(0,0,view_width_,view_height_));

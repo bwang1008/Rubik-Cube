@@ -4,7 +4,6 @@
 #include "render_pass.h"
 #include "config.h"
 #include "gui.h"
-//#include "texture_to_render.h"
 #include "cube.h"
 #include "solver.h"
 
@@ -260,7 +259,8 @@ int main(int argc, char* argv[]) {
 			{ "fragment_color"}
 			);
 
-
+	long long totalMoves = 0;
+	long long totalQT = 0;
 	bool draw_cube = true;
 	bool draw_sky = false;
 
@@ -341,6 +341,9 @@ int main(int argc, char* argv[]) {
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 2) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
 			
 			gui.resetCount();
 			solver->solveCenter1();
@@ -355,6 +358,9 @@ int main(int argc, char* argv[]) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
+
 			gui.resetCount();
 			solver->solveCenter2();
 			gui.setRotatingSpeed(250.0f); // to solve 3rd center
@@ -367,6 +373,9 @@ int main(int argc, char* argv[]) {
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 6) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
 
 			gui.resetCount();
 			solver->solveCenter3();
@@ -381,6 +390,9 @@ int main(int argc, char* argv[]) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
+
 			gui.resetCount();
 			solver->solveLastCenters();
 			gui.setRotatingSpeed(250.0f); // to solve 5th, 6th centers
@@ -394,6 +406,9 @@ int main(int argc, char* argv[]) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
 
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
+
 			gui.resetCount();
 			solver->solveEdges();
 			gui.setRotatingSpeed(250.0f); // to solve edges
@@ -402,19 +417,41 @@ int main(int argc, char* argv[]) {
 			solver->incr();
 		}
 
-		// Finished solving all edges
+		// Finished solving first 8 edges
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 12) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
+
+			//std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
+
+			gui.resetCount();
+			solver->solveEdges2();
+			gui.setRotatingSpeed(50.0f);
+
+			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;
+			solver->incr();
+		}
+
+		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 14) {
+			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
+			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
+
+			totalMoves += gui.getCountMoves();
+			totalQT += gui.getCountQT();
+
+			std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
 			//solver->solveLastCenters();
 			gui.setRotatingSpeed(50.0f);
 
-			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
+			std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
 			solver->incr();
 		}
-
+	
 		// update rotation, depending if rotating already or not
 		if(gui.isQuarterTurning()) {
 			float currentTheta = std::abs(gui.getCurrentPlayTime() * gui.getRotatingSpeed());

@@ -779,7 +779,31 @@ void Solver::exec(int face, int layer, int qt) {
 	case 5: turnBack(layer, qt); break;
 	}
 
-	dequePtr->push_back(glm::vec3(face, layer, qt));
+	if (OPTIMIZE && dequePtr->size() > 0) {
+		glm::ivec3 copy = dequePtr->back();
+
+		if (copy[0] == face && copy[1] == layer) {
+			dequePtr->pop_back();
+			copy[2] = (((copy[2] + qt) % 4) + 4) % 4;
+			if (copy[2] == 3) {
+				copy[2] = -1;
+			}
+			if (copy[2] != 0) {
+				dequePtr->push_back(copy);
+			}
+		}
+		else {
+			if (qt == 3)
+				qt = -1;
+			dequePtr->push_back(glm::ivec3(face, layer, qt));
+		}
+
+	}
+	else {
+		if (qt == 3)
+			qt = -1;
+		dequePtr->push_back(glm::ivec3(face, layer, qt));
+	}
 }
 
 void Solver::exec(glm::vec3 move) {
@@ -795,6 +819,7 @@ void Solver::exec(glm::vec3 move) {
 	case 5: turnBack(layer, qt); break;
 	}
 
+	// not optimized yet
 	dequePtr->push_back(move);
 }
 
@@ -2363,6 +2388,47 @@ void Solver::solveLastCenters() {
 	}	
 }
 
+// Credits to https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/ 
+// flips the edge between front and right
+void Solver::flipEdge(int edge) {
+	if (edge == 0 + 1) { // front + right
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(0, 0, 1);
+		exec(1, 0, -1);
+		exec(0, 0, -1);
+		exec(1, 0, 1);
+	}
+	else if (edge == 1 + 5) { // right + back
+		exec(5, 0, 1);
+		exec(2, 0, 1);
+		exec(5, 0, -1);
+		exec(1, 0, 1);
+		exec(5, 0, -1);
+		exec(1, 0, -1);
+		exec(5, 0, 1);
+	}
+	else if (edge == 5 + 4) { // back + left
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(4, 0, -1);
+		exec(5, 0, 1);
+		exec(4, 0, -1);
+		exec(5, 0, -1);
+		exec(4, 0, 1);
+	}
+	else if (edge == 4 + 0) { // left + front
+		exec(0, 0, 1);
+		exec(2, 0, 1);
+		exec(0, 0, -1);
+		exec(4, 0, 1);
+		exec(0, 0, -1);
+		exec(4, 0, -1);
+		exec(0, 0, 1);
+	}
+}
+
 void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 
 	// build edge on edge between Front and Right face
@@ -2657,7 +2723,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 		int colorF = colorPairs[numTimes].first;
 		int colorR = colorPairs[numTimes].second;
 
-		std::cout << "FR = " << myMap[colorF] << " " << myMap[colorR] << std::endl;
+		//std::cout << "FR = " << myMap[colorF] << " " << myMap[colorR] << std::endl;
 
 		for (int i = 1; i < N - 1; ++i) {
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
@@ -2965,7 +3031,131 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 	exec(1, 0, 1); // place both vertical edges on right into two horizontal edges, one on top, one on bottom -> top has 4, bot has 4
 }
 
-void Solver::solveEdges2(std::vector<std::pair<int, int>>& colorPairs) {
+void Solver::solveEdges2() {
+	std::map<int, char> myMap;
+	myMap[0] = 'G';
+	myMap[1] = 'R';
+	myMap[2] = 'W';
+	myMap[3] = 'Y';
+	myMap[4] = 'O';
+	myMap[5] = 'B';
+
+	// build edge on edge between Front and Right face
+	// top edges, bottom edges are all solved
+	for (int numTimes = 0; numTimes < 3; numTimes++) {
+		int colorF = faces[0][N / 2][N - 1];
+		int colorR = faces[1][N / 2][0];
+
+		std::cout << "pursuing colorF = " << myMap[colorF] << " and colorR = " << myMap[colorR] << std::endl;
+
+		for (int i = 1; i < N - 1; ++i) {
+
+			std::cout << "i = " << i << std::endl;
+			// correct piece already
+			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
+				std::cout << "already done" << std::endl;
+				continue;
+			}
+			// if desired piece on opposite side of same edge
+			else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
+				std::cout << "on other side of same edge!" << std::endl;
+				exec(2, i, -1);
+				exec(2, N - 1 - i, -1);
+				flipEdge(1 + 5); // right + back
+				exec(2, i, 1);
+				exec(2, N - 1 - i, 1);
+			}
+			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
+				std::cout << "edge between right + back, down" << std::endl;
+				exec(2, i, -1);
+				flipEdge(1 + 5); // right + back
+				exec(2, i, 1);
+			}
+			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
+				std::cout << "edge between right + back, up" << std::endl;
+				flipEdge(1 + 5); // right + back
+				exec(2, i, -1);
+				flipEdge(1 + 5);
+				exec(2, i, 1);
+			}
+			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
+				std::cout << "edge between left + front, down" << std::endl;
+				exec(2, i, 1);
+				flipEdge(4 + 0); // left + front
+				exec(2, i, -1);
+			}
+			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
+				std::cout << "edge between left + front, up" << std::endl;
+				flipEdge(4 + 0); // left + front
+				exec(2, i, 1);
+				flipEdge(4 + 0);
+				exec(2, i, -1);
+			}
+			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
+				std::cout << "edge between back + left, down" << std::endl;
+				exec(2, i, 2);
+				flipEdge(5 + 4); // back + left
+				exec(2, i, -2);
+			}
+			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
+				std::cout << "edge between back + left, up" << std::endl;
+				flipEdge(5 + 4);
+				exec(2, i, 2);
+				flipEdge(5 + 4);
+				exec(2, i, -2);
+			}
+		}
+
+		if (numTimes == 0) {
+			// bring 1st finished edge to edge between back + left
+			exec(1, 0, 2);
+			exec(5, 0, 2);
+		}
+		else if (numTimes == 1) {
+			// bring 2nd finished edge to edge between front + left
+			exec(0, 0, 2);
+		}
+		else if (numTimes == 2) {
+			// bring 3rd finished edge to edge between right + back
+			exec(1, 0, 2);
+		}
+	}
+
+	// build last edge, on edge between front + right
+	int colorF = faces[0][N / 2][N - 1];
+	int colorR = faces[1][N / 2][0];
+	std::cout << "last edge: colorF = " << myMap[colorF] << " and colorR = " << myMap[colorR] << std::endl;
+	for (int i = 1; i < N - 1; ++i) {
+		std::cout << "i2 = " << i << std::endl;
+		// correct piece already
+		if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
+			std::cout << "donezoed" << std::endl;
+			continue;
+		}
+		// if desired piece on opposite side of same edge
+		// Red Bull Algorithm
+		else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
+			std::cout << "on the other side..." << std::endl;
+			
+			exec(2, N - 1 - i, 2);
+			exec(5, 0, 2);
+			exec(1, 0, 2);
+			exec(2, i, 1);
+			exec(1, 0, 2);
+			
+			exec(2, N - 1 - i, 1);
+			exec(1, 0, 2);
+			exec(2, N - 1 - i, -1);
+			exec(1, 0, 2);
+			exec(0, 0, 2);
+			exec(2, N - 1 - i, -1);
+			exec(0, 0, 2);
+			
+			exec(2, i, -1);
+			exec(5, 0, 2);
+			exec(2, N - 1 - i, 2);
+		}
+	}
 
 }
 
@@ -2983,5 +3173,5 @@ void Solver::solveEdges() {
 
 	solveEdges0(colorPairs);
 	solveEdges1(colorPairs);
-	solveEdges2(colorPairs);
+	//solveEdges2();
 }
