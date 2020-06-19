@@ -33,10 +33,6 @@ const char* vertex_shader =
 #include "shaders/default.vert"
 ;
 
-const char* blending_shader =
-#include "shaders/blending.vert"
-;
-
 const char* geometry_shader =
 #include "shaders/default.geom"
 ;

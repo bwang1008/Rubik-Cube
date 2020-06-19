@@ -11,7 +11,7 @@ v Double check all possible turns are correct
 v Optimize quarter turns to not updateVBO every render cycle
 - BVH? (Bounding Volume Hierarchy data structure)
 v Deque for storing all moves
-- Key bindings for 6 possible turns
+x Key bindings for 6 possible turns
 - Add black trianges to hide the fact that large cube is in fact hollow
 v Scramble Cube
 - Implement solver

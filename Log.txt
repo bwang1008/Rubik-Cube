@@ -237,3 +237,31 @@ Commit "Solved 4 edges; removed Cube pointers" - June 9, 2020
 - Removed Cube pointers in main, as they were unused
 - Found rotating speed about 200.0 just about the limit of how fast the rendering is
 - Solves first 4 out of 12 edges of the Rubik's cube, puts them onto Up face when finished
+
+Commit "8 edges finished" - June 15, 2020
+- Changed solveEdges() into 3 different methods, one for each set of 4
+- Middle 4 edges were done by hand on paper to ensure other edges did not change locations
+- After solving the middle 4 edges, place them onto the Down face
+
+Commit "Fixed corner case of solving Left center on odd sized cubes that first showed up for N = 15" - June 16, 2020
+- Found a bug when N = 15, that results in the Left center not completing the second pass of the middle column
+- Thought I fixed it when I restricted taking pieces from Left piece only when numTimes = 0
+- Actually not true, when you bring the row out, might have put some desired stickers back into the vacant row
+- Handled in the beginning that rotates the desired piece out of the way of the corner case
+
+Commit "All edges finished!" - June 17, 2020
+- Made some changes to GUI, including having a total count of moves and quarter turns
+- Made a const bool OPTIMIZE, where calling exec will check with the last previous exec and check if cancellation occurs
+- For last 4 edges, used flipping algorithm as specificed by https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/
+	- This flips the edge between front and right
+- Last edge flips pieces around on the same row using the "Red Bull" algorithm, learned from https://www.youtube.com/watch?v=knMCvKdJFgk
+
+Commit "Built complete bottom face" - June 19, 2020 (right past midnight of June 18)
+- Comments on #include statements to say what the include was for
+- Begin solving like 3x3x3
+	- Need careful handling to be able to solve 2x2x2 Rubik's cube
+- 24 if statements, for the 12 different locations of the desired edge and 2 orientations each to make the cross on bottom
+- 12 if statements, for the 4 different locations of desired corner on bottom face, and 3 orientations each to fill in bottom corners
+- Used while loop to rotate top to find the desired corner if it is not on the bottom face, and 3 more if statements
+
+
