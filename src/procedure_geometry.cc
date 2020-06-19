@@ -186,7 +186,6 @@ void update_rubik(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vec
 		P[0] = 0.5f + layer - half;
 	}
 	else if(face == 5) { // Back
-		
 		P[2] = 0.5f + layer - half;
 	}
 

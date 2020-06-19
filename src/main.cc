@@ -1,14 +1,14 @@
 #include <GL/glew.h>
 
-#include "procedure_geometry.h"
-#include "render_pass.h"
-#include "config.h"
-#include "gui.h"
-#include "cube.h"
-#include "solver.h"
+#include "procedure_geometry.h"		// create_rubik, update_rubik
+#include "render_pass.h"			// helper for rendering with OpenGL
+#include "config.h"					// Constants
+#include "gui.h"					// GUI for OpenGL
+#include "cube.h"					// create_cube for each individual small cubie
+#include "solver.h"					// Solver object -> algorithms to solve scrambled Rubik's cube
 
-#include <memory>
-#include <algorithm>
+#include <memory>					
+#include <algorithm>				
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -417,7 +417,7 @@ int main(int argc, char* argv[]) {
 			solver->incr();
 		}
 
-		// Finished solving first 8 edges
+		// Finished solving all edges
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 12) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
@@ -428,7 +428,7 @@ int main(int argc, char* argv[]) {
 			//std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
-			solver->solveEdges2();
+			solver->solve3x3x3();
 			gui.setRotatingSpeed(50.0f);
 
 			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;

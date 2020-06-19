@@ -1,14 +1,14 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <deque>
-#include <utility>
+#include <iostream>		// std::cout, std::endl
+#include <vector>		// std::vector
+#include <string>		// std::string
+#include <algorithm>	// std::sort
+#include <deque>		// std::deque
+#include <utility>		// std::pair, std::make_pair
 #include <glm/glm.hpp>
-#include "config.h"
+#include "config.h"		// constants
 
 class Solver {
 public:
@@ -45,6 +45,11 @@ public:
 	void solveEdges1(std::vector<std::pair<int, int>>& colorPairs);
 	void solveEdges2();
 	void solveEdges();
+
+	void solveCross();
+	void solveCorners4();
+	void solve3x3x3();
+
 
 private:
 	int N;
