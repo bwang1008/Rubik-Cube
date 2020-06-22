@@ -425,7 +425,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solve3x3x3();
-			gui.setRotatingSpeed(50.0f);
+			gui.setRotatingSpeed(250.0f); // to solve 3x3x3
 
 			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;
 			solver->incr();
@@ -442,7 +442,7 @@ int main(int argc, char* argv[]) {
 
 			gui.resetCount();
 			//solver->solveLastCenters();
-			gui.setRotatingSpeed(50.0f);
+			gui.setRotatingSpeed(250.0f);
 
 			std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
 			solver->incr();

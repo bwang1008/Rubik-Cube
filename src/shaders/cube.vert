@@ -18,7 +18,6 @@ void main(){
 	if(rotating > 0) {
 
 		if(face == 0) {
-			
 			mat[0][0] = cos(theta);
 			mat[1][0] = -sin(theta);
 			mat[0][1] = sin(theta);

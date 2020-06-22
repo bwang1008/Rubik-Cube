@@ -48,6 +48,7 @@ public:
 
 	void solveCross();
 	void solveCorners4();
+	void solveSecondLayer();
 	void solve3x3x3();
 
 

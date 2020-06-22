@@ -3192,7 +3192,7 @@ void Solver::solveCross() {
 
 		// already solved
 		if (faces[3][0][1] == colorDown && faces[0][N - 1][1] == colorSide) {
-			continue;
+
 		}
 		// just backwards
 		else if (faces[0][N - 1][1] == colorDown && faces[3][0][1] == colorSide) {
@@ -3305,9 +3305,9 @@ void Solver::solveCross() {
 		}
 		// flipped other way
 		else if (faces[1][0][1] == colorDown && faces[2][N - 2][N - 1] == colorSide) {
-			exec(2, 0, -1);
+			exec(1, 0, -1);
 			exec(0, 0, 1);
-			exec(2, 0, 1);
+			exec(1, 0, 1);
 		}
 		// edge between back + up
 		else if (faces[2][0][1] == colorDown && faces[5][0][1] == colorSide) {
@@ -3569,7 +3569,251 @@ void Solver::solveCorners4() {
 
 }
 
+void Solver::solveSecondLayer() {
+	if (N <= 2) {
+		return;
+	}
+
+	std::map<int, char> myMap;
+	myMap[0] = 'G';
+	myMap[1] = 'R';
+	myMap[2] = 'W';
+	myMap[3] = 'Y';
+	myMap[4] = 'O';
+	myMap[5] = 'B';
+
+	// relative positioning:
+	// first 6 are standard: front, right, up, down, left, back
+	// next 6 are if we take absolute Right as relative front, with Up the same face:
+	//      then relative front,right,up,down,left,back correspond to absolute faces 1,5,2,3,0,4
+	// next 6 are if we take absolute Back as relative front
+	// last 6 are if we take absolute Left as relative front
+	std::vector<int> orient{ 0, 1, 2, 3, 4, 5, 1, 5, 2, 3, 0, 4, 5, 4, 2, 3, 1, 0, 4, 0, 2, 3, 5, 1 };
+
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		int front = orient[0 + numTimes * 6];
+		int right = orient[1 + numTimes * 6];
+		int up = orient[2 + numTimes * 6];
+		int left = orient[4 + numTimes * 6];
+		int back = orient[5 + numTimes * 6];
+
+		int colorFront = getFaceColor(front);
+		int colorRight = getFaceColor(right);
+		std::cout << "looking for " << myMap[colorFront] << " " << myMap[colorRight] << std::endl;
+
+		// 8 if statements: 4 for position in the middle (not on down or up face), and * 2 for if flipped
+		// if edge already in correct place
+		if (faces[front][1][N - 1] == colorFront && faces[right][1][0] == colorRight) {
+			continue;
+		}
+		// edge flipped around
+		else if(faces[right][1][0] == colorFront && faces[front][1][N - 1] == colorRight) {
+			//std::cout << "orig part 2" << std::endl;
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+
+			exec(up, 0, 1);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+		}
+		// desired edge between left + front
+		else if (faces[left][1][N - 1] == colorFront && faces[front][1][0] == colorRight) {
+			//std::cout << "left + front" << std::endl;
+			exec(left, 0, -1);
+			exec(up, 0, 1);
+			exec(left, 0, 1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+
+			exec(up, 0, -1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+		}
+		// flipped other way
+		else if (faces[front][1][0] == colorFront && faces[left][1][N - 1] == colorRight) {
+			//std::cout << "left + front part 2" << std::endl;
+			exec(left, 0, -1);
+			exec(up, 0, 1);
+			exec(left, 0, 1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+		}
+		// desired edge between left + back
+		else if (faces[back][1][N - 1] == colorFront && faces[left][1][0] == colorRight) {
+			//std::cout << "left + back" << std::endl;
+			exec(back, 0, -1);
+			exec(up, 0, 1);
+			exec(back, 0, 1);
+			exec(up, 0, 1);
+			exec(left, 0, 1);
+			exec(up, 0, -1);
+			exec(left, 0, -1);
+
+			exec(up, 0, 2);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+		}
+		// flipped other way
+		else if (faces[left][1][0] == colorFront && faces[back][1][N - 1] == colorRight) {
+			//std::cout << "left + back part 2" << std::endl;
+			exec(back, 0, -1);
+			exec(up, 0, 1);
+			exec(back, 0, 1);
+			exec(up, 0, 1);
+			exec(left, 0, 1);
+			exec(up, 0, -1);
+			exec(left, 0, -1);
+
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+		}
+		// desired edge between right + back
+		else if (faces[back][1][0] == colorFront && faces[right][1][N - 1] == colorRight) {
+			//std::cout << "right + back" << std::endl;
+			exec(right, 0, -1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, 1);
+			exec(back, 0, 1);
+			exec(up, 0, -1);
+			exec(back, 0, -1);
+
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+		}
+		// flipped other way
+		else if (faces[right][1][N - 1] == colorFront && faces[back][1][0] == colorRight) {
+			//std::cout << "right + back part 2" << std::endl;
+			exec(right, 0, -1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, 1);
+			exec(back, 0, 1);
+			exec(up, 0, -1);
+			exec(back, 0, -1);
+
+			exec(up, 0, 2);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
+			exec(up, 0, 1);
+			exec(right, 0, 1);
+			exec(up, 0, -1);
+			exec(right, 0, -1);
+
+		}
+		else {
+			std::cout << "top" << std::endl;
+			// need to access correct sticker on Up face, depending on which edge it is solving right now
+			// need to take correct sticker on Up, starting with if our relative Front is absolute Front, absolute Right, abs Back, or abs Left
+			std::vector<int> topRotationRow{ N - 1, 1, 0, 1 };
+			std::vector<int> topRotationCol{ 1, N - 1, 1, 0 };
+
+			int topRow = topRotationRow[numTimes];
+			int topCol = topRotationCol[numTimes];
+
+			std::vector<int> desired{ colorFront, colorRight };
+			std::sort(desired.begin(), desired.end());
+
+			std::cout << "desired = " << desired[0] << " " << desired[1] << std::endl;
+
+			std::vector<int> myEdge;
+
+			// turn the Up face until the edge you need is in relative position front + up
+			do {
+				exec(up, 0, 1);
+				myEdge.clear();
+				myEdge.push_back(faces[front][0][1]);
+				myEdge.push_back(faces[up][topRow][topCol]);
+				std::sort(myEdge.begin(), myEdge.end());
+
+				/*
+				std::cout << "Desred = " << desired[0] << " = " << myMap[desired[0]] << " " << desired[1] << " = " << myMap[desired[1]] << std::endl;
+				std::cout << "myEdge Front = " << faces[front][0][1] << " " << faces[up][topRow][topCol] << std::endl;
+				std::cout << "color = " << myMap[faces[front][0][1]] << " " << myMap[faces[up][topRow][topCol]] << std::endl;
+
+				std::cout << "front + right = " << faces[front][1][N - 1] << " " << faces[right][1][0] << std::endl;
+				std::cout << "left + front = " << faces[left][1][N - 1] << " " << faces[front][1][0] << std::endl;
+				std::cout << "left + back = " << faces[back][1][N - 1] << " " << faces[left][1][0] << std::endl;
+				std::cout << "back + right = " << faces[back][1][0] << " " << faces[right][1][N - 1] << std::endl;
+				*/
+
+			} while (desired[0] != myEdge[0] || desired[1] != myEdge[1]);
+
+			// now that our desired piece is in the edge between Up face and relative Front face, handle appropriately, depending on orientation
+			if (faces[front][0][1] == colorFront) {
+				exec(up, 0, 1);
+				exec(right, 0, 1);
+				exec(up, 0, -1);
+				exec(right, 0, -1);
+				exec(up, 0, -1);
+				exec(front, 0, -1);
+				exec(up, 0, 1);
+				exec(front, 0, 1);
+			}
+			else {
+				exec(up, 0, 2);
+				exec(front, 0, -1);
+				exec(up, 0, 1);
+				exec(front, 0, 1);
+				exec(up, 0, 1);
+				exec(right, 0, 1);
+				exec(up, 0, -1);
+				exec(right, 0, -1);
+			}
+		}
+
+		// by the time we get here, we have placed the desired edge into the second layer
+	}
+
+}
+
 void Solver::solve3x3x3() {
 	solveCross();
 	solveCorners4();
+	solveSecondLayer();
 }
