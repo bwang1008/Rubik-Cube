@@ -51,6 +51,7 @@ public:
 	void solveSecondLayer();
 	void solveLastCross();
 	void solveLastEdges();
+	void solveLastCornerPosition();
 	void solve3x3x3();
 	
 

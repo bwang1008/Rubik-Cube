@@ -424,8 +424,9 @@ int main(int argc, char* argv[]) {
 			//std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
-			solver->solve3x3x3();
-			gui.setRotatingSpeed(250.0f); // to solve 3x3x3
+			solver->solveEdges2();
+			//solver->solve3x3x3();
+			gui.setRotatingSpeed(1.0f); // to solve 3x3x3
 
 			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;
 			solver->incr();

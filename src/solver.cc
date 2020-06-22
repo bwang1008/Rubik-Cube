@@ -3177,7 +3177,7 @@ void Solver::solveEdges() {
 
 	solveEdges0(colorPairs);
 	solveEdges1(colorPairs);
-	solveEdges2();
+	//solveEdges2();
 }
 
 void Solver::solveCross() {
@@ -3985,10 +3985,158 @@ void Solver::solveLastEdges() {
 	}
 }
 
+void Solver::solveLastCornerPosition() {
+	int colorFront = getFaceColor(0);
+	int colorRight = getFaceColor(1);
+	int colorUp = getFaceColor(2);
+	int colorLeft = getFaceColor(4);
+	int colorBack = getFaceColor(5);
+
+	// we need corner in front-right-up to be correct
+	std::vector<int> desired1{ colorUp, colorFront, colorRight };
+	std::sort(desired1.begin(), desired1.end());
+
+	// corner between front-left-up
+	std::vector<int> desired2{ colorUp, colorFront, colorLeft };
+	std::sort(desired2.begin(), desired2.end());
+
+	// corner between back-left-up
+	std::vector<int> desired3{ colorUp, colorBack, colorLeft };
+	std::sort(desired3.begin(), desired3.end());
+
+	// corner between back-right-up
+	std::vector<int> desired4{ colorUp, colorBack, colorRight };
+	std::sort(desired4.begin(), desired4.end());
+
+	std::vector<int> corner1{ faces[2][N - 1][N - 1], faces[0][0][N - 1], faces[1][0][0] };
+	std::sort(corner1.begin(), corner1.end());
+
+	std::vector<int> corner2{ faces[2][N - 1][0], faces[0][0][0], faces[4][0][N - 1] };
+	std::sort(corner2.begin(), corner2.end());
+
+	std::vector<int> corner3{ faces[2][0][0], faces[5][0][N - 1], faces[4][0][0] };
+	std::sort(corner3.begin(), corner3.end());
+
+	std::vector<int> corner4{ faces[2][0][N-1], faces[5][0][0], faces[1][0][N - 1] };
+	std::sort(corner4.begin(), corner4.end());
+
+	bool same1 = (desired1[0] == corner1[0] && desired1[1] == corner1[1] && desired1[2] == corner1[2]);
+	bool same2 = (desired2[0] == corner2[0] && desired2[1] == corner2[1] && desired2[2] == corner2[2]);
+	bool same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
+	bool same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
+	
+	// if none of them are right
+	if (!same1 && !same2 && !same3 && !same4) {
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		corner1[0] = faces[2][N - 1][N - 1];
+		corner1[1] = faces[0][0][N - 1];
+		corner1[2] = faces[1][0][0];
+		std::sort(corner1.begin(), corner1.end());
+
+		corner2[0] = faces[2][N - 1][0];
+		corner2[1] = faces[0][0][0];
+		corner2[2] = faces[4][0][N - 1];
+		std::sort(corner2.begin(), corner2.end());
+
+		corner3[0] = faces[2][0][0];
+		corner3[1] = faces[5][0][N - 1];
+		corner3[2] = faces[4][0][0];
+		std::sort(corner3.begin(), corner3.end());
+
+		corner4[0] = faces[2][0][N - 1];
+		corner4[1] = faces[5][0][0];
+		corner4[2] = faces[1][0][N - 1];
+		std::sort(corner4.begin(), corner4.end());
+
+		same1 = (desired1[0] == corner1[0] && desired1[1] == corner1[1] && desired1[2] == corner1[2]);
+		same2 = (desired2[0] == corner2[0] && desired2[1] == corner2[1] && desired2[2] == corner2[2]);
+		same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
+		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
+	}
+
+	int relFront = 0;
+	int relRight = 1;
+	int relUp = 2;
+	int relLeft = 4;
+	int index = 0;
+	if (same1) {
+		index = 0;
+	}
+	else if (same2) {
+		index = 2;
+		relFront = 4;
+		relRight = 0;
+		relLeft = 5;
+	}
+	else if (same3) {
+		index = 3;
+		relFront = 5;
+		relRight = 4;
+		relLeft = 1;
+	}
+	else if (same4) {
+		index = 4;
+		relFront = 1;
+		relRight = 5;
+		relLeft = 0;
+	}
+
+	std::cout << "relFront = " << relFront << std::endl;
+
+	int numTimes = 0;
+	while ((!same1 || !same2 || !same3 || !same4) && numTimes < 2) {
+		numTimes++;
+
+		exec(relUp, 0, 1);
+		exec(relRight, 0, 1);
+		exec(relUp, 0, -1);
+		exec(relLeft, 0, -1);
+		exec(relUp, 0, 1);
+		exec(relRight, 0, -1);
+		exec(relUp, 0, -1);
+		exec(relLeft, 0, 1);
+
+		corner1[0] = faces[2][N - 1][N - 1];
+		corner1[1] = faces[0][0][N - 1];
+		corner1[2] = faces[1][0][0];
+		std::sort(corner1.begin(), corner1.end());
+
+		corner2[0] = faces[2][N - 1][0];
+		corner2[1] = faces[0][0][0];
+		corner2[2] = faces[4][0][N - 1];
+		std::sort(corner2.begin(), corner2.end());
+
+		corner3[0] = faces[2][0][0];
+		corner3[1] = faces[5][0][N - 1];
+		corner3[2] = faces[4][0][0];
+		std::sort(corner3.begin(), corner3.end());
+
+		corner4[0] = faces[2][0][N - 1];
+		corner4[1] = faces[5][0][0];
+		corner4[2] = faces[1][0][N - 1];
+		std::sort(corner4.begin(), corner4.end());
+
+		same1 = (desired1[0] == corner1[0] && desired1[1] == corner1[1] && desired1[2] == corner1[2]);
+		same2 = (desired2[0] == corner2[0] && desired2[1] == corner2[1] && desired2[2] == corner2[2]);
+		same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
+		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
+	}
+}
+
+// https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/ for reference
 void Solver::solve3x3x3() {
 	solveCross();
 	solveCorners4();
 	solveSecondLayer();
 	solveLastCross();
 	solveLastEdges();
+	solveLastCornerPosition();
 }
