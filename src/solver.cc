@@ -3160,6 +3160,10 @@ void Solver::solveEdges2() {
 }
 
 void Solver::solveEdges() {
+	if (N <= 3) {
+		return;
+	}
+
 	// colors: 0,1,2,3,4,5 -> green, red, white, yellow, orange, blue
 	// make all possible pairs of colors that correspond to edges
 	std::vector<std::pair<int, int>> colorPairs;
@@ -3448,7 +3452,7 @@ void Solver::solveCorners4() {
 					// if down color on down face
 					if (faces[3][N - 1][0] == colorDown) {
 						exec(5, 0, -1);
-						exec(2, 0, 1);
+						exec(2, 0, -1);
 						exec(5, 0, 1);
 						exec(2, 0, 2);
 						exec(0, 0, -1);
@@ -3599,7 +3603,7 @@ void Solver::solveSecondLayer() {
 
 		int colorFront = getFaceColor(front);
 		int colorRight = getFaceColor(right);
-		std::cout << "looking for " << myMap[colorFront] << " " << myMap[colorRight] << std::endl;
+		//std::cout << "looking for " << myMap[colorFront] << " " << myMap[colorRight] << std::endl;
 
 		// 8 if statements: 4 for position in the middle (not on down or up face), and * 2 for if flipped
 		// if edge already in correct place
@@ -3716,14 +3720,15 @@ void Solver::solveSecondLayer() {
 			exec(up, 0, -1);
 			exec(back, 0, -1);
 
+			exec(up, 0, 2);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
 			exec(up, 0, 1);
 			exec(right, 0, 1);
 			exec(up, 0, -1);
 			exec(right, 0, -1);
-			exec(up, 0, -1);
-			exec(front, 0, -1);
-			exec(up, 0, 1);
-			exec(front, 0, 1);
+
 		}
 		// flipped other way
 		else if (faces[right][1][N - 1] == colorFront && faces[back][1][0] == colorRight) {
@@ -3736,14 +3741,14 @@ void Solver::solveSecondLayer() {
 			exec(up, 0, -1);
 			exec(back, 0, -1);
 
-			exec(up, 0, 2);
-			exec(front, 0, -1);
-			exec(up, 0, 1);
-			exec(front, 0, 1);
 			exec(up, 0, 1);
 			exec(right, 0, 1);
 			exec(up, 0, -1);
 			exec(right, 0, -1);
+			exec(up, 0, -1);
+			exec(front, 0, -1);
+			exec(up, 0, 1);
+			exec(front, 0, 1);
 
 		}
 		else {
@@ -3759,7 +3764,7 @@ void Solver::solveSecondLayer() {
 			std::vector<int> desired{ colorFront, colorRight };
 			std::sort(desired.begin(), desired.end());
 
-			std::cout << "desired = " << desired[0] << " " << desired[1] << std::endl;
+			//std::cout << "desired = " << desired[0] << " " << desired[1] << std::endl;
 
 			std::vector<int> myEdge;
 
@@ -3770,18 +3775,6 @@ void Solver::solveSecondLayer() {
 				myEdge.push_back(faces[front][0][1]);
 				myEdge.push_back(faces[up][topRow][topCol]);
 				std::sort(myEdge.begin(), myEdge.end());
-
-				/*
-				std::cout << "Desred = " << desired[0] << " = " << myMap[desired[0]] << " " << desired[1] << " = " << myMap[desired[1]] << std::endl;
-				std::cout << "myEdge Front = " << faces[front][0][1] << " " << faces[up][topRow][topCol] << std::endl;
-				std::cout << "color = " << myMap[faces[front][0][1]] << " " << myMap[faces[up][topRow][topCol]] << std::endl;
-
-				std::cout << "front + right = " << faces[front][1][N - 1] << " " << faces[right][1][0] << std::endl;
-				std::cout << "left + front = " << faces[left][1][N - 1] << " " << faces[front][1][0] << std::endl;
-				std::cout << "left + back = " << faces[back][1][N - 1] << " " << faces[left][1][0] << std::endl;
-				std::cout << "back + right = " << faces[back][1][0] << " " << faces[right][1][N - 1] << std::endl;
-				*/
-
 			} while (desired[0] != myEdge[0] || desired[1] != myEdge[1]);
 
 			// now that our desired piece is in the edge between Up face and relative Front face, handle appropriately, depending on orientation
@@ -3812,8 +3805,190 @@ void Solver::solveSecondLayer() {
 
 }
 
+void Solver::solveLastCross() {
+	// small enough cubes do not have edges
+	if (N <= 2) {
+		return;
+	}
+
+	int colorTop = getFaceColor(2);
+
+	bool front = faces[2][N - 1][1] == colorTop;
+	bool right = faces[2][1][N - 1] == colorTop;
+	bool back = faces[2][0][1] == colorTop;
+	bool left = faces[2][1][0] == colorTop;
+
+	int count = front + right + back + left;
+
+	while (count < 4) {
+		if (count >= 2) {
+			while (!(left && back) && !(left && right)) {
+				exec(2, 0, 1);
+
+				front = faces[2][N - 1][1] == colorTop;
+				right = faces[2][1][N - 1] == colorTop;
+				back = faces[2][0][1] == colorTop;
+				left = faces[2][1][0] == colorTop;
+			}
+		}
+
+		exec(0, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(1, 0, -1);
+		exec(0, 0, -1);
+
+		front = faces[2][N - 1][1] == colorTop;
+		right = faces[2][1][N - 1] == colorTop;
+		back = faces[2][0][1] == colorTop;
+		left = faces[2][1][0] == colorTop;
+
+		count = front + right + back + left;
+	}
+
+}
+
+void Solver::solveLastEdges() {
+	// small enough cubes do not have edges
+	if (N <= 2) {
+		return;
+	}
+
+	int colorUp = getFaceColor(2);
+	int colorBack = getFaceColor(5);
+	int colorFront = getFaceColor(0);
+	int colorLeft = getFaceColor(4);
+	int colorRight = getFaceColor(1);
+
+	// orient last layer so that back face edge has correct color
+	while (faces[5][0][1] != colorBack) {
+		exec(2, 0, 1);
+	}
+
+	// 6 possible ways that the other 3 edges are positioned; one of them is solved state
+	// from front view, we want Orange, Green, Red on Left, Front, Right
+	// could have (Green, Orange, Red)
+	if (faces[4][0][1] == colorFront && faces[0][0][1] == colorLeft) {
+		// the following swaps up-front and up-left
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+	}
+	// could have (Red, Green, Orange)
+	else if (faces[4][0][1] == colorRight && faces[1][0][1] == colorLeft) {
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+
+		// now Green, Red, Orange
+		exec(2, 0, 1);
+
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+
+		exec(2, 0, -1);
+		// now Green, Orange, Red
+
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		// now Orange, Green, Red
+	}
+	// could have Orange, Red, Green
+	else if (faces[0][0][1] == colorRight && faces[1][0][1] == colorFront) {
+		exec(2, 0, 1);
+
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+
+		exec(2, 0, -1);
+	}
+	// could have Green, Red, Orange
+	else if (faces[4][0][1] == colorFront && faces[0][0][1] == colorRight && faces[1][0][1] == colorLeft) {
+		exec(2, 0, 1);
+
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+
+		exec(2, 0, -1);
+		// now Green, Orange, Red
+
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		// now Orange, Green, Red
+	}
+	// coudl have Red, Orange, Green
+	else if (faces[4][0][1] == colorRight && faces[0][0][1] == colorLeft && faces[1][0][1] == colorFront) {
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		// now Orange, Red, Green
+
+		exec(2, 0, 1);
+
+		exec(1, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, 2);
+		exec(1, 0, -1);
+		exec(2, 0, 1);
+
+		exec(2, 0, -1);
+		// now Orange, Green, Red
+	}
+}
+
 void Solver::solve3x3x3() {
 	solveCross();
 	solveCorners4();
 	solveSecondLayer();
+	solveLastCross();
+	solveLastEdges();
 }

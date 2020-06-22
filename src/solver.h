@@ -49,7 +49,10 @@ public:
 	void solveCross();
 	void solveCorners4();
 	void solveSecondLayer();
+	void solveLastCross();
+	void solveLastEdges();
 	void solve3x3x3();
+	
 
 
 private:

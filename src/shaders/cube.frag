@@ -136,7 +136,7 @@ void main() {
 	float EPS = 0.02;
 
 	if(dx < EPS || dy < EPS) {
-		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);
+		fragment_color = vec4(1.0, 1.0, 1.0, 1.0);
 	}
 
 	fragment_color[3] = 1.0; // prevent transparencies

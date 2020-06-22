@@ -98,7 +98,7 @@ private:
 	float pan_speed_ = 0.5f;
 	float rotation_speed_ = 10.0f; // how fast quarter turn rotations graphically are
 	float drag_speed_ = 0.02f;
-	float zoom_speed_ = 0.5f;
+	float zoom_speed_ = 0.5f + 0.05 * cubeWidth;
 	float aspect_;
 
 	glm::vec3 eye_ = glm::vec3(0.0f, 0.1f, camera_distance_);
