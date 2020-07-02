@@ -3063,8 +3063,7 @@ void Solver::solveEdges2() {
 
 			// correct piece already
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
-				//std::cout << "already done" << std::endl;
-				//continue;
+
 			}
 			// if desired piece on opposite side of same edge
 			else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
@@ -3761,7 +3760,6 @@ void Solver::solveSecondLayer() {
 
 		}
 		else {
-			std::cout << "top" << std::endl;
 			// need to access correct sticker on Up face, depending on which edge it is solving right now
 			// need to take correct sticker on Up, starting with if our relative Front is absolute Front, absolute Right, abs Back, or abs Left
 			std::vector<int> topRotationRow{ N - 1, 1, 0, 1 };
@@ -4165,7 +4163,77 @@ void Solver::solveLastCornerPosition() {
 	bool same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
 	bool same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
 	
-	if (same1 + same2 + same3 + same4 == 2) {
+	//std::cout << "same = " << same1 << " " << same2 << " " << same3 << " " << same4 << std::endl;
+	// must check for cases of parity
+	int indexMax = -1;
+	int maxSame = 0;
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		int sameCount = same1 + same2 + same3 + same4;
+		if (sameCount > maxSame) {
+			indexMax = numTimes;
+			maxSame = sameCount;
+		}
+
+		// turn up face to cycle through
+		exec(2, 0, 1);
+
+		// update corner information
+		corner1[0] = faces[2][N - 1][N - 1];
+		corner1[1] = faces[0][0][N - 1];
+		corner1[2] = faces[1][0][0];
+		std::sort(corner1.begin(), corner1.end());
+
+		corner2[0] = faces[2][N - 1][0];
+		corner2[1] = faces[0][0][0];
+		corner2[2] = faces[4][0][N - 1];
+		std::sort(corner2.begin(), corner2.end());
+
+		corner3[0] = faces[2][0][0];
+		corner3[1] = faces[5][0][N - 1];
+		corner3[2] = faces[4][0][0];
+		std::sort(corner3.begin(), corner3.end());
+
+		corner4[0] = faces[2][0][N - 1];
+		corner4[1] = faces[5][0][0];
+		corner4[2] = faces[1][0][N - 1];
+		std::sort(corner4.begin(), corner4.end());
+
+		same1 = (desired1[0] == corner1[0] && desired1[1] == corner1[1] && desired1[2] == corner1[2]);
+		same2 = (desired2[0] == corner2[0] && desired2[1] == corner2[1] && desired2[2] == corner2[2]);
+		same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
+		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
+	}
+
+	if (maxSame == 2) {
+		std::cout << "nani?" << std::endl;
+
+		exec(2, 0, indexMax);
+
+		corner1[0] = faces[2][N - 1][N - 1];
+		corner1[1] = faces[0][0][N - 1];
+		corner1[2] = faces[1][0][0];
+		std::sort(corner1.begin(), corner1.end());
+
+		corner2[0] = faces[2][N - 1][0];
+		corner2[1] = faces[0][0][0];
+		corner2[2] = faces[4][0][N - 1];
+		std::sort(corner2.begin(), corner2.end());
+
+		corner3[0] = faces[2][0][0];
+		corner3[1] = faces[5][0][N - 1];
+		corner3[2] = faces[4][0][0];
+		std::sort(corner3.begin(), corner3.end());
+
+		corner4[0] = faces[2][0][N - 1];
+		corner4[1] = faces[5][0][0];
+		corner4[2] = faces[1][0][N - 1];
+		std::sort(corner4.begin(), corner4.end());
+
+		same1 = (desired1[0] == corner1[0] && desired1[1] == corner1[1] && desired1[2] == corner1[2]);
+		same2 = (desired2[0] == corner2[0] && desired2[1] == corner2[1] && desired2[2] == corner2[2]);
+		same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
+		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
+
 		if (same1 && same2) {
 			fixParityAdjacentCorners();
 		}
@@ -4218,6 +4286,7 @@ void Solver::solveLastCornerPosition() {
 		same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
 		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
 
+		exec(2, 0, -indexMax);
 	}
 
 	// if none of them are right

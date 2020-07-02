@@ -321,9 +321,6 @@ int main(int argc, char* argv[]) {
 			solver->copyConfiguration(cube_centers, cube_types);
 			std::cout << "COPYING FINISHED" << std::endl;
 
-			std::cout << "scrambled = " << std::endl;
-			solver->print();
-
 			gui.resetCount();
 			solver->solveCenter0();
 			gui.setRotatingSpeed(250.0f); // to solve 1st center
@@ -422,7 +419,6 @@ int main(int argc, char* argv[]) {
 			//std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
-			std::cout << "well numEdgeFlips = " << solver->numEdgeFlip << std::endl;
 			solver->solve3x3x3();
 			gui.setRotatingSpeed(250.0f); // to solve 3x3x3
 
