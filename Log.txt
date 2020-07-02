@@ -264,4 +264,23 @@ Commit "Built complete bottom face" - June 19, 2020 (right past midnight of June
 - 12 if statements, for the 4 different locations of desired corner on bottom face, and 3 orientations each to fill in bottom corners
 - Used while loop to rotate top to find the desired corner if it is not on the bottom face, and 3 more if statements
 
+Commit "Middle layer finished" - June 22, 2020
+- Completed the middle layer by placing the appropriate edges into the edges not on Up/Down faces
+	- Only the Up layer is left to solve
+- Fixed a few bugs
+
+Commit "Last cross finished" - June 22, 2020
+- Increased zoom speed for larger cubes
+- Orients all 4 Up edges so that the colors on top are correct, not worrying about the colors on the side
+- Then permute these edges so that the colors on the sides of these Up edges (Front/Right/Back/Up) are correct
+
+Commit "Found bug where Rubik's cube is in impossible state" - June 22, 2020
+- Permuted the position of the corners so that the corners are in the right place, just perhaps not oriented right
+- When cubeWidth is even, sometimes freezes - seems as if it reached a state where no amount of rotations can fix/solve the cube
+
+Commit "Fixed parity issues of even sized cubes" - July 2, 2020
+- Attempt at implementing pausing cube rotating
+- Issue with impossible state is that for even sized cubes, we do not know whether the edge we are solving is oriented correctly or backwards
+- Occurs either at a) needing to flip orientation of individual edges, b) swapping corners
+- Now whole cube is almost solved, except for the 4 remaining corner pieces
 

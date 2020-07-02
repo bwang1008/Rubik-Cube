@@ -59,8 +59,6 @@ public:
 	void solveLastEdges();
 	void solveLastCornerPosition();
 	void solve3x3x3();
-	
-	int numEdgeFlip = 0;
 
 private:
 	int N;

@@ -259,7 +259,6 @@ int main(int argc, char* argv[]) {
 	long long totalQT = 0;
 	bool draw_cube = true;
 	bool draw_sky = false;
-	bool skip = true;
 
 	if(argc == 3){
 		std::string s(argv[2]);
@@ -455,7 +454,7 @@ int main(int argc, char* argv[]) {
 			float supposedRadians = float((std::abs(myMove[2])) * 3.1415926/2.0);
 
 			// if we turned enough, stop and update for next turn
-			if(skip || (currentTheta > supposedRadians && face >= 0)) { // if it turned enough, stop turning
+			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough, stop turning
 				// update cube vertices (VBO) and centers after making quarter turns
 				// to make transformations permanent
 				glm::mat4 mat = glm::mat4(1.0f);
@@ -627,22 +626,6 @@ int main(int argc, char* argv[]) {
 			gui.setCurrentMove();
 			glm::ivec3 myMove = gui.getCurrentMove(); // Get the next move
 			//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
-
-
-			std::string sth = "";
-			int face = myMove[0];
-			if (face == 0)
-				sth = "Front";
-			else if (face == 1)
-				sth = "Right";
-			else if (face == 2)
-				sth = "Up";
-			else if (face == 3)
-				sth = "Down";
-			else if (face == 4)
-				sth = "Left";
-			else if (face == 5)
-				sth = "Back";
 
 			if (myMove[0] >= 0) { // only rotate if valid face
 				gui.setStartTime(); // set time at 0
