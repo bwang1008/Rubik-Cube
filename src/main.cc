@@ -259,6 +259,7 @@ int main(int argc, char* argv[]) {
 	long long totalQT = 0;
 	bool draw_cube = true;
 	bool draw_sky = false;
+	bool skip = true;
 
 	if(argc == 3){
 		std::string s(argv[2]);
@@ -321,16 +322,14 @@ int main(int argc, char* argv[]) {
 			solver->copyConfiguration(cube_centers, cube_types);
 			std::cout << "COPYING FINISHED" << std::endl;
 
+			std::cout << "scrambled = " << std::endl;
+			solver->print();
+
 			gui.resetCount();
 			solver->solveCenter0();
-			//solver->solveEdges();
 			gui.setRotatingSpeed(250.0f); // to solve 1st center
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
-
-			//for (int i = 0; i < 20; i++)
-			//	solver->incr();
-
 		}
 
 		// Finished solving first center
@@ -424,9 +423,9 @@ int main(int argc, char* argv[]) {
 			//std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
-			solver->solveEdges2();
-			//solver->solve3x3x3();
-			gui.setRotatingSpeed(1.0f); // to solve 3x3x3
+			std::cout << "well numEdgeFlips = " << solver->numEdgeFlip << std::endl;
+			solver->solve3x3x3();
+			gui.setRotatingSpeed(250.0f); // to solve 3x3x3
 
 			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;
 			solver->incr();
@@ -440,9 +439,7 @@ int main(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
-
 			gui.resetCount();
-			//solver->solveLastCenters();
 			gui.setRotatingSpeed(250.0f);
 
 			std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
@@ -458,7 +455,7 @@ int main(int argc, char* argv[]) {
 			float supposedRadians = float((std::abs(myMove[2])) * 3.1415926/2.0);
 
 			// if we turned enough, stop and update for next turn
-			if(currentTheta > supposedRadians && face >= 0) { // if it turned enough, stop turning
+			if(skip || (currentTheta > supposedRadians && face >= 0)) { // if it turned enough, stop turning
 				// update cube vertices (VBO) and centers after making quarter turns
 				// to make transformations permanent
 				glm::mat4 mat = glm::mat4(1.0f);
@@ -630,6 +627,22 @@ int main(int argc, char* argv[]) {
 			gui.setCurrentMove();
 			glm::ivec3 myMove = gui.getCurrentMove(); // Get the next move
 			//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+
+
+			std::string sth = "";
+			int face = myMove[0];
+			if (face == 0)
+				sth = "Front";
+			else if (face == 1)
+				sth = "Right";
+			else if (face == 2)
+				sth = "Up";
+			else if (face == 3)
+				sth = "Down";
+			else if (face == 4)
+				sth = "Left";
+			else if (face == 5)
+				sth = "Back";
 
 			if (myMove[0] >= 0) { // only rotate if valid face
 				gui.setStartTime(); // set time at 0

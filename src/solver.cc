@@ -802,7 +802,9 @@ void Solver::exec(int face, int layer, int qt) {
 	else {
 		if (qt == 3)
 			qt = -1;
-		dequePtr->push_back(glm::ivec3(face, layer, qt));
+
+		if(qt != 0)
+			dequePtr->push_back(glm::ivec3(face, layer, qt));
 	}
 }
 
@@ -2391,6 +2393,7 @@ void Solver::solveLastCenters() {
 // Credits to https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/ 
 // flips the edge between front and right
 void Solver::flipEdge(int edge) {
+	numEdgeFlip++;
 	if (edge == 0 + 1) { // front + right
 		exec(1, 0, 1);
 		exec(2, 0, 1);
@@ -2423,18 +2426,39 @@ void Solver::flipEdge(int edge) {
 		exec(2, 0, 1);
 		exec(0, 0, -1);
 		exec(4, 0, 1);
+
+	//	std::cout << "MIDWAY :" << std::endl;
+	//	print();
+
 		exec(0, 0, -1);
+
+	//	std::cout << "5/7: " << std::endl;
+	//	print();
+
 		exec(4, 0, -1);
+
+		//std::cout << "3/4 of the way:" << std::endl;
+		//print();
+
 		exec(0, 0, 1);
 	}
 }
 
 void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
+	std::map<int, char> myMap;
+	myMap[0] = 'G';
+	myMap[1] = 'R';
+	myMap[2] = 'W';
+	myMap[3] = 'Y';
+	myMap[4] = 'O';
+	myMap[5] = 'B';
 
 	// build edge on edge between Front and Right face
 	for(int numTimes = 0; numTimes < 4; ++numTimes) {
 		int colorF = colorPairs[numTimes].first;
 		int colorR = colorPairs[numTimes].second;
+
+		std::cout << "Edges 0-4 doing " << myMap[colorF] << " " << myMap[colorR] << std::endl;
 
 		for (int i = 1; i < N - 1; ++i) {
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
@@ -2723,7 +2747,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 		int colorF = colorPairs[numTimes].first;
 		int colorR = colorPairs[numTimes].second;
 
-		//std::cout << "FR = " << myMap[colorF] << " " << myMap[colorR] << std::endl;
+		std::cout << "FR = " << myMap[colorF] << " " << myMap[colorR] << std::endl;
 
 		for (int i = 1; i < N - 1; ++i) {
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
@@ -3040,90 +3064,158 @@ void Solver::solveEdges2() {
 	myMap[4] = 'O';
 	myMap[5] = 'B';
 
+	int count = 0;
+
 	// build edge on edge between Front and Right face
 	// top edges, bottom edges are all solved
 	for (int numTimes = 0; numTimes < 3; numTimes++) {
 		int colorF = faces[0][N / 2][N - 1];
 		int colorR = faces[1][N / 2][0];
 
+		if (N % 2 == 0) {
+			/*
+			if (numTimes == 0) {
+				colorF = 3;
+				colorR = 5;
+			}
+			else if (numTimes == 1) {
+				colorF = 4;
+				colorR = 5;
+			}
+			else if (numTimes == 2) {
+				colorF = 4;
+				colorR = 3;
+			}
+			*/
+		}
+
 		std::cout << "pursuing colorF = " << myMap[colorF] << " and colorR = " << myMap[colorR] << std::endl;
 
 		for (int i = 1; i < N - 1; ++i) {
 
-			//std::cout << "i = " << i << std::endl;
+			std::cout << "i = " << i << std::endl;
 			// correct piece already
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
-				//std::cout << "already done" << std::endl;
-				continue;
+				std::cout << "already done" << std::endl;
+				//continue;
 			}
 			// if desired piece on opposite side of same edge
 			else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
-				//std::cout << "on other side of same edge!" << std::endl;
+				std::cout << "on other side of same edge!" << std::endl;
 				exec(2, i, -1);
 				exec(2, N - 1 - i, -1);
 				flipEdge(1 + 5); // right + back
 				exec(2, i, 1);
 				exec(2, N - 1 - i, 1);
+
+				count += 11;
+				std::cout << "now count = " << count << std::endl;
 			}
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
-				//std::cout << "edge between right + back, down" << std::endl;
+				std::cout << "edge between right + back, down" << std::endl;
 				exec(2, i, -1);
 				flipEdge(1 + 5); // right + back
 				exec(2, i, 1);
+
+				count += 9;
+				std::cout << "now count = " << count << std::endl;
 			}
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
-				//std::cout << "edge between right + back, up" << std::endl;
+				std::cout << "edge between right + back, up" << std::endl;
 				flipEdge(1 + 5); // right + back
 				exec(2, i, -1);
 				flipEdge(1 + 5);
 				exec(2, i, 1);
+
+				count += 16;
+			//	std::cout << "now count = " << count << std::endl;
 			}
 			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
-				//std::cout << "edge between left + front, down" << std::endl;
+				std::cout << "edge between left + front, down" << std::endl;
 				exec(2, i, 1);
 				flipEdge(4 + 0); // left + front
 				exec(2, i, -1);
+
+				count += 9;
+			//	std::cout << "now count = " << count << std::endl;
 			}
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
-				//std::cout << "edge between left + front, up" << std::endl;
+				std::cout << "edge between left + front, up" << std::endl;
 				flipEdge(4 + 0); // left + front
 				exec(2, i, 1);
+				std::cout << "doing print: " << std::endl;
+			//	print();
+
 				flipEdge(4 + 0);
+
+				
+			//	std::cout << "STOPPPPPPPPPPPPP" << std::endl;
+
 				exec(2, i, -1);
+
+				count += 16;
+		//		std::cout << "now count = " << count << std::endl;
+			//	print();
 			}
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
-				//std::cout << "edge between back + left, down" << std::endl;
+				std::cout << "edge between back + left, down" << std::endl;
 				exec(2, i, 2);
 				flipEdge(5 + 4); // back + left
 				exec(2, i, -2);
+
+				count += 11;
+			//	std::cout << "now count = " << count << std::endl;
 			}
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
-				//std::cout << "edge between back + left, up" << std::endl;
+				std::cout << "edge between back + left, up" << std::endl;
 				flipEdge(5 + 4);
 				exec(2, i, 2);
 				flipEdge(5 + 4);
 				exec(2, i, -2);
+
+				count += 18;
+		//		std::cout << "now count = " << count << std::endl;
 			}
 		}
+
+	//	std::cout << "here, we are at " << count << std::endl;
 
 		if (numTimes == 0) {
 			// bring 1st finished edge to edge between back + left
 			exec(1, 0, 2);
 			exec(5, 0, 2);
+
+			count += 4;
+		//	std::cout << "added 4: " << count << std::endl;
 		}
 		else if (numTimes == 1) {
 			// bring 2nd finished edge to edge between front + left
+
 			exec(0, 0, 2);
+
+			count += 2;
+		//	std::cout << "added 2: " << count << std::endl;
 		}
 		else if (numTimes == 2) {
 			// bring 3rd finished edge to edge between right + back
 			exec(1, 0, 2);
+
+			count += 2;
+		//	std::cout << "added 2 part 2: " << count << std::endl;
 		}
 	}
+
+	std::cout << "now doing last edge: count = " << count << std::endl;
 
 	// build last edge, on edge between front + right
 	int colorF = faces[0][N / 2][N - 1];
 	int colorR = faces[1][N / 2][0];
+
+	if (N % 2 == 0) {
+	//	colorF = 2;
+	//	colorR = 5;
+	}
+
 	std::cout << "last edge: colorF = " << myMap[colorF] << " and colorR = " << myMap[colorR] << std::endl;
 	for (int i = 1; i < N - 1; ++i) {
 		//std::cout << "i2 = " << i << std::endl;
@@ -3177,7 +3269,7 @@ void Solver::solveEdges() {
 
 	solveEdges0(colorPairs);
 	solveEdges1(colorPairs);
-	//solveEdges2();
+	solveEdges2();
 }
 
 void Solver::solveCross() {
@@ -3805,6 +3897,181 @@ void Solver::solveSecondLayer() {
 
 }
 
+// https://ruwix.com/twisty-puzzles/4x4x4-rubiks-cube-rubiks-revenge/
+// flips edge between Front + Up faces of even size cubes
+void Solver::fixParityEdge() {
+
+	int half = N / 2;
+
+	for (int i = 1; i < half; ++i) {
+		exec(1, i, 2);
+	}
+	exec(5, 0, 2);
+	exec(2, 0, 2);
+	for (int i = 1; i < half; ++i) {
+		exec(4, i, 1);
+	}
+
+	exec(2, 0, 2);
+	for (int i = 1; i < half; ++i) {
+		exec(1, i, -1);
+	}
+	exec(2, 0, 2);
+	for (int i = 1; i < half; ++i) {
+		exec(1, i, 1);
+	}
+
+	exec(2, 0, 2);
+	exec(0, 0, 2);
+	for (int i = 1; i < half; ++i) {
+		exec(1, i, 1);
+	}
+	exec(0, 0, 2);
+
+	for (int i = 1; i < half; ++i) {
+		exec(4, i, -1);
+	}
+	exec(5, 0, 2);
+	for (int i = 1; i < half; ++i) {
+		exec(1, i, 2);
+	}
+
+
+	/*
+	for (int i = 0; i < half; ++i) {
+		exec(1, i, 1);
+	}
+	exec(5, 0, -1);
+
+	for (int i = 0; i < N; i++) {
+		exec(0, 0, -1);
+	}
+
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < half; ++i) {
+			exec(1, i, -1);
+		}
+		exec(0, 0, 1);
+		exec(2, 0, 2);
+		exec(0, 0, -1);
+	}
+
+	for (int i = 1; i < half; ++i) {
+		exec(1, i, -1);
+	}
+	
+	for (int i = 0; i < N; i++) {
+		exec(0, 0, 1);
+	}
+
+	exec(5, 0, 1);
+
+	for (int i = 0; i < half; ++i) {
+		exec(1, 0, -1);
+	}
+
+	*/
+
+	/*
+	for (int i = 0; i < half; ++i) {
+		exec(1, i, -1);
+	}
+
+	for (int numTimes = 0; numTimes < 5; ++numTimes) {
+		exec(0, 0, 2);
+		exec(2, 0, -1);
+
+		for (int i = 0; i < half; i++) {
+			exec(4, i, -1);
+		}
+
+		exec(2, 0, 1);
+	}
+
+	for (int i = 0; i < half; ++i) {
+		exec(1, i, 1);
+	}
+	*/
+	
+}
+
+// https://ruwix.com/twisty-puzzles/4x4x4-rubiks-cube-rubiks-revenge/
+// flips corner pieces Front-Right-Up and Back-Left-Up
+void Solver::fixParityOppositeCorners() {
+	int half = N / 2;
+	for (int i = 0; i < half; ++i) {
+		exec(1, i, 2);
+	}
+	for (int i = 1; i < half; ++i) {
+		exec(0, i, 2); 
+	}
+	exec(2, 0, 2);
+	for (int i = 0; i < half; ++i) {
+		exec(0, i, 2);
+	}
+
+	exec(3, 0, 1);
+	for (int i = 0; i < half; ++i) {
+		exec(1, i, 2);
+	}
+	exec(2, 0, 2);
+	for (int i = 0; i < half; ++i) {
+		exec(0, i, 2);
+	}
+	
+	exec(2, 0, -1);
+	for (int i = 0; i < half; ++i) {
+		exec(0, i, 2);
+	}
+	exec(4, 0, 2);
+	exec(2, 0, 2);
+
+	exec(5, 0, 2);
+	for (int i = 0; i < half; ++i) {
+		exec(4, i, 2);
+	}
+	exec(2, 0, 1);
+
+
+}
+
+// https://ruwix.com/twisty-puzzles/4x4x4-rubiks-cube-rubiks-revenge/
+// flips corner pieces Front-Right-Up and Front-Left-Up
+void Solver::fixParityAdjacentCorners() {
+	int half = N / 2;
+
+	exec(0, 0, 2);
+	exec(1, 0, 2);
+	exec(5, 0, -1);
+
+	exec(3, 0, -1);
+	exec(5, 0, 1);
+	exec(1, 0, 2);
+	exec(0, 0, -1);
+	exec(2, 0, 1);
+	
+	for (int i = 0; i < half; ++i) {
+		exec(0, i, 2);
+	}
+	exec(0, 0, 1);
+	exec(4, 0, 2);
+
+	for (int i = 1; i < half; ++i) {
+		exec(0, i, 2);
+	}
+	for (int i = 0; i < half; ++i) {
+		exec(4, i, 2);
+	}
+
+	for (int i = 1; i < half; ++i) {
+		exec(0, i, 2);
+	}
+	for (int i = 1; i < half; ++i) {
+		exec(4, i, 2);
+	}
+	exec(2, 0, -1);
+}
+
 void Solver::solveLastCross() {
 	// small enough cubes do not have edges
 	if (N <= 2) {
@@ -3819,6 +4086,32 @@ void Solver::solveLastCross() {
 	bool left = faces[2][1][0] == colorTop;
 
 	int count = front + right + back + left;
+
+	if (N % 2 == 0 && count % 2 == 1) {
+		std::cout << front << " " << right << " " << back << " " << left << std::endl;
+		std::cout << "BADDDDDDDDDd" << std::endl;
+		//fixParityEdge();
+
+		for (int i = 0; i < 4; ++i) {
+			if (faces[2][N - 1][1] == colorTop) {
+				fixParityEdge();
+			}
+			exec(2, 0, 1);
+		}
+
+		front = faces[2][N - 1][1] == colorTop;
+		right = faces[2][1][N - 1] == colorTop;
+		back = faces[2][0][1] == colorTop;
+		left = faces[2][1][0] == colorTop;
+
+		count = front + right + back + left;
+
+		std::cout << front << " " << right << " " << back << " " << left << std::endl;
+
+		//return;
+	}
+
+	int rawr = 0;
 
 	while (count < 4) {
 		if (count >= 2) {
@@ -3845,6 +4138,13 @@ void Solver::solveLastCross() {
 		left = faces[2][1][0] == colorTop;
 
 		count = front + right + back + left;
+		std::cout << "COUNT = " << count << std::endl;
+
+		rawr++;
+
+		if (rawr == 20) {
+			break;
+		}
 	}
 
 }
@@ -4025,6 +4325,62 @@ void Solver::solveLastCornerPosition() {
 	bool same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
 	bool same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
 	
+	if (same1 + same2 + same3 + same4 == 2) {
+		std::cout << "BAD CORNERS!!!" << std::endl;
+		if (same1 && same2) {
+			fixParityAdjacentCorners();
+		}
+		else if (same1 && same3) {
+			fixParityOppositeCorners();
+		}
+		else if (same1 && same4) {
+			exec(2, 0, 1);
+			fixParityAdjacentCorners();
+			exec(2, 0, -1);
+		}
+		else if (same2 && same3) {
+			exec(2, 0, -1);
+			fixParityAdjacentCorners();
+			exec(2, 0, 1);
+		}
+		else if (same2 && same4) {
+			exec(2, 0, 1);
+			fixParityOppositeCorners();
+			exec(2, 0, -1);
+		}
+		else if (same3 && same4) {
+			exec(2, 0, 2);
+			fixParityAdjacentCorners();
+			exec(2, 0, -2);
+		}
+
+		corner1[0] = faces[2][N - 1][N - 1];
+		corner1[1] = faces[0][0][N - 1];
+		corner1[2] = faces[1][0][0];
+		std::sort(corner1.begin(), corner1.end());
+
+		corner2[0] = faces[2][N - 1][0];
+		corner2[1] = faces[0][0][0];
+		corner2[2] = faces[4][0][N - 1];
+		std::sort(corner2.begin(), corner2.end());
+
+		corner3[0] = faces[2][0][0];
+		corner3[1] = faces[5][0][N - 1];
+		corner3[2] = faces[4][0][0];
+		std::sort(corner3.begin(), corner3.end());
+
+		corner4[0] = faces[2][0][N - 1];
+		corner4[1] = faces[5][0][0];
+		corner4[2] = faces[1][0][N - 1];
+		std::sort(corner4.begin(), corner4.end());
+
+		same1 = (desired1[0] == corner1[0] && desired1[1] == corner1[1] && desired1[2] == corner1[2]);
+		same2 = (desired2[0] == corner2[0] && desired2[1] == corner2[1] && desired2[2] == corner2[2]);
+		same3 = (desired3[0] == corner3[0] && desired3[1] == corner3[1] && desired3[2] == corner3[2]);
+		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
+
+	}
+
 	// if none of them are right
 	if (!same1 && !same2 && !same3 && !same4) {
 		exec(2, 0, 1);

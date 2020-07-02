@@ -46,6 +46,12 @@ public:
 	void solveEdges2();
 	void solveEdges();
 
+	// fix parity of even size cubes
+	void fixParityEdge();
+	void fixParityOppositeCorners();
+	void fixParityAdjacentCorners();
+
+
 	void solveCross();
 	void solveCorners4();
 	void solveSecondLayer();
@@ -54,7 +60,7 @@ public:
 	void solveLastCornerPosition();
 	void solve3x3x3();
 	
-
+	int numEdgeFlip = 0;
 
 private:
 	int N;

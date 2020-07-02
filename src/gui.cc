@@ -211,10 +211,17 @@ MatrixPointers GUI::getMatrixPointers() const
 	return ret;
 }
 
-float GUI::getCurrentPlayTime() const
+float GUI::getCurrentPlayTime()
 {
-	std::chrono::duration<double> diff = std::chrono::system_clock::now() - start_time;
-	return float(diff.count());
+	if (play_) {
+		std::chrono::duration<double> diff = std::chrono::system_clock::now() - start_time;
+		lastTime = float(diff.count());
+		return lastTime;
+	}
+	else {
+		return lastTime;
+	}
+	
 }
 
 void GUI::scrambleCube()

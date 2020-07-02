@@ -66,7 +66,7 @@ public:
 	const float* getLightPositionPtr() const { return &light_position_[0]; }
 
 	bool isPlaying() const { return play_; }
-	float getCurrentPlayTime() const;
+	float getCurrentPlayTime();
 	void setStartTime() { start_time = std::chrono::system_clock::now(); }
 
 	bool isQuarterTurning() { return quarter_turning; }
@@ -124,9 +124,10 @@ private:
 
 	bool captureWASDUPDOWN(int key, int action);
 
-	bool play_ = false;
+	bool play_ = true;
 	double offset = 0;
 	std::chrono::time_point<std::chrono::system_clock> start_time;
+	float lastTime;
 
 	long long countMoves = 0;
 	long long countQT = 0;
