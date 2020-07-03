@@ -400,6 +400,8 @@ int main(int argc, char* argv[]) {
 			totalMoves += gui.getCountMoves();
 			totalQT += gui.getCountQT();
 
+			std::cout << "total moves of centers = (" << totalMoves << ", " << totalQT << ")" << std::endl;
+
 			gui.resetCount();
 			solver->solveEdges();
 			gui.setRotatingSpeed(250.0f); // to solve edges

@@ -4204,9 +4204,9 @@ void Solver::solveLastCornerPosition() {
 		same4 = (desired4[0] == corner4[0] && desired4[1] == corner4[1] && desired4[2] == corner4[2]);
 	}
 
-	if (maxSame == 2) {
+	// if parity issue occurs with corner, fix it
+	if (N % 2 == 0 && maxSame == 2) {
 		std::cout << "nani?" << std::endl;
-
 		exec(2, 0, indexMax);
 
 		corner1[0] = faces[2][N - 1][N - 1];
@@ -4393,6 +4393,388 @@ void Solver::solveLastCornerPosition() {
 	}
 }
 
+void Solver::solveLastCornerPositionB() {
+	int colorFront = getFaceColor(0);
+	int colorRight = getFaceColor(1);
+	int colorUp = getFaceColor(2);
+	int colorDown = getFaceColor(3);
+	int colorLeft = getFaceColor(4);
+	int colorBack = getFaceColor(5);
+	
+	// front-right-up, front-left-up, back-left-up, back-right-up
+	int corners[12] = { faces[0][0][N - 1], faces[1][0][0], faces[2][N - 1][N - 1], 
+						faces[0][0][0], faces[4][0][N - 1], faces[2][N - 1][0], 
+						faces[5][0][N - 1], faces[4][0][0], faces[2][0][0], 
+						faces[5][0][0], faces[1][0][N - 1], faces[2][0][N - 1] };
+
+	for (int i = 0; i < 4; ++i) {
+		std::sort(corners + 3 * i, corners + 3 * i + 3);
+	}
+
+	int desired[12] = { colorFront, colorRight, colorUp, colorFront, colorLeft, colorUp, 
+		colorBack, colorLeft, colorUp, colorBack, colorRight, colorUp };
+
+	for (int i = 0; i < 4; ++i) {
+		std::sort(desired + 3 * i, desired + 3 * i + 3);
+	}
+
+	int indices[4] = { 0, 0, 0, 0 };
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			if (desired[3 * j] == corners[3 * i] && desired[3 * j + 1] == corners[3 * i + 1] && desired[3 * j + 2] == corners[3 * i + 2]) {
+				indices[i] = j + 1;
+				break;
+			}
+		}
+	}
+
+	int permutation = 1000 * indices[0] + 100 * indices[1] + 10 * indices[2] + indices[3];
+	std::cout << "PPPPPPPPERMUTATION = " << permutation << std::endl;
+
+	if (permutation == 1234) {
+
+	}
+	else if (permutation == 1243) {
+		exec(2, 0, 2);
+		fixParityAdjacentCorners();
+		exec(2, 0, 2);
+	}
+	else if (permutation == 1324) {
+		exec(2, 0, -1);
+		fixParityAdjacentCorners();
+		exec(2, 0, 1);
+	}
+	else if (permutation == 1342) {
+		// turn 234 clockwise
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+	}
+	else if (permutation == 1423) {
+		// turn 234 counter-clockwise
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+	}
+	else if (permutation == 1432) {
+		exec(2, 0, 1);
+		fixParityOppositeCorners();
+		exec(2, 0, -1);
+	}
+	else if (permutation == 2134) {
+		fixParityAdjacentCorners();
+	}
+	else if (permutation == 2143) {
+		exec(2, 0, 1);
+
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, -1);
+
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+	}
+	else if (permutation == 2314) {
+		exec(2, 0, 1);
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+
+		exec(2, 0, -1);
+	}
+	else if (permutation == 2341) {
+		exec(2, 0, 1);
+		fixParityAdjacentCorners();
+		exec(2, 0, -1);
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+	}
+	else if (permutation == 2413) {
+		fixParityOppositeCorners();
+
+		//ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+	}
+	else if (permutation == 2431) {
+		exec(2, 0, 2);
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+
+		exec(2, 0, -2);
+	}
+	else if (permutation == 3124) {
+		exec(2, 0, 1);
+
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, -1);
+	}
+	else if (permutation == 3142) {
+		fixParityAdjacentCorners();
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+	}
+	else if (permutation == 3214) {
+		fixParityOppositeCorners();
+	}
+	else if (permutation == 3241) {
+		exec(2, 0, -1);
+		
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+
+		exec(2, 0, 1);
+	}
+	else if (permutation == 3412) {
+		exec(2, 0, -1);
+		
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, 1);
+
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+	}
+	else if (permutation == 3421) {
+		exec(2, 0, 1);
+		fixParityOppositeCorners();
+		exec(2, 0, -1);
+
+		exec(2, 0, 1);
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		
+		exec(2, 0, -1);
+	}
+	else if (permutation == 4123) {
+		exec(2, 0, 1);
+		fixParityAdjacentCorners();
+		exec(2, 0, -1);
+
+		exec(2, 0, 1);
+		//ccw 
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, -1);
+	}
+	else if (permutation == 4132) {
+		exec(2, 0, 1);
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, -1);
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+	}
+	else if (permutation == 4213) {
+		exec(2, 0, 1);
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+
+		exec(2, 0, -1);
+
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+	}
+	else if (permutation == 4231) {
+		exec(2, 0, 1);
+		fixParityAdjacentCorners();
+		exec(2, 0, -1);
+	}
+	else if (permutation == 4312) {
+		fixParityOppositeCorners();
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+	}
+	else if (permutation == 4321) {
+		exec(2, 0, 1);
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, -1);
+
+		exec(2, 0, -1);
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+
+		exec(2, 0, 1);
+	}
+
+}
+
+// assume corners are in the correct position; now orient each small cube so correct sticker on top
+void Solver::solveLastCornerOrientation() {
+	int colorUp = getFaceColor(2);
+
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		while (faces[2][N - 1][N - 1] != colorUp) {
+			exec(1, 0, -1);
+			exec(3, 0, -1);
+			exec(1, 0, 1);
+			exec(3, 0, 1);
+		}
+
+		exec(2, 0, 1);
+	}
+}
+
 // https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/ for reference
 void Solver::solve3x3x3() {
 	solveCross();
@@ -4400,5 +4782,6 @@ void Solver::solve3x3x3() {
 	solveSecondLayer();
 	solveLastCross();
 	solveLastEdges();
-	solveLastCornerPosition();
+	solveLastCornerPositionB();
+	solveLastCornerOrientation();
 }

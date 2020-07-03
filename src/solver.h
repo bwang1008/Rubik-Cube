@@ -51,13 +51,14 @@ public:
 	void fixParityOppositeCorners();
 	void fixParityAdjacentCorners();
 
-
 	void solveCross();
 	void solveCorners4();
 	void solveSecondLayer();
 	void solveLastCross();
 	void solveLastEdges();
 	void solveLastCornerPosition();
+	void solveLastCornerPositionB();
+	void solveLastCornerOrientation();
 	void solve3x3x3();
 
 private:
@@ -84,6 +85,8 @@ private:
 	// 10 = solve front and right face simultaneously
 	// 11 = wait for ENTER key to proceed
 	// 12 = solve edges
+	// 13 = wait for ENTER key to proceed
+	// 14 = solve as 3x3x3
 
 };
 
