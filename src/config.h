@@ -9,12 +9,12 @@
  * Extra credit: what would happen if you set kNear to 1e-5? How to solve it?
  */
 const float kNear = 0.1f;
-const float kFar = 1000.0f;
+const float kFar = 10000.0f; // 1000.0f;
 const float kFov = 45.0f;
 
 const float kScrollSpeed = 64.0f;
 
 const bool OPTIMIZE = true;
 const float cubieWidth = 1.0f; // FIX ME: I never used this...should remove
-const int cubeWidth = 20;
+const int cubeWidth = 32;
 #endif

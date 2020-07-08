@@ -2390,6 +2390,58 @@ void Solver::solveLastCenters() {
 	}	
 }
 
+void Solver::solveLastCentersB() {
+	int colorF = getFaceColor(0);
+	int colorR = getFaceColor(1);
+
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[0][i][j] == colorR && faces[1][i][j] == colorF) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(2, i, -1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, -1);
+			}
+			exec(1, 0, -1);
+
+			exec(2, i, 1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, 1);
+			}
+			exec(1, 0, -1);
+
+			if (doOther) {
+				exec(2, i, -1);
+				exec(1, 0, -1);
+				exec(2, N - 1 - i, -1);
+				exec(1, 0, 1);
+
+				exec(2, i, 1);
+				exec(1, 0, -1);
+				exec(2, N - 1 - i, 1);
+				exec(1, 0, 1);
+			}
+			
+		}
+
+		exec(1, 0, 1);
+	}
+}
+
 // Credits to https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/ 
 // flips the edge between front and right
 void Solver::flipEdge(int edge) {
