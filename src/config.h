@@ -14,7 +14,8 @@ const float kFov = 45.0f;
 
 const float kScrollSpeed = 64.0f;
 
-const bool OPTIMIZE = true;
-const float cubieWidth = 1.0f; // FIX ME: I never used this...should remove
-const int cubeWidth = 1024;
+// RGB of green, red, white, yellow, orange, blue
+const int kColors[6][3] = { {46, 139, 87}, {255, 0, 0}, {255, 255, 255}, {255, 255, 0}, {255, 140, 0}, {0, 0, 255} };
+const bool kOptimize = true;
+const int cubeWidth = 1;
 #endif

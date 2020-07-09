@@ -284,3 +284,29 @@ Commit "Fixed parity issues of even sized cubes" - July 2, 2020
 - Occurs either at a) needing to flip orientation of individual edges, b) swapping corners
 - Now whole cube is almost solved, except for the 4 remaining corner pieces
 
+Commit "Fixed another parity issue, RUBIK'S CUBE SOLVED!" - July 3, 2020
+- Since there 24 permutations of the positions of the last 4 corners, used 24 if statements to solve each case
+	- this handles parity issues with corners
+- Also solved the orientations of the 4 corners after placing in right position
+- Rubik's cube solved for all sizes!
+
+Commit "Trying out textures, fixed pixel color bug" - July 8, 2020
+- Removed some redundancy in solving last 2 centers
+	- Have some ideas on extending it to all centers so that each mismatch takes only 2 quarter turns to place correctly
+	- along with some + kN where k is a constant
+- Used main to instead try loading a JPEG as a texture
+- Seems spliced, where a triangle is cut off on the side and pasted on the other side, making picture look cut in half and lopsided
+
+Commit "Flipped some vertices of cube" - July 9, 2020
+- Many of the large commit differences came from Visual Studio complaining that line endings were not consistent
+- Fixed earlier bug: some how, in the way it reads or applies textures, it wants the width of the JPEG to be divisible by 4.
+	- Maybe it reads ints, which are 4 bytes?
+	- That means I just pad in some extra bytes at the end of each line until the width in bytes is divisible by 4
+
+Commit "Loaded 6 different textures" - July 9, 2020
+- Currently randomgly picking among the 6 colors and filling in a texture with these pixels
+- But all 6 faces show the same texture
+- Fixed by making 6 textures total, making the appropriate uniforms pointing to the location (0-5)
+	- and using glActiveTexture(GL_TEXTURE0) through glActiveTexture(GL_TEXTURE5)
+	- Also need to update textures through each while loop...potentially a bottleneck?
+- Can now successfully render a N = 1024 Rubik's cube (or at least the same size and same number of stickers)

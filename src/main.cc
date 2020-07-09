@@ -680,14 +680,13 @@ int tryingOutTextures(int argc, char* argv[]) {
 	GUI gui(window, window_width, window_height, window_height);
 
 	srand(1); // set seed for random
-	//Image* im = new Image();
 	Image* images[6];
 	for (int i = 0; i < 6; ++i) {
 		images[i] = new Image();
 	}
 	std::string path = "../../../assets/NyanCat.jpg";
 
-	bool wantToLoad = true;
+	bool wantToLoad = false;
 	bool loaded = false;
 	if (wantToLoad) {
 		for (int index = 0; index < 6; ++index) {
@@ -743,36 +742,9 @@ int tryingOutTextures(int argc, char* argv[]) {
 				for (int j = 0; j < im->width; ++j) {
 					int sth = rand() % 6;
 
-					if (sth == 0) {
-						im->bytes.push_back(0);
-						im->bytes.push_back(255);
-						im->bytes.push_back(0);
-					}
-					else if (sth == 1) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(0);
-						im->bytes.push_back(0);
-					}
-					else if (sth == 2) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-					}
-					else if (sth == 3) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-						im->bytes.push_back(0);
-					}
-					else if (sth == 4) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(140);
-						im->bytes.push_back(0);
-					}
-					else if (sth == 5) {
-						im->bytes.push_back(0);
-						im->bytes.push_back(0);
-						im->bytes.push_back(255);
-					}
+					im->bytes.push_back(kColors[sth][0]);
+					im->bytes.push_back(kColors[sth][1]);
+					im->bytes.push_back(kColors[sth][2]);
 				}
 
 				int currSize = im->width * 3;
@@ -783,6 +755,8 @@ int tryingOutTextures(int argc, char* argv[]) {
 			}
 
 			images[index] = im;
+
+			std::cout << "Finished creating texture " << index + 1 << std::endl;
 		}
 	}
 	
@@ -830,12 +804,12 @@ int tryingOutTextures(int argc, char* argv[]) {
 	auto std_camera = make_uniform("camera_position", cam_data);
 	auto std_proj = make_uniform("projection", proj_data);
 	
-	auto preview_texture0 = make_uniform("preview_texture0", texture_data0);
-	auto preview_texture1 = make_uniform("preview_texture1", texture_data1);
-	auto preview_texture2 = make_uniform("preview_texture2", texture_data2);
-	auto preview_texture3 = make_uniform("preview_texture3", texture_data3);
-	auto preview_texture4 = make_uniform("preview_texture4", texture_data4);
-	auto preview_texture5 = make_uniform("preview_texture5", texture_data5);
+	auto texture0 = make_uniform("texture0", texture_data0);
+	auto texture1 = make_uniform("texture1", texture_data1);
+	auto texture2 = make_uniform("texture2", texture_data2);
+	auto texture3 = make_uniform("texture3", texture_data3);
+	auto texture4 = make_uniform("texture4", texture_data4);
+	auto texture5 = make_uniform("texture5", texture_data5);
 
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
@@ -843,7 +817,7 @@ int tryingOutTextures(int argc, char* argv[]) {
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 	RenderPass cube_pass(-1, cube_pass_input,
 		{ preview_vertex_shader, nullptr, preview_fragment_shader },
-		{ std_view, std_proj, preview_texture0, preview_texture1, preview_texture2, preview_texture3, preview_texture4, preview_texture5 },
+		{ std_view, std_proj, texture0, texture1, texture2, texture3, texture4, texture5 },
 		{ "fragment_color" }
 	);
 
@@ -864,8 +838,6 @@ int tryingOutTextures(int argc, char* argv[]) {
 
 		gui.updateMatrices();
 		mats = gui.getMatrixPointers();
-
-		glViewport(0, 0, window_width, window_height);
 
 		//int sth = rand() % (im->width * im->height * 3);
 		//im->bytes[sth] = 255;
@@ -894,7 +866,6 @@ int tryingOutTextures(int argc, char* argv[]) {
 
 			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
-
 		}
 		
 		// render faces

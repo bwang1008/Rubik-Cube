@@ -779,7 +779,7 @@ void Solver::exec(int face, int layer, int qt) {
 	case 5: turnBack(layer, qt); break;
 	}
 
-	if (OPTIMIZE && dequePtr->size() > 0) {
+	if (kOptimize && dequePtr->size() > 0) {
 		glm::ivec3 copy = dequePtr->back();
 
 		if (copy[0] == face && copy[1] == layer) {
