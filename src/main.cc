@@ -675,203 +675,55 @@ int tryingOutTextures(int argc, char* argv[]) {
 	}
 
 	std::cout << "Cube Width = " << cubeWidth << std::endl;
-	
-	GLFWwindow* window = init_glefw();
-	GUI gui(window, window_width, window_height, window_height);
-
-	srand(1); // set seed for random
-	Image* images[6]; // 6 textures
-	for (int index = 0; index < 1; ++index) {
-		Image* im = new Image();
-		std::string path = "../../../assets/red.jpg";
-
-		
-		if (false && !LoadJPEG(path, im)) {
-			std::cout << "Could not find path" << std::endl;
-			return -1;
-		}
-		else {
-			im->width = cubeWidth;
-			im->height = cubeWidth;
-
-
-			for (int i = 0; i < im->width; ++i) {
-				for (int j = 0; j < im->height; ++j) {
-					int sth = rand() % 2;
-					if (sth == 0) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(0);
-						im->bytes.push_back(0);
-					}
-					else if (sth == 1) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-					}
-					else if (sth == 2) {
-						im->bytes.push_back(0);
-						im->bytes.push_back(0);
-						im->bytes.push_back(255);
-					}
-					else if (sth == 3) {
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-						im->bytes.push_back(0);
-					}
-					else if (sth == 4) {
-						im->bytes.push_back(0);
-						im->bytes.push_back(255);
-						im->bytes.push_back(255);
-					}
-					else if (sth == 5) {
-						im->bytes.push_back(0);
-						im->bytes.push_back(255);
-						im->bytes.push_back(0);
-					}
-				}
-			}
-		}
-		
-		images[index] = im;
-
-		std::cout << "size = " << im->bytes.size() << std::endl;
-		std::cout << "w = " << im->width << " h = " << im->height << " size = " << im->bytes.size() << std::endl;
-		for (int i = 0; i < im->width * im->height * 3; i += 3) {
-			std::cout << "(" << (int) im->bytes[i] << ", " << (int) im->bytes[i + 1] << "," << (int) im->bytes[i + 2] << ") ";
-		}
-		std::cout << std::endl;
-	}
-
-	unsigned int textureNum[6];
-
-	for (int i = 0; i < 1; ++i) {
-		glGenTextures(1, &textureNum[i]);
-		glBindTexture(GL_TEXTURE_2D, textureNum[i]);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-
-	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
-
-	std::vector<glm::vec4> cube_vertices;
-	std::vector<glm::uvec3> cube_faces;
-	create_rubik2(cube_vertices, cube_faces);
-
-	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
-	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
-	std::function<glm::mat4()> identity_mat = []() { return glm::mat4(1.0f); };
-	std::function<glm::vec3()> cam_data = [&gui]() { return gui.getCamera(); };
-	// ?
-	std::function<int()> texture_data = []() {return 0; };
-
-
-	auto std_view = make_uniform("view", view_data);
-	auto std_camera = make_uniform("camera_position", cam_data);
-	auto std_proj = make_uniform("projection", proj_data);
-	// ?
-	auto preview_texture = make_uniform("preview_texture", texture_data);
-
-	RenderDataInput cube_pass_input;
-	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
-	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
-	RenderPass cube_pass(-1, cube_pass_input,
-		{ preview_vertex_shader, nullptr, preview_fragment_shader },
-		{ std_view, std_proj, preview_texture },
-		{ "fragment_color" }
-	);
-	
-
-	while (!glfwWindowShouldClose(window)) {
-		// Setup some basic window stuff.
-		glfwGetFramebufferSize(window, &window_width, &window_height);
-		glViewport(0, 0, window_width, window_height);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_MULTISAMPLE);
-		glEnable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDepthFunc(GL_LESS);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glCullFace(GL_BACK);
-
-		gui.updateMatrices();
-		mats = gui.getMatrixPointers();
-
-		glViewport(0, 0, window_width, window_height);
-
-		//int sth = rand() % (im->width * im->height * 3);
-		//im->bytes[sth] = 255;
-		//std::cout << "sth = " << sth << std::endl;
-
-		for (int i = 0; i < 1; ++i) {
-			//glActiveTexture(GL_TEXTURE0);
-			if (i == 0) {
-				glActiveTexture(GL_TEXTURE0);
-			}
-			else if (i == 1) {
-				glActiveTexture(GL_TEXTURE1);
-			}
-			else if (i == 2) {
-				glActiveTexture(GL_TEXTURE2);
-			}
-			else if (i == 3) {
-				glActiveTexture(GL_TEXTURE3);
-			}
-			else if (i == 4) {
-				glActiveTexture(GL_TEXTURE4);
-			}
-			else if (i == 5) {
-				glActiveTexture(GL_TEXTURE5);
-			}
-			
-			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
-			//glGenerateMipmap(GL_TEXTURE_2D);
-			//glBindVertexArray(VAO);
-
-			// render faces
-			
-			cube_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));
-
-		}
-
-		// Poll and swap.
-		glfwPollEvents();
-		glfwSwapBuffers(window);
-	}
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	exit(EXIT_SUCCESS);
-}
-
-int tryingOutTextures2(int argc, char* argv[]) {
-	if (cubeWidth <= 0 || cubeWidth > 1024) {
-		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
-		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
-		return -1;
-	}
-
-	std::cout << "Cube Width = " << cubeWidth << std::endl;
 
 	GLFWwindow* window = init_glefw();
 	GUI gui(window, window_width, window_height, window_height);
 
 	srand(1); // set seed for random
 	Image* im = new Image();
-	std::string path = "../../../assets/red.jpg";
+	std::string path = "../../../assets/NyanCat.jpg";
 
+	bool wantToLoad = false;
+	bool loaded = false;
+	if (wantToLoad) {
+		loaded = LoadJPEG(path, im);
+	}
 
-	if (false && !LoadJPEG(path, im)) {
+	if (wantToLoad && !loaded) {
 		std::cout << "Could not find path" << std::endl;
 		return -1;
 	}
+	else if (wantToLoad && loaded) {
+		std::cout << "Loaded! Need to resize width" << std::endl;
+
+		Image* im2 = new Image();
+		im2->width = im->width;
+		im2->height = im->height;
+
+		int append = (4 - ((3 * im->width) % 4)) % 4;
+
+		int index = 0;
+		for (int i = 0; i < im->height; ++i) {
+			int count = 0;
+			for (int j = 0; j < im->width; ++j) {
+				im2->bytes.push_back(im->bytes[index]);
+				im2->bytes.push_back(im->bytes[index+1]);
+				im2->bytes.push_back(im->bytes[index+2]);
+				
+				index += 3;
+				count += 3;
+			}
+			// make new length divisible by 4, so attach on <append> more bytes
+			
+			for (int j = 0; j < append; ++j) {
+				im2->bytes.push_back(0);
+			}
+		}
+
+		im = im2;
+	}
 	else {
+		// wantToLoad is false
 		im->width = cubeWidth;
 		im->height = cubeWidth;
 
@@ -880,20 +732,18 @@ int tryingOutTextures2(int argc, char* argv[]) {
 			for (int j = 0; j < im->width; ++j) {
 				int sth = rand() % 6;
 				if (sth == 0) {
+					im->bytes.push_back(0);
 					im->bytes.push_back(255);
 					im->bytes.push_back(0);
-					im->bytes.push_back(0);
-					//im->bytes.push_back(255);
 				}
 				else if (sth == 1) {
 					im->bytes.push_back(255);
-					im->bytes.push_back(255);
-					im->bytes.push_back(255);
-					//im->bytes.push_back(255);
+					im->bytes.push_back(0);
+					im->bytes.push_back(0);
 				}
 				else if (sth == 2) {
-					im->bytes.push_back(0);
-					im->bytes.push_back(0);
+					im->bytes.push_back(255);
+					im->bytes.push_back(255);
 					im->bytes.push_back(255);
 				}
 				else if (sth == 3) {
@@ -902,14 +752,14 @@ int tryingOutTextures2(int argc, char* argv[]) {
 					im->bytes.push_back(0);
 				}
 				else if (sth == 4) {
-					im->bytes.push_back(0);
 					im->bytes.push_back(255);
+					im->bytes.push_back(140);
 					im->bytes.push_back(0);
 				}
 				else if (sth == 5) {
 					im->bytes.push_back(0);
-					im->bytes.push_back(255);
 					im->bytes.push_back(0);
+					im->bytes.push_back(255);
 				}
 			}
 
@@ -924,7 +774,7 @@ int tryingOutTextures2(int argc, char* argv[]) {
 	std::cout << "size = " << im->bytes.size() << std::endl;
 	std::cout << "w = " << im->width << " h = " << im->height << " size = " << im->bytes.size() << std::endl;
 	for (int i = 0; i < im->width * im->height * 3; i += 3) {
-		std::cout << "(" << (int)im->bytes[i] << ", " << (int)im->bytes[i + 1] << "," << (int)im->bytes[i + 2] << ") ";
+		//std::cout << "(" << (int)im->bytes[i] << ", " << (int)im->bytes[i + 1] << "," << (int)im->bytes[i + 2] << ") ";
 	}
 	std::cout << std::endl;
 
@@ -938,22 +788,12 @@ int tryingOutTextures2(int argc, char* argv[]) {
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 
-
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
 
 	std::vector<glm::vec4> cube_vertices;
 	std::vector<glm::uvec3> cube_faces;
-	
-	float half = cubeWidth / 2.0f;
 
-	// front
-	cube_vertices.push_back(glm::vec4(-half, -half, half, 1.0f));
-	cube_vertices.push_back(glm::vec4(half, -half, half, 1.0f));
-	cube_vertices.push_back(glm::vec4(-half, half, half, 1.0f));
-	cube_vertices.push_back(glm::vec4(half, half, half, 1.0f));
-
-	cube_faces.push_back(glm::uvec3(0, 1, 2));
-	cube_faces.push_back(glm::uvec3(1, 3, 2));
+	create_rubik2(cube_vertices, cube_faces);
 
 	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
 	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
@@ -967,14 +807,14 @@ int tryingOutTextures2(int argc, char* argv[]) {
 	auto std_camera = make_uniform("camera_position", cam_data);
 	auto std_proj = make_uniform("projection", proj_data);
 	// ?
-	auto preview_texture = make_uniform("preview_texture", texture_data);
+	//auto preview_texture = make_uniform("preview_texture", texture_data);
 
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 	RenderPass cube_pass(-1, cube_pass_input,
 		{ preview_vertex_shader, nullptr, preview_fragment_shader },
-		{ std_view, std_proj, preview_texture },
+		{ std_view, std_proj,  },
 		{ "fragment_color" }
 	);
 
@@ -1025,5 +865,5 @@ int tryingOutTextures2(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
 	//main2(argc, argv);
-	tryingOutTextures2(argc, argv);
+	tryingOutTextures(argc, argv);
 }

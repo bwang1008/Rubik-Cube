@@ -16,5 +16,5 @@ const float kScrollSpeed = 64.0f;
 
 const bool OPTIMIZE = true;
 const float cubieWidth = 1.0f; // FIX ME: I never used this...should remove
-const int cubeWidth = 32;
+const int cubeWidth = 128;
 #endif
