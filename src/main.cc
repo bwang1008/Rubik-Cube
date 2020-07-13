@@ -265,6 +265,7 @@ int main2(int argc, char* argv[]) {
 			{ "fragment_color"}
 			);
 
+	int dequeSize = 0;
 	long long totalMoves = 0;
 	long long totalQT = 0;
 	bool draw_cube = true;
@@ -283,6 +284,7 @@ int main2(int argc, char* argv[]) {
 
 	std::cout << "Begin generating scrambles" << std::endl;
 	gui.scrambleCube();
+	dequeSize = gui.getSize();
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
 	gui.setRotatingSpeed(250.0f);
 
@@ -325,6 +327,23 @@ int main2(int argc, char* argv[]) {
 		glfwSetWindowTitle(window, title.str().data());
 		glViewport(0, 0, window_width, window_height);
 
+		// progress bar
+		std::cout << "Progress: [";
+		int currProgress = std::round(50 * (float(dequeSize - gui.getSize()) / dequeSize));
+		for (int pr = 0; pr < currProgress; ++pr) {
+			std::cout << "I";
+		}
+		for (int pr = 0; pr < 50 - currProgress; ++pr) {
+			std::cout << " ";
+		}
+		std::cout << "]\r";
+		if (solver->currentState() % 2 == 0 && gui.getSize() == 0) {
+			std::cout << std::endl;
+		}
+		if (solver->currentState() % 2 == 0) {
+			std::cout << std::flush;
+		}
+
 		// Finished scrambling
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 0) {
 			std::cout << "COPYING " << std::endl;
@@ -333,7 +352,9 @@ int main2(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter0B();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 1st center
+			
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
 		}
@@ -348,11 +369,11 @@ int main2(int argc, char* argv[]) {
 			
 			gui.resetCount();
 			solver->solveCenter1B();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 2nd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
 			solver->incr();
-
 		}
 
 		// Finished solving second center
@@ -365,6 +386,7 @@ int main2(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveCenter2B();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 3rd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
