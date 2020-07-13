@@ -48,6 +48,14 @@ public:
 	float getEyeZ() { return eye_[2]; }
 
 	glm::ivec3 getCurrentMove() { return currentMove; }
+	int peekMove() {
+		if (solver->currentState() % 2 == 1 || allMoves.size() == 0) {
+			return -1;
+		}
+		else {
+			return allMoves.front()[0];
+		}
+	}
 	void setCurrentMove() {
 		if(solver->currentState() % 2 == 1 || allMoves.size() == 0) {
 			currentMove = glm::ivec3(-1, 0, 0);

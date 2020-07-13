@@ -332,7 +332,7 @@ int main2(int argc, char* argv[]) {
 			std::cout << "COPYING FINISHED" << std::endl;
 
 			gui.resetCount();
-			solver->solveCenter0();
+			solver->solveCenter0B();
 			gui.setRotatingSpeed(250.0f); // to solve 1st center
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
@@ -347,11 +347,12 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 			
 			gui.resetCount();
-			solver->solveCenter1();
+			solver->solveCenter1B();
 			gui.setRotatingSpeed(250.0f); // to solve 2nd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
 			solver->incr();
+
 		}
 
 		// Finished solving second center
@@ -363,11 +364,14 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			solver->solveCenter2();
+			//solver->solveCenter2();
 			gui.setRotatingSpeed(250.0f); // to solve 3rd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
 			solver->incr();
+
+			for (int i = 0; i < 20; ++i)
+				solver->incr();
 		}
 
 		// Finished solving third center
@@ -438,6 +442,7 @@ int main2(int argc, char* argv[]) {
 			solver->incr();
 		}
 
+		// FINISHED
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 14) {
 			std::cout << "num moves = " << gui.getCountMoves() << std::endl;
 			std::cout << "num quarter turns = " << gui.getCountQT() << std::endl;
@@ -668,7 +673,7 @@ int main2(int argc, char* argv[]) {
 }
 
 int tryingOutTextures(int argc, char* argv[]) {
-	if (cubeWidth <= 0 || cubeWidth > 1024) {
+	if (cubeWidth <= 0 || cubeWidth > 4096) {
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
 		return -1;
@@ -865,7 +870,9 @@ int tryingOutTextures(int argc, char* argv[]) {
 			}
 
 			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
+			
+			if(gui.isQuarterTurning())
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
 		}
 		
 		// render faces
@@ -883,6 +890,6 @@ int tryingOutTextures(int argc, char* argv[]) {
 }
 
 int main(int argc, char* argv[]) {
-	//main2(argc, argv);
-	tryingOutTextures(argc, argv);
+	main2(argc, argv);
+	//tryingOutTextures(argc, argv);
 }

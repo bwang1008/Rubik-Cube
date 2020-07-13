@@ -2390,6 +2390,484 @@ void Solver::solveLastCenters() {
 	}	
 }
 
+// solving Down face: use swapping method to get down stickers from Back, Left, Right, Front
+// then be careful on getting up to preserve 2 quarter turns per mismatch of stickers
+void Solver::solveCenter0B() {
+	int colorD = getFaceColor(3);
+
+	// get all colorD stickers from back
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[3][j][i] != colorD && faces[5][N - 1 - j][N - 1 - i] == colorD) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(4, i, 1);
+			exec(5, 0, -1);
+			for (int r2 : indices) {
+				exec(4, r2, 1);
+			}
+			exec(5, 0, 1);
+
+			exec(4, i, -1);
+			exec(5, 0, -1);
+			for (int r2 : indices) {
+				exec(4, r2, -1);
+			}
+			exec(5, 0, 1);
+
+			if (doOther) {
+				exec(4, i, 1);
+				exec(5, 0, 1);
+				exec(4, N - 1 - i, 1);
+				exec(5, 0, -1);
+
+				exec(4, i, -1);
+				exec(5, 0, 1);
+				exec(4, N - 1 - i, -1);
+				exec(5, 0, -1);
+			}
+		}
+
+		exec(5, 0, 1);
+	}
+
+	// get all colorD stickers from left
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[3][i][j] != colorD && faces[4][j][N - 1 - i] == colorD) {
+					if (N - 1 - i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(0, i, 1);
+			exec(4, 0, -1);
+			for (int r2 : indices) {
+				exec(0, N - 1 - r2, 1);
+			}
+			exec(4, 0, 1);
+
+			exec(0, i, -1);
+			exec(4, 0, -1);
+			for (int r2 : indices) {
+				exec(0, N - 1 - r2, -1);
+			}
+			exec(4, 0, 1);
+
+			if (doOther) {
+				exec(0, i, 1);
+				exec(4, 0, 1);
+				exec(0, N - 1 - i, 1);
+				exec(4, 0, -1);
+
+				exec(0, i, -1);
+				exec(4, 0, 1);
+				exec(0, N - 1 - i, -1);
+				exec(4, 0, -1);
+			}
+		}
+
+		exec(4, 0, 1);
+	}
+
+	// get all colorD stickers from right
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[3][i][j] != colorD && faces[1][N - 1 - j][i] == colorD) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(0, i, -1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(0, r2, -1);
+			}
+			exec(1, 0, -1);
+
+			exec(0, i, 1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(0, r2, 1);
+			}
+			exec(1, 0, -1);
+
+			if (doOther) {
+				exec(0, i, -1);
+				exec(1, 0, -1);
+				exec(0, N - 1 - i, -1);
+				exec(1, 0, 1);
+
+				exec(0, i, 1);
+				exec(1, 0, -1);
+				exec(0, N - 1 - i, 1);
+				exec(1, 0, 1);
+			}
+		}
+
+		exec(1, 0, 1);
+	}
+
+	// get all colorD stickers from front
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[3][j][i] != colorD && faces[0][j][i] == colorD) {
+					if (N - 1 - i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(4, i, -1);
+			exec(0, 0, 1);
+			for (int r2 : indices) {
+				exec(4, N - 1 - r2, -1);
+			}
+			exec(0, 0, -1);
+
+			exec(4, i, 1);
+			exec(0, 0, 1);
+			for (int r2 : indices) {
+				exec(4, N - 1 - r2, 1);
+			}
+			exec(0, 0, -1);
+
+			if (doOther) {
+				exec(4, i, -1);
+				exec(0, 0, -1);
+				exec(4, N - 1 - i, -1);
+				exec(0, 0, 1);
+
+				exec(4, i, 1);
+				exec(0, 0, -1);
+				exec(4, N - 1 - i, 1);
+				exec(0, 0, 1);
+			}
+		}
+
+		exec(0, 0, 1);
+	}
+
+	// get all colorD stickers fron up
+	int howMany = (N % 2 == 1) ? 2 : 1;
+	for (int numTimes = 0; numTimes < howMany; ++numTimes) {
+		// bring each column from down into front, ignoring the center column if N is odd
+		for (int i = 1; i < N - 1; ++i) {
+			if (i == N / 2 && N % 2 == 1) {
+				continue;
+			}
+
+			// bring column from down into front
+			exec(4, i, -1);
+			exec(0, 0, 2); // bring band from left of Front to right of Front
+			exec(4, i, 1); // preserve remaining yellows on Up face
+			exec(0, 0, -1); // have band parallel to up
+
+			for (int t = 0; t < 4; ++t) {
+				bool which[cubeWidth];
+				for (int j = 0; j < cubeWidth; ++j)
+					which[j] = false;
+
+				int count = 0;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][i][j] != colorD && faces[2][i][j] == colorD) {
+						exec(4, j, 1);
+						which[j] = true;
+						count++;
+					}
+					else {
+						which[j] = false;
+					}
+				}
+
+				if (count == 0) {
+					exec(2, 0, 1);
+					continue;
+				}
+				
+				// move band out of the way to Left
+				exec(2, i, 1);
+				exec(4, 0, 2); // flip upside down
+				exec(2, i, -1); // restore other sections
+				exec(4, 0, 2);
+
+				for (int j = 1; j < N - 1; ++j) {
+					if (which[j]) {
+						exec(4, j, -1);
+					}
+				}
+				
+				// move band back into front
+				exec(2, i, -1);
+
+				exec(2, 0, 1); // turn top to do 4 times
+			}
+
+			exec(0, 0, 1); // reverse entrance
+			exec(4, i, -1);
+			exec(0, 0, 2);
+			exec(4, i, 1);
+
+		}
+
+		if (howMany == 2 && numTimes == 0) {
+			exec(3, 0, 1);
+		}
+	}
+}
+
+// solving Back face: use swapping method to get down stickers from Left, Right, Up
+// then be careful on getting Front to preserve 2 quarter turns per mismatch
+void Solver::solveCenter1B() {
+	int colorB = getFaceColor(5);
+
+	// get all colorB stickers from left
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[5][i][j] != colorB && faces[4][i][j] == colorB) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(2, i, -1);
+			exec(4, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, -1);
+			}
+			exec(4, 0, -1);
+
+			exec(2, i, 1);
+			exec(4, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, 1);
+			}
+			exec(4, 0, -1);
+
+			if (doOther) {
+				exec(2, i, -1);
+				exec(4, 0, -1);
+				exec(2, N - 1 - i, -1);
+				exec(4, 0, 1);
+
+				exec(2, i, 1);
+				exec(4, 0, -1);
+				exec(2, N - 1 - i, 1);
+				exec(4, 0, 1);
+			}
+		}
+
+		exec(4, 0, 1);
+	}
+
+	// get all colorB stickers from right
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[5][i][j] != colorB && faces[1][i][j] == colorB) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(2, i, 1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, 1);
+			}
+			exec(1, 0, -1);
+
+			exec(2, i, -1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, -1);
+			}
+			exec(1, 0, -1);
+
+			if (doOther) {
+				exec(2, i, 1);
+				exec(1, 0, -1);
+				exec(2, N - 1 - i, 1);
+				exec(1, 0, 1);
+
+				exec(2, i, -1);
+				exec(1, 0, -1);
+				exec(2, N - 1 - i, -1);
+				exec(1, 0, 1);
+			}
+		}
+
+		exec(1, 0, 1);
+	}
+
+	// get all colorB stickers from up
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[5][j][i] != colorB && faces[2][N - 1 - j][N - 1 - i] == colorB) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(1, i, -1);
+			exec(2, 0, -1);
+			for (int r2 : indices) {
+				exec(1, r2, -1);
+			}
+			exec(2, 0, 1);
+
+			exec(1, i, 1);
+			exec(2, 0, -1);
+			for (int r2 : indices) {
+				exec(1, r2, 1);
+			}
+			exec(2, 0, 1);
+
+			if (doOther) {
+				exec(1, i, -1);
+				exec(2, 0, 1);
+				exec(1, N - 1 - i, -1);
+				exec(2, 0, -1);
+
+				exec(1, i, 1);
+				exec(2, 0, 1);
+				exec(1, N - 1 - i, 1);
+				exec(2, 0, -1);
+			}
+		}
+
+		exec(2, 0, 1);
+	}
+
+	// get all colorB stickers fron fronts
+	int howMany = (N % 2 == 1) ? 2 : 1;
+	for (int numTimes = 0; numTimes < howMany; ++numTimes) {
+		// bring each row from back into left, ignoring the center row if N is odd
+		for (int i = 1; i < N - 1; ++i) {
+			if (i == N / 2 && N % 2 == 1) {
+				continue;
+			}
+
+			// bring row from back into left
+			exec(2, i, -1);
+			exec(4, 0, 2); // bring band from up of Left to down of Left
+			exec(2, i, 1); // preserve remaining blue on Front face
+			exec(4, 0, -1); // have band parallel to right of Left, aka parallel to Front
+
+			for (int t = 0; t < 4; ++t) {
+				bool which[cubeWidth];
+				for (int j = 0; j < cubeWidth; ++j)
+					which[j] = false;
+
+				int count = 0;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][N - 1 - i] != colorB && faces[0][j][N - 1 - i] == colorB) {
+						exec(2, j, 1);
+						which[j] = true;
+						count++;
+					}
+					else {
+						which[j] = false;
+					}
+				}
+
+				if (count == 0) {
+					exec(0, 0, 1);
+					continue;
+				}
+
+				// move band out of the way to Up
+				exec(0, i, 1);
+				exec(2, 0, 2); // flip upside down
+				exec(0, i, -1); // restore other sections
+				//exec(2, 0, 2);
+
+				for (int j = 1; j < N - 1; ++j) {
+					if (which[j]) {
+						exec(2, j, -1);
+					}
+				}
+
+				// move band back into left, but need to preserve bottom, so just undo above
+				//exec(2, 0, 2);
+				exec(0, i, 1);
+				exec(2, 0, 2);
+				exec(0, i, -1);
+
+				exec(0, 0, 1); // turn front to do 4 times
+			}
+
+			exec(4, 0, 1); // reverse entrance
+			exec(2, i, -1);
+			exec(4, 0, 2);
+			exec(2, i, 1);
+
+		}
+
+		if (howMany == 2 && numTimes == 0) {
+			exec(5, 0, 1);
+		}
+	}
+}
+
 void Solver::solveLastCentersB() {
 	int colorF = getFaceColor(0);
 	int colorR = getFaceColor(1);

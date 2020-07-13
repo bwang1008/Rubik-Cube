@@ -112,6 +112,13 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 			std::cout << "state = " << solver->currentState() << std::endl;
 		}
 	}
+	else if (key == GLFW_KEY_MINUS && action != GLFW_RELEASE) {
+		rotation_speed_ = std::max(rotation_speed_ - 5.0f, 0.0f);
+	}
+	else if (key == GLFW_KEY_EQUAL && action != GLFW_RELEASE) {
+		rotation_speed_ = std::min(rotation_speed_ + 5.0f, 250.0f);
+	}
+	
 	// FIXME: implement other controls here.
 }
 
