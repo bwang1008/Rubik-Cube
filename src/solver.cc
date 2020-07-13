@@ -3038,6 +3038,106 @@ void Solver::solveCenter2B() {
 	}
 }
 
+// solving Up face: use swapping method to get up stickers from Front, Right
+void Solver::solveCenter3B() {
+	int colorU = getFaceColor(2);
+
+	// get all colorU stickers from Front
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[2][j][i] != colorU && faces[0][j][i] == colorU) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(4, i, 1);
+			exec(0, 0, -1);
+			for (int r2 : indices) {
+				exec(4, r2, 1);
+			}
+			exec(0, 0, 1);
+
+			exec(4, i, -1);
+			exec(0, 0, -1);
+			for (int r2 : indices) {
+				exec(4, r2, -1);
+			}
+			exec(0, 0, 1);
+
+			if (doOther) {
+				exec(4, i, 1);
+				exec(0, 0, 1);
+				exec(4, N - 1 - i, 1);
+				exec(0, 0, -1);
+
+				exec(4, i, -1);
+				exec(0, 0, 1);
+				exec(4, N - 1 - i, -1);
+				exec(0, 0, -1);
+			}
+		}
+
+		exec(0, 0, 1);
+	}
+
+	// get all colorU stickers from Right
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[2][i][j] != colorU && faces[1][j][N - 1 - i] == colorU) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(0, N - 1 - i, 1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(0, N - 1 - r2, 1);
+			}
+			exec(1, 0, -1);
+
+			exec(0, N - 1 - i, -1);
+			exec(1, 0, 1);
+			for (int r2 : indices) {
+				exec(0, N - 1 - r2, -1);
+			}
+			exec(1, 0, -1);
+
+			if (doOther) {
+				exec(0, N - 1 - i, 1);
+				exec(1, 0, -1);
+				exec(0, i, 1);
+				exec(1, 0, 1);
+
+				exec(0, N - 1 - i, -1);
+				exec(1, 0, -1);
+				exec(0, i, -1);
+				exec(1, 0, 1);
+			}
+		}
+
+		exec(1, 0, 1);
+	}
+}
+
+// solving Front and Right faces: use swapping method
 void Solver::solveLastCentersB() {
 	int colorF = getFaceColor(0);
 	int colorR = getFaceColor(1);
@@ -4042,7 +4142,7 @@ void Solver::solveCross() {
 		else if (faces[4][0][1] == colorDown && faces[2][1][0] == colorSide) {
 			exec(4, 0, 1);
 			exec(0, 0, -1);
-			exec(4, 0, 1);
+			exec(4, 0, -1);
 		}
 
 		// once done, move finished edge to another edge on bottom

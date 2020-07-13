@@ -402,14 +402,12 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			//solver->solveCenter3();
+			solver->solveCenter3B();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 4th center
 
 			std::cout << "Click on animation window and press ENTER to proceed (4)" << std::endl;
 			solver->incr();
-
-			for (int i = 0; i < 20; ++i)
-				solver->incr();
 		}
 
 		// Finished solving fourth center
@@ -422,6 +420,7 @@ int main2(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveLastCentersB();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 5th, 6th centers
 
 			std::cout << "Click on animation window and press ENTER to proceed (5)" << std::endl;
@@ -440,6 +439,7 @@ int main2(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveEdges();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve edges
 
 			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
@@ -458,6 +458,7 @@ int main2(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solve3x3x3();
+			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 3x3x3
 
 			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;

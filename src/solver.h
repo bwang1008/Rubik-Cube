@@ -43,6 +43,7 @@ public:
 	void solveCenter0B();
 	void solveCenter1B();
 	void solveCenter2B();
+	void solveCenter3B();
 	void solveLastCentersB();
 	
 	void flipEdge(int edge);
