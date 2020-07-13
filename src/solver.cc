@@ -2797,7 +2797,7 @@ void Solver::solveCenter1B() {
 		exec(2, 0, 1);
 	}
 
-	// get all colorB stickers fron fronts
+	// get all colorB stickers from front
 	int howMany = (N % 2 == 1) ? 2 : 1;
 	for (int numTimes = 0; numTimes < howMany; ++numTimes) {
 		// bring each row from back into left, ignoring the center row if N is odd
@@ -2864,6 +2864,176 @@ void Solver::solveCenter1B() {
 
 		if (howMany == 2 && numTimes == 0) {
 			exec(5, 0, 1);
+		}
+	}
+}
+
+// solving Left face: use swapping method to get down stickers from Front, Up
+// then be careful on getting Right to preserve 2 quarter turns per mismatch
+void Solver::solveCenter2B() {
+	int colorL = getFaceColor(4);
+
+	// get all colorB stickers from Front
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[4][i][j] != colorL && faces[0][i][j] == colorL) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(2, i, -1);
+			exec(0, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, -1);
+			}
+			exec(0, 0, -1);
+
+			exec(2, i, 1);
+			exec(0, 0, 1);
+			for (int r2 : indices) {
+				exec(2, r2, 1);
+			}
+			exec(0, 0, -1);
+
+			if (doOther) {
+				exec(2, i, -1);
+				exec(0, 0, -1);
+				exec(2, N - 1 - i, -1);
+				exec(0, 0, 1);
+
+				exec(2, i, 1);
+				exec(0, 0, -1);
+				exec(2, N - 1 - i, 1);
+				exec(0, 0, 1);
+			}
+		}
+
+		exec(0, 0, 1);
+	}
+
+	// get all colorB stickers from Up
+	for (int numTimes = 0; numTimes < 4; ++numTimes) {
+		for (int i = 1; i < N - 1; ++i) {
+			bool doOther = false;
+			std::vector<int> indices;
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[4][j][i] != colorL && faces[2][i][N - 1 - j] == colorL) {
+					if (i == j) {
+						doOther = true;
+					}
+					else {
+						indices.push_back(j);
+					}
+				}
+			}
+
+			exec(0, N - 1 - i, 1);
+			exec(2, 0, -1);
+			for (int r2 : indices) {
+				exec(0, N - 1 - r2, 1);
+			}
+			exec(2, 0, 1);
+
+			exec(0, N - 1 - i, -1);
+			exec(2, 0, -1);
+			for (int r2 : indices) {
+				exec(0, N - 1 - r2, -1);
+			}
+			exec(2, 0, 1);
+
+			if (doOther) {
+				exec(0, N - 1 - i, 1);
+				exec(2, 0, 1);
+				exec(0, i, 1);
+				exec(2, 0, -1);
+
+				exec(0, N - 1 - i, -1);
+				exec(2, 0, 1);
+				exec(0, i, -1);
+				exec(2, 0, -1);
+			}
+		}
+
+		exec(2, 0, 1);
+	}
+
+	// get all colorB stickers from Right
+	int howMany = (N % 2 == 1) ? 2 : 1;
+	for (int numTimes = 0; numTimes < howMany; ++numTimes) {
+		// bring each row from left into front, ignoring the center row if N is odd
+		for (int i = 1; i < N - 1; ++i) {
+			if (i == N / 2 && N % 2 == 1) {
+				continue;
+			}
+
+			// bring row from left into front
+			exec(2, i, -1);
+			exec(0, 0, 2); // bring band from up of Front to down of Front
+			exec(2, i, 1); // preserve remaining red on Right face
+			exec(0, 0, -1); // have band parallel to right of Front, aka parallel to Right
+
+			for (int t = 0; t < 4; ++t) {
+				bool which[cubeWidth];
+				for (int j = 0; j < cubeWidth; ++j)
+					which[j] = false;
+
+				int count = 0;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][j][N - 1 - i] != colorL && faces[1][j][N - 1 - i] == colorL) {
+						exec(2, j, 1);
+						which[j] = true;
+						count++;
+					}
+					else {
+						which[j] = false;
+					}
+				}
+
+				if (count == 0) {
+					exec(1, 0, 1);
+					continue;
+				}
+
+				// move band out of the way to Up
+				exec(1, i, 1);
+				exec(2, 0, 2); // flip upside down
+				exec(1, i, -1); // restore other sections
+				//exec(2, 0, 2);
+
+				for (int j = 1; j < N - 1; ++j) {
+					if (which[j]) {
+						exec(2, j, -1);
+					}
+				}
+
+				// move band back into left, but need to preserve bottom, so just undo above
+				//exec(2, 0, 2);
+				exec(1, i, 1);
+				exec(2, 0, 2);
+				exec(1, i, -1);
+
+				exec(1, 0, 1); // turn Right to do 4 times
+			}
+
+			exec(0, 0, 1); // reverse entrance
+			exec(2, i, -1);
+			exec(0, 0, 2);
+			exec(2, i, 1);
+
+		}
+
+		if (howMany == 2 && numTimes == 0) {
+			exec(4, 0, 1);
 		}
 	}
 }

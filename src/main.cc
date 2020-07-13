@@ -364,14 +364,11 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			//solver->solveCenter2();
+			solver->solveCenter2B();
 			gui.setRotatingSpeed(250.0f); // to solve 3rd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
 			solver->incr();
-
-			for (int i = 0; i < 20; ++i)
-				solver->incr();
 		}
 
 		// Finished solving third center
@@ -383,11 +380,14 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			solver->solveCenter3();
+			//solver->solveCenter3();
 			gui.setRotatingSpeed(250.0f); // to solve 4th center
 
 			std::cout << "Click on animation window and press ENTER to proceed (4)" << std::endl;
 			solver->incr();
+
+			for (int i = 0; i < 20; ++i)
+				solver->incr();
 		}
 
 		// Finished solving fourth center
