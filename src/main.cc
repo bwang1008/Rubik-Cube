@@ -270,6 +270,7 @@ int main2(int argc, char* argv[]) {
 	long long totalQT = 0;
 	bool draw_cube = true;
 	bool draw_sky = false;
+	bool finished = false;
 
 	if(argc == 3){
 		std::string s(argv[2]);
@@ -328,20 +329,22 @@ int main2(int argc, char* argv[]) {
 		glViewport(0, 0, window_width, window_height);
 
 		// progress bar
-		std::cout << "Progress: [";
-		int currProgress = std::round(50 * (float(dequeSize - gui.getSize()) / dequeSize));
-		for (int pr = 0; pr < currProgress; ++pr) {
-			std::cout << "I";
-		}
-		for (int pr = 0; pr < 50 - currProgress; ++pr) {
-			std::cout << " ";
-		}
-		std::cout << "]\r";
-		if (solver->currentState() % 2 == 0 && gui.getSize() == 0) {
-			std::cout << std::endl;
-		}
-		if (solver->currentState() % 2 == 0) {
-			std::cout << std::flush;
+		if (!finished) {
+			std::cout << "Progress: [";
+			int currProgress = std::round(50 * (float(dequeSize - gui.getSize()) / dequeSize));
+			for (int pr = 0; pr < currProgress; ++pr) {
+				std::cout << "I";
+			}
+			for (int pr = 0; pr < 50 - currProgress; ++pr) {
+				std::cout << " ";
+			}
+			std::cout << "]\r";
+			if (solver->currentState() % 2 == 0 && gui.getSize() == 0) {
+				std::cout << std::endl;
+			}
+			if (solver->currentState() % 2 == 0) {
+				std::cout << std::flush;
+			}
 		}
 
 		// Finished scrambling
@@ -477,8 +480,9 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			gui.setRotatingSpeed(250.0f);
 
-			std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
+			//std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
 			solver->incr();
+			finished = true;
 		}
 	
 		// update rotation, depending if rotating already or not

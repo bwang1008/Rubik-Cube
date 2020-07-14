@@ -4004,10 +4004,12 @@ void Solver::solveCross() {
 
 		// already solved
 		if (faces[3][0][1] == colorDown && faces[0][N - 1][1] == colorSide) {
+			std::cout << "opt 1" << std::endl;
 
 		}
 		// just backwards
 		else if (faces[0][N - 1][1] == colorDown && faces[3][0][1] == colorSide) {
+			std::cout << "opt 2" << std::endl;
 			exec(0, 0, -1);
 			exec(1, 0, 1);
 			exec(2, 0, 1);
@@ -4016,23 +4018,27 @@ void Solver::solveCross() {
 		}
 		// desired edge on edge between right and down
 		else if (faces[3][1][N - 1] == colorDown && faces[1][N - 1][1] == colorSide) {
+			std::cout << "opt 3" << std::endl;
 			exec(1, 0, 2);
 			exec(2, 0, 1);
 			exec(0, 0, 2);
 		}
 		// flipped other way
 		else if (faces[1][N - 1][1] == colorDown && faces[3][1][N - 1] == colorSide) {
+			std::cout << "opt 4" << std::endl;
 			exec(1, 0, 1);
 			exec(0, 0, 1);
 		}
 		// desired edge on edge between back and down
 		else if (faces[3][N - 1][N - 2] == colorDown && faces[5][N - 1][1] == colorSide) {
+			std::cout << "opt 5" << std::endl;
 			exec(5, 0, 2);
 			exec(2, 0, 2);
 			exec(0, 0, 2);
 		}
 		// flipped other way
 		else if (faces[5][N - 1][1] == colorDown && faces[3][N - 1][N - 2] == colorSide) {
+			std::cout << "opt 6" << std::endl;
 			exec(5, 0, 1);
 			exec(1, 0, -1);
 			exec(2, 0, 1);
@@ -4041,20 +4047,24 @@ void Solver::solveCross() {
 		}
 		// desired edge on edge between left and down
 		else if (faces[3][1][0] == colorDown && faces[4][N - 1][N - 2] == colorSide) {
-			exec(3, 0, -1);
+			std::cout << "opt 7" << std::endl;
+			exec(3, 0, 1);
 		}
 		// flipped other way
 		else if (faces[4][N - 1][N - 2] == colorDown && faces[3][1][0] == colorSide) {
+			std::cout << "opt 8" << std::endl;
 			exec(4, 0, -1);
 			exec(0, 0, -1);
 			exec(4, 0, 1);
 		}
 		// edge between front and right
 		else if (faces[1][1][0] == colorDown && faces[0][1][N - 1] == colorSide) {
+			std::cout << "opt 9" << std::endl;
 			exec(0, 0, 1);
 		}
 		// flipped other way
 		else if (faces[0][1][N - 1] == colorDown && faces[1][1][0] == colorSide) {
+			std::cout << "opt 10" << std::endl;
 			exec(1, 0, 1);
 			exec(2, 0, 1);
 			exec(1, 0, -1);
@@ -4062,6 +4072,7 @@ void Solver::solveCross() {
 		}
 		// edge between right and back
 		else if (faces[5][1][0] == colorDown && faces[1][1][N - 1] == colorSide) {
+			std::cout << "opt 11" << std::endl;
 			exec(1, 0, -1);
 			exec(2, 0, 1);
 			exec(1, 0, 1);
@@ -4069,6 +4080,7 @@ void Solver::solveCross() {
 		}
 		// flipped other way
 		else if (faces[1][1][N - 1] == colorDown && faces[5][1][0] == colorSide) {
+			std::cout << "opt 12" << std::endl;
 			exec(5, 0, 1);
 			exec(2, 0, 2);
 			exec(5, 0, -1);
@@ -4076,6 +4088,7 @@ void Solver::solveCross() {
 		}
 		// edge between back + left
 		else if (faces[4][1][0] == colorDown && faces[5][1][N - 1] == colorSide) {
+			std::cout << "opt 13" << std::endl;
 			exec(5, 0, -1);
 			exec(2, 0, 2);
 			exec(5, 0, 1);
@@ -4083,6 +4096,7 @@ void Solver::solveCross() {
 		}
 		// flipped other way
 		else if (faces[5][1][N - 1] == colorDown && faces[4][1][0] == colorSide) {
+			std::cout << "opt 14" << std::endl;
 			exec(4, 0, 1);
 			exec(2, 0, -1);
 			exec(4, 0, -1);
@@ -4090,6 +4104,7 @@ void Solver::solveCross() {
 		}
 		// edge between left + front
 		else if (faces[0][1][0] == colorDown && faces[4][1][N - 1] == colorSide) {
+			std::cout << "opt 15" << std::endl;
 			exec(4, 0, -1);
 			exec(2, 0, -1);
 			exec(4, 0, 1);
@@ -4097,14 +4112,17 @@ void Solver::solveCross() {
 		}
 		// flipped other way
 		else if (faces[4][1][N - 1] == colorDown && faces[0][1][0] == colorSide) {
+		std::cout << "opt 16" << std::endl;
 			exec(0, 0, -1);
 		}
 		// edge between front + up
 		else if (faces[2][N - 1][1] == colorDown && faces[0][0][1] == colorSide) {
+		std::cout << "opt 17" << std::endl;
 			exec(0, 0, 2);
 		}
 		// flipped other way
 		else if (faces[0][0][1] == colorDown && faces[2][N - 1][1] == colorSide) {
+		std::cout << "opt 18" << std::endl;
 			exec(2, 0, -1);
 			exec(1, 0, -1);
 			exec(0, 0, 1);
@@ -4112,22 +4130,26 @@ void Solver::solveCross() {
 		}
 		// edge between right + up
 		else if (faces[2][N - 2][N - 1] == colorDown && faces[1][0][1] == colorSide) {
+		std::cout << "opt 19" << std::endl;
 			exec(2, 0, 1);
 			exec(0, 0, 2);
 		}
 		// flipped other way
 		else if (faces[1][0][1] == colorDown && faces[2][N - 2][N - 1] == colorSide) {
+		std::cout << "opt 20" << std::endl;
 			exec(1, 0, -1);
 			exec(0, 0, 1);
 			exec(1, 0, 1);
 		}
 		// edge between back + up
 		else if (faces[2][0][1] == colorDown && faces[5][0][1] == colorSide) {
+		std::cout << "opt 21" << std::endl;
 			exec(2, 0, 2);
 			exec(0, 0, 2);
 		}
 		// flipped other way
 		else if (faces[5][0][1] == colorDown && faces[2][0][1] == colorSide) {
+		std::cout << "opt 22" << std::endl;
 			exec(2, 0, 1);
 			exec(1, 0, -1);
 			exec(0, 0, 1);
@@ -4135,11 +4157,13 @@ void Solver::solveCross() {
 		}
 		// edge between left + up
 		else if (faces[2][1][0] == colorDown && faces[4][0][1] == colorSide) {
+		std::cout << "opt 23" << std::endl;
 			exec(2, 0, -1);
 			exec(0, 0, 2);
 		}
 		// flipped other way
 		else if (faces[4][0][1] == colorDown && faces[2][1][0] == colorSide) {
+		std::cout << "opt 24" << std::endl;
 			exec(4, 0, 1);
 			exec(0, 0, -1);
 			exec(4, 0, -1);
