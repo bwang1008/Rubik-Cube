@@ -5301,6 +5301,7 @@ void Solver::solveLastCornerPositionB() {
 	else if (permutation == 2143) {
 		exec(2, 0, 1);
 
+		// ccw
 		exec(2, 0, 1);
 		exec(1, 0, 1);
 		exec(2, 0, -1);
@@ -5312,6 +5313,7 @@ void Solver::solveLastCornerPositionB() {
 
 		exec(2, 0, -1);
 
+		// ccw
 		exec(2, 0, 1);
 		exec(1, 0, 1);
 		exec(2, 0, -1);
@@ -5554,6 +5556,7 @@ void Solver::solveLastCornerPositionB() {
 		exec(2, 0, -1);
 	}
 	else if (permutation == 4321) {
+		/*
 		exec(2, 0, 1);
 		// ccw
 		exec(2, 0, 1);
@@ -5579,6 +5582,31 @@ void Solver::solveLastCornerPositionB() {
 		exec(4, 0, 1);
 
 		exec(2, 0, 1);
+		*/
+
+		exec(2, 0, 2);
+
+		// cw
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+
+		exec(2, 0, -2);
+
+		// ccw
+		exec(2, 0, 1);
+		exec(1, 0, 1);
+		exec(2, 0, -1);
+		exec(4, 0, -1);
+		exec(2, 0, 1);
+		exec(1, 0, -1);
+		exec(2, 0, -1);
+		exec(4, 0, 1);
 	}
 
 }
