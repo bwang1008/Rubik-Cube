@@ -40,7 +40,9 @@ public:
 	void solveCenter3();
 	void solveLastCenters();
 	
+	void preliminary0();
 	void solveCenter0B();
+	void preliminary1();
 	void solveCenter1B();
 	void solveCenter2B();
 	void solveCenter3B();

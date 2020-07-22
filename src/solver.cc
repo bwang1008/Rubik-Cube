@@ -770,6 +770,7 @@ void Solver::turnBack(int layer, int qts) {
 
 // wrapper function that turns internal representation, and writes to deque of moves
 void Solver::exec(int face, int layer, int qt) {
+	qt %= 4;
 	switch (face) {
 	case 0: turnFront(layer, qt); break;
 	case 1: turnRight(layer, qt); break;
@@ -2390,8 +2391,215 @@ void Solver::solveLastCenters() {
 	}	
 }
 
+void Solver::preliminary0() {
+	int colorD = getFaceColor(3);
+
+	// most of bottom face
+	for (int i = 1; i < N - 1; ++i) {
+		exec(4, i, -1);
+
+		for (int again = 0; again < 2; ++again) {
+
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][i] == colorD && faces[0][j][i] != colorD) {
+						exec(2, j, -1);
+					}
+				}
+				exec(4, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][j][i] == colorD && faces[0][j][i] != colorD) {
+						exec(2, j, 1);
+					}
+				}
+				exec(1, 0, 1);
+			}
+		}
+
+		exec(4, i, 1);
+	}
+
+	// access to other two sides for bottom face
+	for (int i = 1; i < N - 1; ++i) {
+		exec(0, i, -1); // bring to Right
+
+		for (int again = 0; again < 2; ++again) {
+
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][j][i] == colorD && faces[1][j][i] != colorD) {
+						exec(2, j, -1);
+					}
+				}
+				exec(0, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][j][i] == colorD && faces[1][j][i] != colorD) {
+						exec(2, j, 1);
+					}
+				}
+				exec(5, 0, 1);
+			}
+		}
+
+		exec(0, i, 1);
+	}
+
+	int colorB = getFaceColor(5);
+
+	// most of back face, but placing on Up face for now, except for center col of odd N
+	for (int i = 1; i < N - 1; ++i) {
+		if (2 * i + 1 == N) {
+			continue;
+		}
+
+		exec(4, i, 1); // on Front face, parallel to Left
+		exec(0, 0, 2); // on Front face, parallel to Right
+		exec(4, i, -1); // restore bottom face
+		
+		for (int again = 0; again < 2; ++again) {
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][N - 1 - i] == colorB && faces[0][j][N - 1 - i] != colorB) {
+						exec(2, j, -1);
+					}
+				}
+				exec(4, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][j][N - 1 - i] == colorB && faces[0][j][N - 1 - i] != colorB) {
+						exec(2, j, 1);
+					}
+				}
+			}
+			exec(1, 0, 1);
+		}
+
+		exec(4, i, 1); // undo entrance
+		exec(0, 0, 2);
+		exec(4, i, -1);
+	}
+
+	// access to other two sides for back face that is on Up face
+	for (int i = 1; i < N - 1; ++i) {
+		exec(0, i, 1); // on Right face, parallel to Front
+		exec(1, 0, 2); // on Right face, parallel to Back
+		exec(0, i, -1); // restore bottom face
+
+		for (int again = 0; again < 2; ++again) {
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (2 * j + 1 == N) {
+						continue;
+					}
+
+					if (faces[0][j][N - 1 - i] == colorB && faces[1][j][N - 1 - i] != colorB) {
+						exec(2, j, -1);
+					}
+				}
+				exec(0, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (2 * j + 1 == N) {
+						continue;
+					}
+
+					if (faces[5][j][N - 1 - i] == colorB && faces[1][j][N - 1 - i] != colorB) {
+						exec(2, j, 1);
+					}
+				}
+				exec(5, 0, 1);
+			}
+		}
+
+		exec(0, i, 1); // undo entrance
+		exec(1, 0, 2);
+		exec(0, i, -1);
+	}
+
+
+	// most of bottom face AGAIN
+	for (int i = 1; i < N - 1; ++i) {
+		exec(4, i, -1);
+		exec(0, 0, 2);
+		exec(4, i, 1);
+
+		for (int again = 0; again < 2; ++again) {
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][N - 1 - i] == colorD && faces[0][j][N - 1 - i] != colorD) {
+						exec(2, j, -1);
+					}
+				}
+				exec(4, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][j][N - 1 - i] == colorD && faces[0][j][N - 1 - i] != colorD) {
+						exec(2, j, 1);
+					}
+				}
+				exec(1, 0, 1);
+			}
+		}
+
+		exec(4, i, -1);
+		exec(0, 0, 2);
+		exec(4, i, 1);
+	}
+
+	// access to other two sides for bottom face
+	for (int i = 1; i < N - 1; ++i) {
+		exec(0, i, -1); // bring to Right
+		exec(1, 0, 2);
+		exec(0, i, 1);
+
+		for (int again = 0; again < 2; ++again) {
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][j][N - 1 - i] == colorD && faces[1][j][N - 1 - i] != colorD) {
+						exec(2, j, -1);
+					}
+				}
+				exec(0, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][j][N - 1 - i] == colorD && faces[1][j][N - 1 - i] != colorD) {
+						exec(2, j, 1);
+					}
+				}
+				exec(5, 0, 1);
+			}
+		}
+
+		exec(0, i, -1);
+		exec(1, 0, 2);
+		exec(0, i, 1);
+	}
+
+}
+
 // solving Down face: use swapping method to get down stickers from Back, Left, Right, Front
 // then be careful on getting up to preserve 2 quarter turns per mismatch of stickers
+// Let M = number of mismatches on this face
+// Even Worst-Case: 2M + 192(N-2) + 16 + 42(N-2)
+// Odd  Worst-Case: 2M + 192(N-2) + 16 + 42(N-3) + 1 + 21(N-3)
 void Solver::solveCenter0B() {
 	int colorD = getFaceColor(3);
 
@@ -2651,8 +2859,260 @@ void Solver::solveCenter0B() {
 	}
 }
 
+void Solver::preliminary1() {
+	int colorB = getFaceColor(5);
+
+	// most of back face, but placing on Up face for now, except for center col of odd N
+	for (int i = 1; i < N - 1; ++i) {
+		if (2 * i + 1 == N) {
+			continue;
+		}
+
+		exec(4, i, 1); // on Front face, parallel to Left
+		exec(0, 0, 2); // on Front face, parallel to Right
+		exec(4, i, -1); // restore bottom face
+
+		for (int again = 0; again < 2; ++again) {
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][N - 1 - i] == colorB && faces[0][j][N - 1 - i] != colorB) {
+						exec(2, j, -1);
+					}
+				}
+				exec(4, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][j][N - 1 - i] == colorB && faces[0][j][N - 1 - i] != colorB) {
+						exec(2, j, 1);
+					}
+				}
+			}
+			exec(1, 0, 1);
+		}
+
+		exec(4, i, 1); // undo entrance
+		exec(0, 0, 2);
+		exec(4, i, -1);
+	}
+
+	// access to other two sides for back face that is on Up face
+	for (int i = 1; i < N - 1; ++i) {
+		exec(0, i, 1); // on Right face, parallel to Front
+		exec(1, 0, 2); // on Right face, parallel to Back
+		exec(0, i, -1); // restore bottom face
+
+		for (int again = 0; again < 2; ++again) {
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (2 * j + 1 == N) {
+						continue;
+					}
+
+					if (faces[0][j][N - 1 - i] == colorB && faces[1][j][N - 1 - i] != colorB) {
+						exec(2, j, -1);
+					}
+				}
+				exec(0, 0, 1);
+			}
+
+			for (int numTimes = 0; numTimes < 4; ++numTimes) {
+				for (int j = 1; j < N - 1; ++j) {
+					if (2 * j + 1 == N) {
+						continue;
+					}
+
+					if (faces[5][j][N - 1 - i] == colorB && faces[1][j][N - 1 - i] != colorB) {
+						exec(2, j, 1);
+					}
+				}
+				exec(5, 0, 1);
+			}
+		}
+
+		exec(0, i, 1); // undo entrance
+		exec(1, 0, 2);
+		exec(0, i, -1);
+	}
+
+	int positions[cubeWidth];
+	for (int i = 0; i < N; ++i) {
+		positions[i] = -1;
+	}
+
+	std::map<int, int> myMap;
+	myMap[-1] = -1;
+	myMap[0] = 0;
+	myMap[1] = 1;
+	myMap[2] = 5;
+	myMap[3] = 4;
+
+	int colorL = getFaceColor(4);
+
+	// build each row of Left on the Front face first as a col
+	for (int i = 1; i < N - 1; ++i) {
+
+		for (int j = 1; j < N - 1; ++j) {
+			if (faces[1][j][i] == colorL) {
+				if ((faces[0][j][i] != colorL && myMap[positions[j]] != 1) || (faces[0][j][i] == colorL && myMap[positions[j]] == 0)) {
+					exec(2, j, 1);
+
+					if (myMap[positions[j]] >= 0) {
+						positions[j] = (positions[j] + 3) % 4;
+					}
+				}
+			}
+
+		}
+
+		for (int j = 1; j < N - 1; ++j) {
+			if (faces[4][j][i] == colorL) {
+				if ((faces[0][j][i] != colorL && myMap[positions[j]] != 4) || (faces[0][j][i] == colorL && myMap[positions[j]] == 0)) {
+					exec(2, j, -1);
+
+					if (myMap[positions[j]] >= 0) {
+						positions[j] = (positions[j] + 1) % 4;
+					}
+				}
+			}
+		}
+
+
+		if (myMap[positions[i]] == 1) {
+			exec(2, i, -1);
+			positions[i] = 2;
+		}
+
+
+		exec(0, 0, 1);
+		exec(2, i, 1);
+
+
+		if (positions[i] >= 0) {
+			positions[i] = (positions[i] + 3) % 4;
+		}
+
+
+		exec(0, 0, -1);
+
+		positions[i] = 3;
+	}
+
+	for (int i = 1; i < N - 1; ++i) {
+		exec(2, i, positions[i] + 1);
+		positions[i] = 3;
+	}
+
+	int numCorrect = 0;
+	for (int i = 1; i < N - 1; ++i) {
+		for (int j = 1; j < N - 1; ++j) {
+			if (faces[4][i][j] == colorL) {
+				numCorrect++;
+			}
+		}
+	}
+
+	std::cout << "numCorrect0 = " << numCorrect << std::endl;
+
+	
+	for (int numTimes = 0; numTimes < 3; ++numTimes) {
+		exec(4, 0, 1);
+
+		for (int i = 1; i < N - 1; ++i) {
+
+			exec(2, i, positions[i] + 1);
+			positions[i] = 3;
+
+			exec(2, i, -1);
+			exec(0, 0, -1);
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[1][j][i] == colorL) {
+					if ((faces[0][j][i] != colorL && myMap[positions[j]] != 1) || (faces[0][j][i] == colorL && myMap[positions[j]] == 0)) {
+						exec(2, j, 1);
+
+						if (myMap[positions[j]] >= 0) {
+							positions[j] = (positions[j] + 3) % 4;
+						}
+					}
+				}
+
+			}
+
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[4][j][i] == colorL) {
+					if ((faces[0][j][i] != colorL && myMap[positions[j]] != 4) || (faces[0][j][i] == colorL && myMap[positions[j]] == 0)) {
+						exec(2, j, -1);
+
+						if (myMap[positions[j]] >= 0) {
+							positions[j] = (positions[j] + 1) % 4;
+						}
+					}
+				}
+			}
+
+
+			if (myMap[positions[i]] == 1) {
+				exec(2, i, -1);
+				positions[i] = 2;
+			}
+
+
+			exec(0, 0, 1);
+			exec(2, i, 1);
+
+
+			if (positions[i] >= 0) {
+				positions[i] = (positions[i] + 3) % 4;
+			}
+
+
+			exec(0, 0, -1);
+
+			positions[i] = 3;
+		}
+
+		for (int i = 1; i < N - 1; ++i) {
+			exec(2, i, positions[i] + 1);
+			positions[i] = 3;
+		}
+
+		numCorrect = 0;
+		for (int i = 1; i < N - 1; ++i) {
+			for (int j = 1; j < N - 1; ++j) {
+				if (faces[4][i][j] == colorL) {
+					numCorrect++;
+				}
+			}
+		}
+
+		std::cout << "numCorrect" << numTimes << " = " << numCorrect << std::endl;
+	}
+	
+
+
+	
+	// move the Up face that has Back stickers onto Back face, do this at the end of preliminary
+	for (int i = 1; i < N / 2; ++i) {
+		exec(4, i, -1);
+	}
+	exec(5, 0, 2);
+	for (int i = 1; i < N / 2; ++i) {
+		exec(4, i, 2);
+	}
+	exec(2, 0, 2);
+	for (int i = 1; i < N / 2; ++i) {
+		exec(4, i, -1);
+	}
+	
+}
+
 // solving Back face: use swapping method to get down stickers from Left, Right, Up
 // then be careful on getting Front to preserve 2 quarter turns per mismatch
+// Let M = number of mismatches on this face
+// Even Worst-Case: 2M + 144(N-2) + 12 + 46(N-2)
+// Odd  Worst-Case: 2M + 144(N-2) + 12 + 46(N-3) + 1 + 22(N-3)
 void Solver::solveCenter1B() {
 	int colorB = getFaceColor(5);
 
@@ -2870,6 +3330,9 @@ void Solver::solveCenter1B() {
 
 // solving Left face: use swapping method to get down stickers from Front, Up
 // then be careful on getting Right to preserve 2 quarter turns per mismatch
+// Let M = number of mismatches on this face
+// Even Worst-Case: 2M + 96(N-2) + 8 + 46(N-2)
+// Odd  Worst-Case: 2M + 96(N-2) + 8 + 46(N-3) + 1 + 22(N-3)
 void Solver::solveCenter2B() {
 	int colorL = getFaceColor(4);
 
@@ -3039,6 +3502,8 @@ void Solver::solveCenter2B() {
 }
 
 // solving Up face: use swapping method to get up stickers from Front, Right
+// Let M = number of mismatches on this face
+// Worst-Case: 2M + 96(N-2) + 8
 void Solver::solveCenter3B() {
 	int colorU = getFaceColor(2);
 
@@ -3138,6 +3603,8 @@ void Solver::solveCenter3B() {
 }
 
 // solving Front and Right faces: use swapping method
+// Let M = number of mismatches on this face
+// Worst-Case: 2M + 48(N-2) + 4
 void Solver::solveLastCentersB() {
 	int colorF = getFaceColor(0);
 	int colorR = getFaceColor(1);
@@ -3190,8 +3657,12 @@ void Solver::solveLastCentersB() {
 	}
 }
 
+// Solving Centers total (from methods B): Odd: 2 * (# total mismatches) + 775N - 1698 <= 2*5(N-2)^2 + 775N - 1698 = 10N^2 + 735N - 1658
+// Even Worst-Case: 2 * (# total mismatches) + 710(N-2) + 48 <= 2*5(N^2) + 710N - 1372 = 10N^2 + 670N - 1332
+
 // Credits to https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/ 
 // flips the edge between front and right
+// 7 quarter turns
 void Solver::flipEdge(int edge) {
 	if (edge == 0 + 1) { // front + right
 		exec(1, 0, 1);
@@ -3231,6 +3702,8 @@ void Solver::flipEdge(int edge) {
 	}
 }
 
+// solve first 4 edges
+// Even Worst-Case: 52N - 88, Odd Worst-Case: 52N - 140
 void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
@@ -3252,7 +3725,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				continue;
 			}
 			
-			// edge between front and up
+			// edge between front and up; 5 qt
 			if (faces[0][0][i] == colorF && faces[2][N - 1][i] == colorR) {
 				exec(2, i, 1);
 				exec(4, 0, -1);
@@ -3261,7 +3734,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 7 qt
 			else if (faces[2][N - 1][N - 1 - i] == colorF && faces[0][0][N - 1 - i] == colorR) {
 				exec(2, i, 2);
 				exec(4, 0, 1);
@@ -3270,7 +3743,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between left and up
+			// edge between left and up; 6 qt
 			else if (faces[4][0][i] == colorF && faces[2][i][0] == colorR) {
 				exec(2, 0, 1);
 				exec(2, i, 1);
@@ -3280,7 +3753,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 8 qt
 			else if (faces[2][N - 1 - i][0] == colorF && faces[4][0][N - 1 - i] == colorR) {
 				exec(2, 0, 1);
 				exec(2, i, 2);
@@ -3290,7 +3763,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between back and up
+			// edge between back and up; 5 qt
 			else if (faces[5][0][i] == colorF && faces[2][0][N - 1 - i] == colorR) {
 				exec(2, i, 1);
 				exec(4, 0, -1);
@@ -3298,7 +3771,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 7 qt
 			else if (faces[2][0][i] == colorF && faces[5][0][N - 1 - i] == colorR) {
 				exec(2, i, 2);
 				exec(4, 0, 1);
@@ -3306,7 +3779,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between right and up
+			// edge between right and up; 6 qt
 			else if (faces[1][0][i] == colorF && faces[2][N - 1 - i][N - 1] == colorR) {
 				exec(2, i, 1);
 				exec(4, 0, -1);
@@ -3314,7 +3787,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 8 qt
 			else if (faces[2][i][N - 1] == colorF && faces[1][0][N - 1 - i] == colorR) {
 				exec(2, i, 2);
 				exec(4, 0, 1);
@@ -3322,7 +3795,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between front and left
+			// edge between front and left; 10 qt
 			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
 				exec(4, 0, -1);
 				exec(2, 0, -1);
@@ -3333,7 +3806,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// other one
+			// other one; 8 qt
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
 				exec(4, 0, -1);
 				exec(2, 0, -1);
@@ -3344,7 +3817,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// edge between left and back
+			// edge between left and back; 11 qt
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
 				exec(5, 0, -1);
 				exec(2, 0, 1);
@@ -3357,7 +3830,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// other one
+			// other one; 9 qt
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
 				exec(5, 0, -1);
 				exec(2, 0, 1);
@@ -3370,7 +3843,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// edge between right and back
+			// edge between right and back; 11 qt
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
 				exec(5, 0, 1);
 				exec(2, 0, -1);
@@ -3383,7 +3856,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// other one
+			// other one; 9 qt
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
 				exec(5, 0, 1);
 				exec(2, 0, -1);
@@ -3396,7 +3869,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// edge between down and front
+			// edge between down and front; 11 qt
 			else if (faces[0][N - 1][N - 1 - i] == colorF && faces[3][0][N - 1 - i] == colorR) {
 				exec(0, 0, 2);
 				exec(2, 0, -1);
@@ -3408,7 +3881,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 13 qt
 			else if (faces[3][0][i] == colorF && faces[0][N - 1][i] == colorR) {
 				exec(0, 0, 2);
 				exec(2, 0, -1);
@@ -3420,7 +3893,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between down and left
+			// edge between down and left; 10 qt
 			else if (faces[4][N - 1][N - 1 - i] == colorF && faces[3][i][0] == colorR) {
 				exec(4, 0, 2);
 				exec(2, 0, -1);
@@ -3432,7 +3905,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one, 12 qt
 			else if (faces[3][N - 1 - i][0] == colorF && faces[4][N - 1][i] == colorR) {
 				exec(4, 0, 2);
 				exec(2, 0, -1);
@@ -3444,7 +3917,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between down and back
+			// edge between down and back; 11 qt
 			else if (faces[5][N - 1][N - 1 - i] == colorF && faces[3][N - 1][i] == colorR) {
 				exec(5, 0, 2);
 				exec(2, 0, 1);
@@ -3456,7 +3929,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 13 qt
 			else if (faces[3][N - 1][N - 1 - i] == colorF && faces[5][N - 1][i] == colorR) {
 				exec(5, 0, 2);
 				exec(2, 0, 1);
@@ -3468,7 +3941,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between down and right
+			// edge between down and right; 10 qt
 			else if (faces[1][N - 1][N - 1 - i] == colorF && faces[3][N - 1 - i][N - 1] == colorR) {
 				exec(1, 0, 2);
 				exec(2, 0, 1);
@@ -3480,7 +3953,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 12 qt
 			else if (faces[3][i][N - 1] == colorF && faces[1][N - 1][i] == colorR) {
 				exec(1, 0, 2);
 				exec(2, 0, 1);
@@ -3492,7 +3965,7 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(2, i, -2);
 			}
-			// other edge piece on edge between front and right
+			// other edge piece on edge between front and right; 12 qt
 			else if (faces[1][N - 1 - i][0] == colorF && faces[0][N - 1 - i][N - 1] == colorR) {
 				exec(2, N - 1 - i, 1);
 				exec(4, 0, -1);
@@ -3518,6 +3991,8 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 	exec(5, 0, 2);
 }
 
+// solve middle 4 edges
+// Even Worst-Case: 108N - 312, Odd Worst-Case: 108N - 420
 void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 
 	std::map<int, char> myMap;
@@ -3543,7 +4018,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 
 			//std::cout << "i = " << i << std::endl;
 
-			// edge between front and left
+			// edge between front and left; 18 qt
 			if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "opt1 " << std::endl;
 				exec(4, 0, 1);
@@ -3564,7 +4039,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(3, 0, 1);
 			}
-			// other one
+			// other one; 20 qt
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
 				//std::cout << "opt2 " << std::endl;
 				exec(4, 0, 1);
@@ -3585,7 +4060,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(3, 0, 1);
 			}
-			// edge between left and back
+			// edge between left and back; 20 qt
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "left + back " << std::endl;
 				exec(3, 0, 2);
@@ -3610,7 +4085,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 				exec(3, 0, 1);
 			}
-			// other one
+			// other one; 22 qt
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
 				//std::cout << "left + back part 2" << std::endl;
 				exec(3, 0, 2);
@@ -3636,7 +4111,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, 1);
 			}
 			
-			// edge between right and back
+			// edge between right and back; 22 qt
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
 				//std::cout << "right + back" << std::endl;
 				exec(5, 0, -1);
@@ -3657,7 +4132,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(0, 0, 1);
 				exec(3, 0, 2);
 			}
-			// other one
+			// other one; 20 qt
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "right + back part 2" << std::endl;
 				exec(5, 0, -1);
@@ -3678,7 +4153,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(0, 0, 1);
 				exec(3, 0, 2);
 			}
-			// edge between down and front
+			// edge between down and front; 8 qt
 			else if (faces[0][N - 1][N - 1 - i] == colorF && faces[3][0][N - 1 - i] == colorR) {
 				//std::cout << "down + front" << std::endl;
 				exec(2, i, 1);
@@ -3691,7 +4166,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, 1);
 				exec(4, 0, -1);
 			}
-			// other one
+			// other one; 10 qt
 			else if (faces[3][0][i] == colorF && faces[0][N - 1][i] == colorR) {
 				//std::cout << "down + front part 2" << std::endl;
 				exec(2, i, 2);
@@ -3705,7 +4180,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, -1);
 			}
 			
-			// edge between down and left
+			// edge between down and left; 10 qt
 			else if (faces[4][N - 1][N - 1 - i] == colorF && faces[3][i][0] == colorR) {
 				//std::cout << "down + left" << std::endl;
 
@@ -3724,7 +4199,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 
 				exec(3, 0, -1);
 			}
-			// other one
+			// other one; 12 qt
 			else if (faces[3][N - 1 - i][0] == colorF && faces[4][N - 1][i] == colorR) {
 				//std::cout << "down + left part 2" << std::endl;
 				exec(3, 0, 1);
@@ -3743,7 +4218,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, -1);
 			}
 			
-			// edge between down and back
+			// edge between down and back; 6 qt
 			else if (faces[5][N - 1][N - 1 - i] == colorF && faces[3][N - 1][i] == colorR) {
 				//std::cout << "down + back" << std::endl;
 				exec(2, i, 1);
@@ -3753,7 +4228,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, -1);
 				exec(2, i, -1);
 			}
-			// other one
+			// other one; 8 qt
 			else if (faces[3][N - 1][N - 1 - i] == colorF && faces[5][N - 1][i] == colorR) {
 				//std::cout << "down + back part 2" << std::endl;
 				exec(2, i, 2);
@@ -3763,7 +4238,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, -1);
 				exec(2, i, -2);
 			}
-			// edge between down and right
+			// edge between down and right; 8 qt
 			else if (faces[1][N - 1][N - 1 - i] == colorF && faces[3][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "down + right" << std::endl;
 				exec(2, i, 2);
@@ -3773,7 +4248,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, -1);
 				exec(2, i, -2);
 			}
-			// other one
+			// other one; 6 qt
 			else if (faces[3][i][N - 1] == colorF && faces[1][N - 1][i] == colorR) {
 				//std::cout << "down + right part 2" << std::endl;
 				exec(2, i, -1);
@@ -3783,7 +4258,7 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(3, 0, -1);
 				exec(2, i, 1);
 			}
-			// other edge piece on edge between front and right
+			// other edge piece on edge between front and right; 32 qt
 			else if (faces[1][N - 1 - i][0] == colorF && faces[0][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "reversed: front + right" << std::endl;
 				
@@ -3842,6 +4317,8 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 	exec(1, 0, 1); // place both vertical edges on right into two horizontal edges, one on top, one on bottom -> top has 4, bot has 4
 }
 
+// solve last 4 edges
+// Even Worst-Case: 66.5N - 125, Odd Worst-Case: 66.5N - 191.5
 void Solver::solveEdges2() {
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
@@ -3865,7 +4342,7 @@ void Solver::solveEdges2() {
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
 
 			}
-			// if desired piece on opposite side of same edge
+			// if desired piece on opposite side of same edge; 11 qt
 			else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
 				//std::cout << "on other side of same edge!" << std::endl;
 				exec(2, i, -1);
@@ -3874,12 +4351,14 @@ void Solver::solveEdges2() {
 				exec(2, i, 1);
 				exec(2, N - 1 - i, 1);
 			}
+			// on edge between back and right; 9 qt
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "edge between right + back, down" << std::endl;
 				exec(2, i, -1);
 				flipEdge(1 + 5); // right + back
 				exec(2, i, 1);
 			}
+			// reverse that; 16 qt
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
 				//std::cout << "edge between right + back, up" << std::endl;
 				flipEdge(1 + 5); // right + back
@@ -3887,12 +4366,14 @@ void Solver::solveEdges2() {
 				flipEdge(1 + 5);
 				exec(2, i, 1);
 			}
+			// on edge between front and left; 9 qt
 			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "edge between left + front, down" << std::endl;
 				exec(2, i, 1);
 				flipEdge(4 + 0); // left + front
 				exec(2, i, -1);
 			}
+			// reverse that; 16 qt
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
 				//std::cout << "edge between left + front, up" << std::endl;
 				flipEdge(4 + 0); // left + front
@@ -3900,12 +4381,14 @@ void Solver::solveEdges2() {
 				flipEdge(4 + 0);
 				exec(2, i, -1);
 			}
+			// on edge between left and back; 11 qt
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "edge between back + left, down" << std::endl;
 				exec(2, i, 2);
 				flipEdge(5 + 4); // back + left
 				exec(2, i, -2);
 			}
+			// reverse that; 18 qt
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
 				//std::cout << "edge between back + left, up" << std::endl;
 				flipEdge(5 + 4);
@@ -3940,7 +4423,7 @@ void Solver::solveEdges2() {
 		if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
 			continue;
 		}
-		// if desired piece on opposite side of same edge
+		// if desired piece on opposite side of same edge; 25 qt
 		// Red Bull Algorithm - https://www.youtube.com/watch?v=knMCvKdJFgk
 		else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
 			//std::cout << "on the other side..." << std::endl;
@@ -3967,6 +4450,7 @@ void Solver::solveEdges2() {
 
 }
 
+// Total Edges: Even Worst-Case: 226.5N - 525, Odd Worst-Case: 226.5N - 751.5
 void Solver::solveEdges() {
 	if (N <= 3) {
 		return;

@@ -354,7 +354,9 @@ int main2(int argc, char* argv[]) {
 			std::cout << "COPYING FINISHED" << std::endl;
 
 			gui.resetCount();
+			solver->preliminary0();
 			solver->solveCenter0B();
+			solver->preliminary1();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 1st center
 			
@@ -700,7 +702,7 @@ int main2(int argc, char* argv[]) {
 }
 
 int tryingOutTextures(int argc, char* argv[]) {
-	if (cubeWidth <= 0 || cubeWidth > 4096) {
+	if (cubeWidth <= 0 || cubeWidth > 2048) {
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
 		return -1;
@@ -858,7 +860,8 @@ int tryingOutTextures(int argc, char* argv[]) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		//glClearColor(0.56f, 0.72f, 0.95f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -898,8 +901,11 @@ int tryingOutTextures(int argc, char* argv[]) {
 
 			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
 			
-			if(gui.isQuarterTurning())
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
+			if (true || gui.isQuarterTurning()) {
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, images[i]->width, images[i]->height, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
+				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
+
+			}
 		}
 		
 		// render faces
