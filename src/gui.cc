@@ -231,23 +231,6 @@ float GUI::getCurrentPlayTime()
 	
 }
 
-void GUI::scrambleCube()
-{
-	int N = cubeWidth;
-	srand(1);
-	int numberMoves = std::min(3 * N * N, 300);
-
-	for (int i = 0; i < numberMoves; ++i) {
-		int randFace = rand() % 3;
-		int randLayer = rand() % N;
-		int randRotation = rand() % 3;
-		if (randRotation == 0)
-			randRotation = -1; // now -1, 1, or 2
-
-		allMoves.push_back(glm::ivec3(randFace, randLayer, randRotation));
-	}
-}
-
 bool GUI::captureWASDUPDOWN(int key, int action)
 {
 	if (key == GLFW_KEY_W) {

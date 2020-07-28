@@ -33,6 +33,7 @@ public:
 	void print();
 	void incr();
 	int currentState();
+	void scrambleCube();
 	
 	void solveCenter0();
 	void solveCenter1();

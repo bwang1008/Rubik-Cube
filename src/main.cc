@@ -284,7 +284,7 @@ int main2(int argc, char* argv[]) {
 	*/
 
 	std::cout << "Begin generating scrambles" << std::endl;
-	gui.scrambleCube();
+	solver -> scrambleCube();
 	dequeSize = gui.getSize();
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
 	gui.setRotatingSpeed(250.0f);
@@ -425,6 +425,7 @@ int main2(int argc, char* argv[]) {
 
 			gui.resetCount();
 			solver->solveLastCentersB();
+			solver->solveEdges();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 5th, 6th centers
 
@@ -443,9 +444,9 @@ int main2(int argc, char* argv[]) {
 			std::cout << "total moves of centers = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
-			solver->solveEdges();
+			solver->solveEdges2();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve edges
+			gui.setRotatingSpeed(1.0f); // to solve edges
 
 			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
 			solver->incr();

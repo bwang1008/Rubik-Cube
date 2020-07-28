@@ -82,7 +82,6 @@ public:
 	float getRotatingSpeed() { return rotation_speed_; }
 	void setRotatingSpeed(float f) { rotation_speed_ = f; }
 
-	void scrambleCube();
 	size_t getSize() { return allMoves.size(); }
 
 	long long getCountMoves() { return countMoves; }

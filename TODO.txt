@@ -19,6 +19,7 @@ v Implement solver
 	- Idea: Solve centers, then edges, then all as a 3x3x3
 - Implement reader-writer system where solver writes, graphical rendering pulls first for current move
 	- Use a thread for above?
+	- Use Bounded Buffer?
 - Write moves to JSON file, copy sticker color from JSON 
 - Use textures to be able to render larger cubes efficiently
 	- Can load JPG and also create my own texture

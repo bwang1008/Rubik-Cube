@@ -928,6 +928,23 @@ int Solver::currentState() {
 	return state;
 }
 
+void Solver::scrambleCube()
+{
+	int N = cubeWidth;
+	srand(1);
+	int numberMoves = std::min(3 * N * N, 300);
+
+	for (int i = 0; i < numberMoves; ++i) {
+		int randFace = rand() % 3;
+		int randLayer = rand() % N;
+		int randRotation = rand() % 3;
+		if (randRotation == 0)
+			randRotation = -1; // now -1, 1, or 2
+
+		dequePtr -> push_back(glm::ivec3(randFace, randLayer, randRotation));
+	}
+}
+
 // solves the Down face of the cube (for even sized cubes, it is yellow)
 void Solver::solveCenter0() {
 	int color = getFaceColor(3); // let's solve the bottom/down face
@@ -2480,8 +2497,8 @@ void Solver::preliminary0() {
 						exec(2, j, 1);
 					}
 				}
+				exec(1, 0, 1);
 			}
-			exec(1, 0, 1);
 		}
 
 		exec(4, i, 1); // undo entrance
@@ -2888,8 +2905,9 @@ void Solver::preliminary1() {
 						exec(2, j, 1);
 					}
 				}
+				exec(1, 0, 1);
 			}
-			exec(1, 0, 1);
+			
 		}
 
 		exec(4, i, 1); // undo entrance
@@ -3089,9 +3107,6 @@ void Solver::preliminary1() {
 
 		std::cout << "numCorrect" << numTimes << " = " << numCorrect << std::endl;
 	}
-	
-
-
 	
 	// move the Up face that has Back stickers onto Back face, do this at the end of preliminary
 	for (int i = 1; i < N / 2; ++i) {
@@ -3727,257 +3742,469 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 			
 			// edge between front and up; 5 qt
 			if (faces[0][0][i] == colorF && faces[2][N - 1][i] == colorR) {
-				exec(2, i, 1);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][0][j] == colorF && faces[2][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+				
+				for (int j : indices) {
+					exec(2, j, 1);
+				}
 				exec(4, 0, -1);
 
 				exec(2, 0, 1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for (int j : indices) {
+					exec(2, j, -1);
+				}
 			}
 			// other one; 7 qt
 			else if (faces[2][N - 1][N - 1 - i] == colorF && faces[0][0][N - 1 - i] == colorR) {
-				exec(2, i, 2);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[2][N - 1][N - 1 - j] == colorF && faces[0][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+					exec(2, j, 2);
 				exec(4, 0, 1);
 
 				exec(2, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+					exec(2, j, -2);
 			}
 			// edge between left and up; 6 qt
 			else if (faces[4][0][i] == colorF && faces[2][i][0] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][0][j] == colorF && faces[2][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(2, 0, 1);
-				exec(2, i, 1);
+				for(int j : indices)
+					exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+					exec(2, j, -1);
 			}
 			// other one; 8 qt
 			else if (faces[2][N - 1 - i][0] == colorF && faces[4][0][N - 1 - i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[2][N - 1 - j][0] == colorF && faces[4][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(2, 0, 1);
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, -1);
 				
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between back and up; 5 qt
 			else if (faces[5][0][i] == colorF && faces[2][0][N - 1 - i] == colorR) {
-				exec(2, i, 1);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][0][j] == colorF && faces[2][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one; 7 qt
 			else if (faces[2][0][i] == colorF && faces[5][0][N - 1 - i] == colorR) {
-				exec(2, i, 2);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[2][0][j] == colorF && faces[5][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, -1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between right and up; 6 qt
 			else if (faces[1][0][i] == colorF && faces[2][N - 1 - i][N - 1] == colorR) {
-				exec(2, i, 1);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][0][j] == colorF && faces[2][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, 2);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one; 8 qt
 			else if (faces[2][i][N - 1] == colorF && faces[1][0][N - 1 - i] == colorR) {
-				exec(2, i, 2);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[2][j][N - 1] == colorF && faces[1][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 2);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between front and left; 10 qt
 			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][N - 1 - j][0] == colorF && faces[4][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// other one; 8 qt
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][N - 1] == colorF && faces[0][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, 1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// edge between left and back; 11 qt
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][N - 1 - j][0] == colorF && faces[5][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+				
 				exec(5, 0, -1);
 				exec(2, 0, 1);
 				exec(5, 0, 1);
 				exec(2, 0, -1);
 
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, -1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// other one; 9 qt
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][j][N - 1] == colorF && faces[4][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, -1);
 				exec(2, 0, 1);
 				exec(5, 0, 1);
 				exec(2, 0, -1);
 
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// edge between right and back; 11 qt
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][j][N - 1] == colorF && faces[5][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, 1);
 				exec(2, 0, -1);
 				exec(5, 0, -1);
 				exec(2, 0, 1);
 				
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, -1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// other one; 9 qt
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][N - 1 - j][0] == colorF && faces[1][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, 1);
 				exec(2, 0, -1);
 				exec(5, 0, -1);
 				exec(2, 0, 1);
 
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// edge between down and front; 11 qt
 			else if (faces[0][N - 1][N - 1 - i] == colorF && faces[3][0][N - 1 - i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][N - 1][N - 1 - j] == colorF && faces[3][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(0, 0, 2);
 				exec(2, 0, -1);
 				exec(0, 0, -2);
-
-				exec(2, i, 1);
+				
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, 2);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one; 13 qt
 			else if (faces[3][0][i] == colorF && faces[0][N - 1][i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][0][j] == colorF && faces[0][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(0, 0, 2);
 				exec(2, 0, -1);
 				exec(0, 0, -2);
 
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 2);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between down and left; 10 qt
 			else if (faces[4][N - 1][N - 1 - i] == colorF && faces[3][i][0] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][N - 1][N - 1 - j] == colorF && faces[3][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(4, 0, 2);
 				exec(2, 0, -1);
 				exec(4, 0, -2);
 
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, 1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one, 12 qt
 			else if (faces[3][N - 1 - i][0] == colorF && faces[4][N - 1][i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][N - 1 - j][0] == colorF && faces[4][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(4, 0, 2);
 				exec(2, 0, -1);
 				exec(4, 0, -2);
 
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between down and back; 11 qt
 			else if (faces[5][N - 1][N - 1 - i] == colorF && faces[3][N - 1][i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][N - 1][N - 1 - j] == colorF && faces[3][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, 2);
 				exec(2, 0, 1);
 				exec(5, 0, -2);
 
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, 2);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one; 13 qt
 			else if (faces[3][N - 1][N - 1 - i] == colorF && faces[5][N - 1][i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][N - 1][N - 1 - j] == colorF && faces[5][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, 2);
 				exec(2, 0, 1);
 				exec(5, 0, -2);
 
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 2);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between down and right; 10 qt
 			else if (faces[1][N - 1][N - 1 - i] == colorF && faces[3][N - 1 - i][N - 1] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][N - 1][N - 1 - j] == colorF && faces[3][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(1, 0, 2);
 				exec(2, 0, 1);
 				exec(1, 0, -2);
 
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, 1);
 				exec(4, 0, 1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one; 12 qt
 			else if (faces[3][i][N - 1] == colorF && faces[1][N - 1][i] == colorR) {
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][j][N - 1] == colorF && faces[1][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(1, 0, 2);
 				exec(2, 0, 1);
 				exec(1, 0, -2);
 
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// other edge piece on edge between front and right; 12 qt
 			else if (faces[1][N - 1 - i][0] == colorF && faces[0][N - 1 - i][N - 1] == colorR) {
-				exec(2, N - 1 - i, 1);
+				
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][N - 1 - j][0] == colorF && faces[0][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, N - 1 - j, 1);
 				exec(4, 0, -1);
 				exec(2, 0, -1);
 				exec(4, 0, 1);
-				exec(2, N - 1 - i, -1);
+				for(int j : indices)
+				exec(2, N - 1 - j, -1);
 
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, 1);
 				exec(2, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 		}
 
@@ -4021,14 +4248,23 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// edge between front and left; 18 qt
 			if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "opt1 " << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][N - 1 - j][0] == colorF && faces[4][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(4, 0, 1);
 				exec(3, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 				exec(5, 0, -1);
 				exec(3, 0, 2);
 				exec(5, 0, 1);
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 
 				exec(1, 0, 1);
 				exec(3, 0, 1);
@@ -4042,14 +4278,23 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// other one; 20 qt
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
 				//std::cout << "opt2 " << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][j][N - 1] == colorF && faces[0][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(4, 0, 1);
 				exec(3, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 				exec(5, 0, 1);
 				exec(3, 0, 2);
 				exec(5, 0, -1);
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				
 				exec(1, 0, 1);
 				exec(3, 0, 1);
@@ -4063,6 +4308,13 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// edge between left and back; 20 qt
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "left + back " << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][N - 1 - j][0] == colorF && faces[5][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(3, 0, 2);
 				exec(5, 0, 1);
 				exec(4, 0, 1);
@@ -4074,11 +4326,13 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(3, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 				exec(5, 0, -1);
 				exec(3, 0, 2);
 				exec(5, 0, 1);
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				
 				exec(4, 0, 1);
 				exec(3, 0, -1);
@@ -4088,6 +4342,13 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// other one; 22 qt
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
 				//std::cout << "left + back part 2" << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][j][N - 1] == colorF && faces[4][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(3, 0, 2);
 				exec(5, 0, 1);
 				exec(4, 0, 1);
@@ -4099,11 +4360,13 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				exec(4, 0, 1);
 				exec(3, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 				exec(5, 0, 1);
 				exec(3, 0, 2);
 				exec(5, 0, -1);
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				
 				exec(4, 0, 1);
 				exec(3, 0, -1);
@@ -4114,14 +4377,23 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// edge between right and back; 22 qt
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
 				//std::cout << "right + back" << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][j][N - 1] == colorF && faces[5][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, -1);
 				exec(3, 0, -1);
 				exec(5, 0, 1);
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, -1);
 				exec(3, 0, 2);
 				exec(4, 0, 1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 
 				exec(0, 0, -1);
 				exec(3, 0, 2);
@@ -4135,14 +4407,23 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// other one; 20 qt
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "right + back part 2" << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][N - 1 - j][0] == colorF && faces[1][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 				exec(5, 0, -1);
 				exec(3, 0, -1);
 				exec(5, 0, 1);
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, 1);
 				exec(3, 0, 2);
 				exec(4, 0, -1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 
 				exec(0, 0, -1);
 				exec(3, 0, 2);
@@ -4156,11 +4437,20 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// edge between down and front; 8 qt
 			else if (faces[0][N - 1][N - 1 - i] == colorF && faces[3][0][N - 1 - i] == colorR) {
 				//std::cout << "down + front" << std::endl;
-				exec(2, i, 1);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[0][N - 1][N - 1 - j] == colorF && faces[3][0][N - 1 - j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, 1);
 				exec(3, 0, -1);
 				exec(4, 0, -1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 				
 				exec(4, 0, 1);
 				exec(3, 0, 1);
@@ -4169,11 +4459,20 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// other one; 10 qt
 			else if (faces[3][0][i] == colorF && faces[0][N - 1][i] == colorR) {
 				//std::cout << "down + front part 2" << std::endl;
-				exec(2, i, 2);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][0][j] == colorF && faces[0][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, -1);
 				exec(3, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 				
 				exec(4, 0, 1);
 				exec(3, 0, 1);
@@ -4183,15 +4482,24 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// edge between down and left; 10 qt
 			else if (faces[4][N - 1][N - 1 - i] == colorF && faces[3][i][0] == colorR) {
 				//std::cout << "down + left" << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[4][N - 1][N - 1 - j] == colorF && faces[3][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
 
 				exec(3, 0, 1);
 
 				// do down + front
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, 1);
 				exec(3, 0, -1);
 				exec(4, 0, -1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 
 				exec(4, 0, 1);
 				exec(3, 0, 1);
@@ -4202,14 +4510,24 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// other one; 12 qt
 			else if (faces[3][N - 1 - i][0] == colorF && faces[4][N - 1][i] == colorR) {
 				//std::cout << "down + left part 2" << std::endl;
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][N - 1 - j][0] == colorF && faces[4][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+
 				exec(3, 0, 1);
 
 				// do down + front
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, -1);
 				exec(3, 0, -1);
 				exec(4, 0, 1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 				
 				exec(4, 0, 1);
 				exec(3, 0, 1);
@@ -4221,47 +4539,89 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 			// edge between down and back; 6 qt
 			else if (faces[5][N - 1][N - 1 - i] == colorF && faces[3][N - 1][i] == colorR) {
 				//std::cout << "down + back" << std::endl;
-				exec(2, i, 1);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[5][N - 1][N - 1 - j] == colorF && faces[3][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 1);
 				exec(4, 0, 1);
 				exec(3, 0, 1);
 				exec(4, 0, -1);
 				exec(3, 0, -1);
-				exec(2, i, -1);
+				for(int j : indices)
+				exec(2, j, -1);
 			}
 			// other one; 8 qt
 			else if (faces[3][N - 1][N - 1 - i] == colorF && faces[5][N - 1][i] == colorR) {
 				//std::cout << "down + back part 2" << std::endl;
-				exec(2, i, 2);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][N - 1][N - 1 - j] == colorF && faces[5][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(4, 0, -1);
 				exec(3, 0, 1);
 				exec(4, 0, 1);
 				exec(3, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// edge between down and right; 8 qt
 			else if (faces[1][N - 1][N - 1 - i] == colorF && faces[3][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "down + right" << std::endl;
-				exec(2, i, 2);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[1][N - 1][N - 1 - j] == colorF && faces[3][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, 2);
 				exec(5, 0, 1);
 				exec(3, 0, 1);
 				exec(5, 0, -1);
 				exec(3, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 			}
 			// other one; 6 qt
 			else if (faces[3][i][N - 1] == colorF && faces[1][N - 1][i] == colorR) {
 				//std::cout << "down + right part 2" << std::endl;
-				exec(2, i, -1);
+				std::vector<int> indices;
+				for (int j = 1; j < N - 1; ++j) {
+					if (faces[3][j][N - 1] == colorF && faces[1][N - 1][j] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				for(int j : indices)
+				exec(2, j, -1);
 				exec(5, 0, -1);
 				exec(3, 0, 1);
 				exec(5, 0, 1);
 				exec(3, 0, -1);
-				exec(2, i, 1);
+				for(int j : indices)
+				exec(2, j, 1);
 			}
 			// other edge piece on edge between front and right; 32 qt
 			else if (faces[1][N - 1 - i][0] == colorF && faces[0][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "reversed: front + right" << std::endl;
-				
+				std::vector<int> indices;
+				for (int j = 1; j < N / 2; ++j) {
+					if (faces[1][N - 1 - j][0] == colorF && faces[0][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+				/*
 				exec(2, N - 1 - i, 1);
 				if (i != N - 1 - i) {
 					exec(2, i, 1);
@@ -4278,17 +4638,35 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 				if (i != N - 1 - i) {
 					exec(2, N - 1 - i, 1);
 				}
+				*/
+
+				for (int j : indices)
+					exec(2, N - 1 - j, 1);
+				for (int j : indices)
+					exec(2, j, 1);
+				exec(4, 0, 2);
+				for (int j : indices)
+					exec(2, j, -2);
+				for (int j : indices)
+					exec(2, N - 1 - j, -2);
+				exec(4, 0, -2);
+				for (int j : indices)
+					exec(2, j, 1);
+				for (int j : indices)
+					exec(2, N - 1 - j, 1);
 
 				// now handle using front + left
 
 				exec(4, 0, 1);
 				exec(3, 0, 1);
 				exec(4, 0, -1);
-				exec(2, i, -2);
+				for(int j : indices)
+				exec(2, j, -2);
 				exec(5, 0, 1);
 				exec(3, 0, 2);
 				exec(5, 0, -1);
-				exec(2, i, 2);
+				for(int j : indices)
+				exec(2, j, 2);
 
 				exec(1, 0, 1);
 				exec(3, 0, 1);
@@ -4334,9 +4712,16 @@ void Solver::solveEdges2() {
 		int colorF = faces[0][N / 2][N - 1];
 		int colorR = faces[1][N / 2][0];
 
-		//std::cout << "pursuing colorF = " << myMap[colorF] << " and colorR = " << myMap[colorR] << std::endl;
+		std::cout << "pursuing colorF = " << myMap[colorF] << " and colorR = " << myMap[colorR] << std::endl;
 
 		for (int i = 1; i < N - 1; ++i) {
+			int lowLimit = 1;
+			int highLimit = N / 2;
+
+			if (i >= N / 2) {
+				lowLimit = N / 2;
+				highLimit = N - 1;
+			}
 
 			// correct piece already
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
@@ -4345,56 +4730,176 @@ void Solver::solveEdges2() {
 			// if desired piece on opposite side of same edge; 11 qt
 			else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
 				//std::cout << "on other side of same edge!" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[0][N - 1 - j][N - 1] == colorR && faces[1][N - 1 - j][0] == colorF) {
+						indices.push_back(j);
+					}
+				}
+
+				
+				for(int j : indices)
+				exec(2, j, -1);
+				for(int j : indices)
+				exec(2, N - 1 - j, -1);
+				flipEdge(1 + 5); // right + back
+				for(int j : indices)
+				exec(2, j, 1);
+				for(int j : indices)
+				exec(2, N - 1 - j, 1);
+				
+				/*
 				exec(2, i, -1);
 				exec(2, N - 1 - i, -1);
 				flipEdge(1 + 5); // right + back
 				exec(2, i, 1);
 				exec(2, N - 1 - i, 1);
+				*/
 			}
 			// on edge between back and right; 9 qt
 			else if (faces[5][N - 1 - i][0] == colorF && faces[1][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "edge between right + back, down" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[5][N - 1 - j][0] == colorF && faces[1][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				
+				for(int j : indices)
+				exec(2, j, -1);
+				flipEdge(1 + 5); // right + back
+				for(int j : indices)
+				exec(2, j, 1);
+				
+				/*
 				exec(2, i, -1);
 				flipEdge(1 + 5); // right + back
 				exec(2, i, 1);
+				*/
 			}
 			// reverse that; 16 qt
 			else if (faces[1][i][N - 1] == colorF && faces[5][i][0] == colorR) {
-				//std::cout << "edge between right + back, up" << std::endl;
+				std::cout << "i = " << i <<  "edge between right + back, up" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[1][j][N - 1] == colorF && faces[5][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+				
+				
+				flipEdge(1 + 5); // right + back
+				for(int j : indices)
+				exec(2, j, -1);
+				flipEdge(1 + 5);
+				for(int j : indices)
+				exec(2, j, 1);
+				
+				/*
 				flipEdge(1 + 5); // right + back
 				exec(2, i, -1);
 				flipEdge(1 + 5);
 				exec(2, i, 1);
+				*/
 			}
 			// on edge between front and left; 9 qt
 			else if (faces[0][N - 1 - i][0] == colorF && faces[4][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "edge between left + front, down" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[0][N - 1 - j][0] == colorF && faces[4][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				
+				for(int j : indices)
+				exec(2, j, 1);
+				flipEdge(4 + 0); // left + front
+				for(int j : indices)
+				exec(2, j, -1);
+				
+				/*
 				exec(2, i, 1);
 				flipEdge(4 + 0); // left + front
 				exec(2, i, -1);
+				*/
 			}
 			// reverse that; 16 qt
 			else if (faces[4][i][N - 1] == colorF && faces[0][i][0] == colorR) {
 				//std::cout << "edge between left + front, up" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[4][j][N - 1] == colorF && faces[0][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				
+				flipEdge(4 + 0); // left + front
+				for(int j : indices)
+				exec(2, j, 1);
+				flipEdge(4 + 0);
+				for(int j : indices)
+				exec(2, j, -1);
+				
+				/*
 				flipEdge(4 + 0); // left + front
 				exec(2, i, 1);
 				flipEdge(4 + 0);
 				exec(2, i, -1);
+				*/
 			}
 			// on edge between left and back; 11 qt
 			else if (faces[4][N - 1 - i][0] == colorF && faces[5][N - 1 - i][N - 1] == colorR) {
 				//std::cout << "edge between back + left, down" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[4][N - 1 - j][0] == colorF && faces[5][N - 1 - j][N - 1] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				
+				for(int j : indices)
+				exec(2, j, 2);
+				flipEdge(5 + 4); // back + left
+				for(int j : indices)
+				exec(2, j, -2);
+				
+				/*
 				exec(2, i, 2);
 				flipEdge(5 + 4); // back + left
 				exec(2, i, -2);
+				*/
+
 			}
 			// reverse that; 18 qt
 			else if (faces[5][i][N - 1] == colorF && faces[4][i][0] == colorR) {
 				//std::cout << "edge between back + left, up" << std::endl;
+				std::vector<int> indices;
+				for (int j = lowLimit; j < highLimit; ++j) {
+					if (faces[5][j][N - 1] == colorF && faces[4][j][0] == colorR) {
+						indices.push_back(j);
+					}
+				}
+
+				
+				flipEdge(5 + 4);
+				for(int j : indices)
+				exec(2, j, 2);
+				flipEdge(5 + 4);
+				for(int j : indices)
+				exec(2, j, -2);
+				
+				/*
 				flipEdge(5 + 4);
 				exec(2, i, 2);
 				flipEdge(5 + 4);
 				exec(2, i, -2);
+				*/
 			}
 		}
 
@@ -4427,24 +4932,37 @@ void Solver::solveEdges2() {
 		// Red Bull Algorithm - https://www.youtube.com/watch?v=knMCvKdJFgk
 		else if (faces[0][N - 1 - i][N - 1] == colorR && faces[1][N - 1 - i][0] == colorF) {
 			//std::cout << "on the other side..." << std::endl;
-			
-			exec(2, N - 1 - i, 2);
+			std::vector<int> indices;
+			for (int j = 1; j < N / 2; ++j) {
+				if (faces[0][N - 1 - j][N - 1] == colorR && faces[1][N - 1 - j][0] == colorF) {
+					indices.push_back(j);
+				}
+			}
+
+			for(int j : indices)
+			exec(2, N - 1 - j, 2);
 			exec(5, 0, 2);
 			exec(1, 0, 2);
-			exec(2, i, 1);
+			for(int j : indices)
+			exec(2, j, 1);
 			exec(1, 0, 2);
 			
-			exec(2, N - 1 - i, 1);
+			for(int j : indices)
+			exec(2, N - 1 - j, 1);
 			exec(1, 0, 2);
-			exec(2, N - 1 - i, -1);
+			for(int j : indices)
+			exec(2, N - 1 - j, -1);
 			exec(1, 0, 2);
 			exec(0, 0, 2);
-			exec(2, N - 1 - i, -1);
+			for(int j : indices)
+			exec(2, N - 1 - j, -1);
 			exec(0, 0, 2);
 			
-			exec(2, i, -1);
+			for(int j : indices)
+			exec(2, j, -1);
 			exec(5, 0, 2);
-			exec(2, N - 1 - i, 2);
+			for(int j : indices)
+			exec(2, N - 1 - j, 2);
 		}
 	}
 
@@ -4469,7 +4987,7 @@ void Solver::solveEdges() {
 
 	solveEdges0(colorPairs);
 	solveEdges1(colorPairs);
-	solveEdges2();
+	//solveEdges2();
 }
 
 void Solver::solveCross() {
