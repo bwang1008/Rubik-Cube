@@ -14,20 +14,20 @@ v Deque for storing all moves
 x Key bindings for 6 possible turns
 - Add black trianges to hide the fact that large cube is in fact hollow
 v Scramble Cube
-	- Change to Solver rather than Gui class
+	v Change to Solver rather than Gui class
 v Implement solver
-	- Idea: Solve centers, then edges, then all as a 3x3x3
+	v Idea: Solve centers, then edges, then all as a 3x3x3
 - Implement reader-writer system where solver writes, graphical rendering pulls first for current move
 	- Use a thread for above?
 	- Use Bounded Buffer?
 - Write moves to JSON file, copy sticker color from JSON 
 - Use textures to be able to render larger cubes efficiently
 	- Can load JPG and also create my own texture
-	- Make sure sampling is correct and not upside-down
+	v Make sure sampling is correct and not upside-down
 - Implement turns again graphically
 	- Find which band needs to be made transparent, while in fragment shader
 	- Add square prism of size NxNx1 that rotates to overlap on transparent original band
 	- When theta is large enough, make new square prism disappear, and update pixels on textures
 	- Move multiple parallel layers at once 
-- Improve center-solving so that each mismatch takes 2 quarter turns
+v Improve center-solving so that each mismatch takes 2 quarter turns
 

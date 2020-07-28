@@ -310,3 +310,36 @@ Commit "Loaded 6 different textures" - July 9, 2020
 	- and using glActiveTexture(GL_TEXTURE0) through glActiveTexture(GL_TEXTURE5)
 	- Also need to update textures through each while loop...potentially a bottleneck?
 - Can now successfully render a N = 1024 Rubik's cube (or at least the same size and same number of stickers)
+
+Commit "Redid centers of Down and Back", "Redid Left Center" - July 13, 2020
+- Use swapping method used on the last two centers, to get stickers for Down from Front, Left, Right, Back
+	- Be sure to only use 2 quarter turns per mismatch, plus some linear amount of quarter turns
+- Use swapping method to get Back stickers from Left, Right, Up, and be careful getting from Front
+
+Commit "Added rudimentary progress bar" - July 13, 2020
+- Used "\r" to bring cursor back to start of line
+
+Commit "Fixed one bug in solving first cross" - July 13, 2020
+- Accidentally had a negative sign
+
+Commit "Fixed bug with permuting last corners" - July 13, 2020
+- Messed up diagram done on paper
+
+Commit "Added preliminary for speed up" - July 22, 2020
+- Found how to change background color using glClearColor
+- Used glTexSubImage2D for updating texturings for small improvement in performance
+- Included worst-case scenario of number of quarter turns on some methods, I think it can be improved down
+- Preliminary solves most of Back by the freedom of the Front,Right,Back,Left faces
+	- Use only 1 quarter-turn per mismatch, plus some linear terms
+- Same preliminary for solving Back face, except we place Back face in the position of Up face
+- Same freedom for solving Left face, though space is much more limited
+- Bring the Back stickers on Up onto Back face
+
+Commit "Edges are faster" - July 28, 2020
+- Idea to possibly use Bounded Buffer to manage solving while rendering
+- Removed GUI::scrambleCube() into Solver::scrambleCube()
+- Edges: before, I used to solve each cubie one by one
+- Now if several cubies on the current edge being solved are in the same position, then we move those together.
+	- For instance, if two correct cubies are next to each other, then both get solved simultaneously
+- Be careful on the flipping cubies on the current edge as well as last 4 edges, since might push some cubies incorrectly
+- Significant speed up on edge solving on N = 100

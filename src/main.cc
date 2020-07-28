@@ -66,8 +66,6 @@ const char* preview_fragment_shader =
 #include "shaders/preview.frag"
 ;
 
-
-
 void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW Error: " << description << "\n";
 }
@@ -293,7 +291,8 @@ int main2(int argc, char* argv[]) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		//glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		glClearColor(0.56f, 0.72f, 0.95f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -349,13 +348,11 @@ int main2(int argc, char* argv[]) {
 
 		// Finished scrambling
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 0) {
-			std::cout << "COPYING " << std::endl;
 			solver->copyConfiguration(cube_centers, cube_types);
-			std::cout << "COPYING FINISHED" << std::endl;
-
 			gui.resetCount();
+
 			solver->preliminary0();
-			solver->solveCenter0B();
+			solver->solveCenter0();
 			solver->preliminary1();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 1st center
@@ -373,7 +370,7 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 			
 			gui.resetCount();
-			solver->solveCenter1B();
+			solver->solveCenter1();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 2nd center
 
@@ -390,7 +387,7 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			solver->solveCenter2B();
+			solver->solveCenter2();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 3rd center
 
@@ -407,7 +404,7 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			solver->solveCenter3B();
+			solver->solveCenter3();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 4th center
 
@@ -424,8 +421,7 @@ int main2(int argc, char* argv[]) {
 			totalQT += gui.getCountQT();
 
 			gui.resetCount();
-			solver->solveLastCentersB();
-			solver->solveEdges();
+			solver->solveLastCenters();
 			dequeSize = gui.getSize();
 			gui.setRotatingSpeed(250.0f); // to solve 5th, 6th centers
 
@@ -444,9 +440,9 @@ int main2(int argc, char* argv[]) {
 			std::cout << "total moves of centers = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 
 			gui.resetCount();
-			solver->solveEdges2();
+			solver->solveEdges();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(1.0f); // to solve edges
+			gui.setRotatingSpeed(250.0f); // to solve edges
 
 			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
 			solver->incr();

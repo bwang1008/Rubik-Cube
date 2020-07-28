@@ -40,7 +40,6 @@ GUI::~GUI()
 {
 }
 
-
 void GUI::keyCallback(int key, int scancode, int action, int mods)
 {
 #if 0
@@ -65,7 +64,6 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		return ;
 		*/
 	}
-
 	if (mods == 0 && captureWASDUPDOWN(key, action))
 		return ;
 	if (key == GLFW_KEY_LEFT || key == GLFW_KEY_RIGHT) {

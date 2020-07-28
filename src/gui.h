@@ -1,15 +1,15 @@
 #ifndef SKINNING_GUI_H
 #define SKINNING_GUI_H
 
-#include <glm/glm.hpp>
+#include <glm/glm.hpp>						// GLM for vec, mat
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
-#include <chrono>
-#include <deque>
+#include <chrono>							// timing
+#include <deque>							// std::deque
 #include <stdlib.h>
 
-#include "config.h"
-#include "solver.h"
+#include "config.h"							// constants
+#include "solver.h"							// access to Solver
 
 /*
  * Hint: call glUniformMatrix4fv on thest pointers
@@ -17,7 +17,6 @@
 struct MatrixPointers {
 	const glm::mat4 *projection, *model, *view;
 };
-
 
 class GUI {
 public:

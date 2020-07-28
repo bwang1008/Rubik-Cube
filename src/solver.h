@@ -7,7 +7,7 @@
 #include <algorithm>	// std::sort
 #include <deque>		// std::deque
 #include <utility>		// std::pair, std::make_pair
-#include <glm/glm.hpp>
+#include <glm/glm.hpp>	// GLM for vec, mat
 #include "config.h"		// constants
 
 class Solver {
@@ -16,6 +16,7 @@ public:
 	void setDequePtr(std::deque<glm::ivec3>* deque);
 	int getFaceColor(int face);
 	int getSticker(int face, int row, int col);
+
 	void copyConfiguration(std::vector<glm::vec3>& centers, std::vector<int>& types);
 
 	void turnFront(int layer, int qt);
@@ -26,7 +27,6 @@ public:
 	void turnBack(int layer, int qt);
 
 	void exec(int face, int layer, int qt);
-	void exec(glm::vec3 move);
 
 	void getPossiblePositions(int row, int col, std::vector<glm::ivec2>& container);
 
@@ -35,19 +35,13 @@ public:
 	int currentState();
 	void scrambleCube();
 	
+	void preliminary0();
 	void solveCenter0();
+	void preliminary1();
 	void solveCenter1();
 	void solveCenter2();
 	void solveCenter3();
 	void solveLastCenters();
-	
-	void preliminary0();
-	void solveCenter0B();
-	void preliminary1();
-	void solveCenter1B();
-	void solveCenter2B();
-	void solveCenter3B();
-	void solveLastCentersB();
 	
 	void flipEdge(int edge);
 	void solveEdges0(std::vector<std::pair<int, int>>& colorPairs);
@@ -66,7 +60,6 @@ public:
 	void solveLastCross();
 	void solveLastEdges();
 	void solveLastCornerPosition();
-	void solveLastCornerPositionB();
 	void solveLastCornerOrientation();
 	void solve3x3x3();
 
@@ -96,7 +89,6 @@ private:
 	// 12 = solve edges
 	// 13 = wait for ENTER key to proceed
 	// 14 = solve as 3x3x3
-
 };
 
 #endif
