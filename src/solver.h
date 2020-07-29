@@ -17,8 +17,6 @@ public:
 	int getFaceColor(int face);
 	int getSticker(int face, int row, int col);
 
-	void copyConfiguration(std::vector<glm::vec3>& centers, std::vector<int>& types);
-
 	void turnFront(int layer, int qt);
 	void turnRight(int layer, int qt);
 	void turnUp(int layer, int qt);
@@ -27,8 +25,6 @@ public:
 	void turnBack(int layer, int qt);
 
 	void exec(int face, int layer, int qt);
-
-	void getPossiblePositions(int row, int col, std::vector<glm::ivec2>& container);
 
 	void print();
 	void incr();

@@ -348,7 +348,7 @@ int main2(int argc, char* argv[]) {
 
 		// Finished scrambling
 		if (gui.getSize() == 0 && gui.getCurrentMove()[0] < 0 && solver->currentState() == 0) {
-			solver->copyConfiguration(cube_centers, cube_types);
+			//solver->copyConfiguration(cube_centers, cube_types);
 			gui.resetCount();
 
 			solver->preliminary0();

@@ -137,7 +137,6 @@ private:
 
 	long long countMoves = 0;
 	long long countQT = 0;
-
 };
 
 #endif
