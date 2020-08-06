@@ -291,8 +291,8 @@ int main2(int argc, char* argv[]) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
-		//glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-		glClearColor(0.56f, 0.72f, 0.95f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		//glClearColor(0.56f, 0.72f, 0.95f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -662,17 +662,31 @@ int main2(int argc, char* argv[]) {
 			}
 		}
 		if(!gui.isQuarterTurning()) { // currently not turning, so start next move
-			gui.setCurrentMove();
-			glm::ivec3 myMove = gui.getCurrentMove(); // Get the next move
-			//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+			glm::ivec3 nextMove = gui.peekMove();
 
-			if (myMove[0] >= 0) { // only rotate if valid face
-				gui.setStartTime(); // set time at 0
-				update_rubik(cube_centers, gui.getCurrentMove(), cube_rotating); // find which cubes should be rotating
-				//std::cout << "time = " << gui.getCurrentPlayTime() << std::endl;
+			bool firstTime = true;
+			while (true) { // bad coding style, but trying to make multi-layer turn work
 
-				cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
-				gui.setQuarterTurning(true); // Applying next move
+				gui.setCurrentMove();
+				glm::ivec3 myMove = gui.getCurrentMove(); // Get the next move
+
+				//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
+
+				if (nextMove[0] >= 0) { // only rotate if valid face
+					gui.setStartTime(); // set time at 0
+					update_rubik(cube_centers, gui.getCurrentMove(), cube_rotating, firstTime); // find which cubes should be rotating
+
+					cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
+					gui.setQuarterTurning(true); // Applying next move
+
+
+					if (gui.peekMove()[0] == nextMove[0] && gui.peekMove()[2] == nextMove[2]) {
+						firstTime = false;
+						continue;
+					}
+				}
+
+				break;
 			}
 		}
 

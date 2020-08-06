@@ -151,7 +151,7 @@ void create_rubik(std::vector<glm::vec4>& cube_vertices,
 	}
 }
 
-void update_rubik(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vector<int>& cube_rotating) {
+void update_rubik(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vector<int>& cube_rotating, bool firstTime) {
 	int N = cubeWidth;
 	float half = N/2.0f;
 
@@ -165,7 +165,13 @@ void update_rubik(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vec
 		return;
 	}
 
-	cube_rotating.clear();
+	//cube_rotating.clear();
+	if (firstTime) {
+		for (size_t i = 0; i < cube_rotating.size(); ++i) {
+			cube_rotating[i] = 0;
+		}
+	}
+
 
 	// Build point P and Q, where unit vector PQ is axis rotating about
 	glm::vec3 P = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -223,12 +229,16 @@ void update_rubik(std::vector<glm::vec3>& cube_centers, glm::vec3 move, std::vec
 		float dot = glm::dot(PC, PQ);
 
 		if(abs(dot) < 0.00001f) {
-			for(int j = 0; j < 8; ++j)
-				cube_rotating.push_back(1);
+			for (int j = 0; j < 8; ++j) {
+				// cube_rotating.push_back(1);
+				cube_rotating[i + j] = 1;
+			}
 		}
 		else {
-			for(int j = 0; j < 8; ++j)
-				cube_rotating.push_back(0);
+			for (int j = 0; j < 8; ++j) {
+				// cube_rotating.push_back(0);
+				
+			}
 		}
 	}
 }
