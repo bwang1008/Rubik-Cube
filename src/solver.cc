@@ -806,7 +806,7 @@ int Solver::currentState() {
 void Solver::scrambleCube() {
 	int N = cubeWidth;
 	srand(1);
-	int numberMoves = std::min(3 * N * N, 300);
+	int numberMoves = std::min(3 * N * N, 137);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;
@@ -820,6 +820,14 @@ void Solver::scrambleCube() {
 }
 
 void Solver::preliminary0() {
+	std::map<int, char> myMap;
+	myMap[0] = 'G';
+	myMap[1] = 'R';
+	myMap[2] = 'W';
+	myMap[3] = 'Y';
+	myMap[4] = 'O';
+	myMap[5] = 'B';
+
 	int colorD = getFaceColor(3);
 
 	// most of bottom face
@@ -877,6 +885,7 @@ void Solver::preliminary0() {
 	}
 
 	int colorB = getFaceColor(5);
+	storeTopColor = colorB;
 
 	// most of back face, but placing on Up face for now, except for center col of odd N
 	for (int i = 1; i < N - 1; ++i) {
@@ -1279,7 +1288,7 @@ void Solver::solveCenter0() {
 }
 
 void Solver::preliminary1() {
-	int colorB = getFaceColor(5);
+	int colorB = storeTopColor;
 
 	// most of back face, but placing on Up face for now, except for center col of odd N
 	for (int i = 1; i < N - 1; ++i) {
@@ -1356,6 +1365,15 @@ void Solver::preliminary1() {
 		exec(0, i, -1);
 	}
 
+	// for odd cubes, make sure back center is actually the one we are using
+	if (N % 2 == 1 && getFaceColor(5) != storeTopColor) {
+		int numTimes = 4;
+		while (getFaceColor(5) != storeTopColor && numTimes > 0) {
+			exec(2, N / 2, 1);
+			numTimes--;
+		}
+	}
+
 	int positions[cubeWidth];
 	for (int i = 0; i < N; ++i) {
 		positions[i] = -1;
@@ -1372,6 +1390,9 @@ void Solver::preliminary1() {
 
 	// build each row of Left on the Front face first as a col
 	for (int i = 1; i < N - 1; ++i) {
+		if (2 * i + 1 == N) {
+			continue;
+		}
 
 		for (int j = 1; j < N - 1; ++j) {
 			if (faces[1][j][i] == colorL) {
@@ -1435,6 +1456,9 @@ void Solver::preliminary1() {
 		exec(4, 0, 1);
 
 		for (int i = 1; i < N - 1; ++i) {
+			if (2 * i + 1 == N) {
+				continue;
+			}
 
 			exec(2, i, positions[i] + 1);
 			positions[i] = 3;
@@ -1501,6 +1525,16 @@ void Solver::preliminary1() {
 	}
 	
 	// move the Up face that has Back stickers onto Back face, do this at the end of preliminary
+
+	// for odd cubes, make sure back center is actually the one we are using
+	if (N % 2 == 1 && getFaceColor(5) != storeTopColor) {
+		int numTimes = 4;
+		while (getFaceColor(5) != storeTopColor && numTimes > 0) {
+			exec(2, N / 2, 1);
+			numTimes--;
+		}
+	}
+
 	for (int i = 1; i < N / 2; ++i) {
 		exec(4, i, -1);
 	}
@@ -1521,7 +1555,8 @@ void Solver::preliminary1() {
 // Even Worst-Case: 2M + 144(N-2) + 12 + 46(N-2)
 // Odd  Worst-Case: 2M + 144(N-2) + 12 + 46(N-3) + 1 + 22(N-3)
 void Solver::solveCenter1() {
-	int colorB = getFaceColor(5);
+	// int colorB = getFaceColor(5);
+	int colorB = storeTopColor;
 
 	// get all colorB stickers from left
 	for (int numTimes = 0; numTimes < 4; ++numTimes) {
@@ -2123,6 +2158,10 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 	for(int numTimes = 0; numTimes < 4; ++numTimes) {
 		int colorF = colorPairs[numTimes].first;
 		int colorR = colorPairs[numTimes].second;
+		if (N % 2 == 1) {
+			colorF = faces[0][N / 2][N - 1];
+			colorR = faces[1][N / 2][0];
+		}
 
 		for (int i = 1; i < N - 1; ++i) {
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {
@@ -2621,6 +2660,10 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 	for (int numTimes = 4; numTimes < 8; ++numTimes) {
 		int colorF = colorPairs[numTimes].first;
 		int colorR = colorPairs[numTimes].second;
+		if (N % 2 == 1) {
+			colorF = faces[0][N / 2][N - 1];
+			colorR = faces[1][N / 2][0];
+		}
 
 		for (int i = 1; i < N - 1; ++i) {
 			if (faces[0][i][N - 1] == colorF && faces[1][i][0] == colorR) {

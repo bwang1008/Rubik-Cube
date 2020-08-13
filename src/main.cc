@@ -14,6 +14,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <set>						// keep track of which layers have been turning; prevent (2,4,2),(2,6,2),(2,4,2) from executing all at once
 
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -48,14 +49,6 @@ const char* cube_vertex_shader =
 
 const char* cube_fragment_shader = 
 #include "shaders/cube.frag"
-;
-
-const char* sky_vertex_shader = 
-#include "shaders/sky.vert"
-;
-
-const char* sky_fragment_shader = 
-#include "shaders/sky.frag"
 ;
 
 const char* preview_vertex_shader =
@@ -194,11 +187,6 @@ int main2(int argc, char* argv[]) {
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
 
-	// SKY BOX
-	std::vector<glm::vec4> sky_vertices;
-	std::vector<glm::uvec3> sky_faces;
-	create_skybox(sky_vertices, sky_faces, gui.getCamera());
-
 	glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
 
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
@@ -254,20 +242,10 @@ int main2(int argc, char* argv[]) {
 			{ "fragment_color"}
 			);
 
-	RenderDataInput sky_pass_input;
-	sky_pass_input.assign(0, "vertex_position", sky_vertices.data(), sky_faces.size(), 4, GL_FLOAT);
-	sky_pass_input.assignIndex(sky_faces.data(), sky_faces.size(), 3);
-	RenderPass sky_pass(-1, sky_pass_input,
-			{ sky_vertex_shader, nullptr, sky_fragment_shader},
-			{ std_view, std_proj},
-			{ "fragment_color"}
-			);
-
 	int dequeSize = 0;
 	long long totalMoves = 0;
 	long long totalQT = 0;
 	bool draw_cube = true;
-	bool draw_sky = false;
 	bool finished = false;
 
 	if(argc == 3){
@@ -291,8 +269,9 @@ int main2(int argc, char* argv[]) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
+		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-		//glClearColor(0.56f, 0.72f, 0.95f, 1.0f);
+		//glClearColor(0.56f, 0.72f, 0.95f, 0.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -328,7 +307,7 @@ int main2(int argc, char* argv[]) {
 		glViewport(0, 0, window_width, window_height);
 
 		// progress bar
-		if (!finished) {
+		if (false && !finished) {
 			std::cout << "Progress: [";
 			int currProgress = std::round(50 * (float(dequeSize - gui.getSize()) / dequeSize));
 			for (int pr = 0; pr < currProgress; ++pr) {
@@ -664,6 +643,8 @@ int main2(int argc, char* argv[]) {
 		if(!gui.isQuarterTurning()) { // currently not turning, so start next move
 			glm::ivec3 nextMove = gui.peekMove();
 
+			std::set<int> whichLayers; // prevent executing (2,4,2),(2,6,2),(2,4,2) all at once in parallel
+
 			bool firstTime = true;
 			while (true) { // bad coding style, but trying to make multi-layer turn work
 
@@ -673,14 +654,16 @@ int main2(int argc, char* argv[]) {
 				//std::cout << "myMove = " << myMove[0] << " " << myMove[1] << " " << myMove[2] << std::endl;
 
 				if (nextMove[0] >= 0) { // only rotate if valid face
+					whichLayers.insert(myMove[1]);
+
 					gui.setStartTime(); // set time at 0
-					update_rubik(cube_centers, gui.getCurrentMove(), cube_rotating, firstTime); // find which cubes should be rotating
+					update_rubik(cube_centers, myMove, cube_rotating, firstTime); // find which cubes should be rotating
 
 					cube_pass.updateVBO(2, cube_rotating.data(), cube_rotating.size());
 					gui.setQuarterTurning(true); // Applying next move
 
 
-					if (gui.peekMove()[0] == nextMove[0] && gui.peekMove()[2] == nextMove[2]) {
+					if (gui.peekMove()[0] == nextMove[0] && gui.peekMove()[2] == nextMove[2] && whichLayers.find(gui.peekMove()[1]) == whichLayers.end()) {
 						firstTime = false;
 						continue;
 					}
@@ -694,12 +677,6 @@ int main2(int argc, char* argv[]) {
 		if (draw_cube) {
 			cube_pass.setup();
 			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));
-		}
-
-		// Render skybox
-		if (draw_sky) {
-			sky_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, sky_faces.size() * 3, GL_UNSIGNED_INT, 0));
 		}
 
 		// Poll and swap.

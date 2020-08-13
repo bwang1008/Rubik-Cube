@@ -85,6 +85,8 @@ private:
 	// 12 = solve edges
 	// 13 = wait for ENTER key to proceed
 	// 14 = solve as 3x3x3
+
+	int storeTopColor;
 };
 
 #endif
