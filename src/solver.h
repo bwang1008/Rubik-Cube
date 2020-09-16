@@ -61,7 +61,7 @@ public:
 
 private:
 	int N;
-	int faces[6][cubeWidth][cubeWidth]; // internal representation
+	int faces[6][kCubeWidth][kCubeWidth]; // internal representation
 	// 0 1 2 3 4 5
 	// front, right, top, bottom, left, back
 	// green, red, white, yellow, orange, blue

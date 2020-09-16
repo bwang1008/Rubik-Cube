@@ -57,33 +57,6 @@ struct Cube {
 		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1]    , pos2[2] + L, 1));
 		cube_vertices.push_back(glm::vec4(pos2[0]    , pos2[1] + L, pos2[2] + L, 1));
 		cube_vertices.push_back(glm::vec4(pos2[0] + L, pos2[1] + L, pos2[2] + L, 1));
-
-		/*
-		if (type & 1) {
-			cube_faces.push_back(glm::uvec3(index + 0, index + 2, index + 1));
-			cube_faces.push_back(glm::uvec3(index + 1, index + 2, index + 3));
-		}
-		if ((type >> 4) & 1) {
-			cube_faces.push_back(glm::uvec3(index + 1, index + 3, index + 5));
-			cube_faces.push_back(glm::uvec3(index + 5, index + 3, index + 7));
-		}
-		if ((type >> 1) & 1) {
-			cube_faces.push_back(glm::uvec3(index + 0, index + 4, index + 2));
-			cube_faces.push_back(glm::uvec3(index + 4, index + 6, index + 2));
-		}
-		if ((type >> 3) & 1) {
-			cube_faces.push_back(glm::uvec3(index + 2, index + 6, index + 3));
-			cube_faces.push_back(glm::uvec3(index + 3, index + 6, index + 7));
-		}
-		if ((type >> 2) & 1) {
-			cube_faces.push_back(glm::uvec3(index + 0, index + 1, index + 4));
-			cube_faces.push_back(glm::uvec3(index + 1, index + 5, index + 4));
-		}
-		if ((type >> 5) & 1) {
-			cube_faces.push_back(glm::uvec3(index + 4, index + 5, index + 7));
-			cube_faces.push_back(glm::uvec3(index + 4, index + 7, index + 6));
-		}
-		*/
 		
 		cube_faces.push_back(glm::uvec3(index + 0, index + 2, index + 1));
 		cube_faces.push_back(glm::uvec3(index + 1, index + 2, index + 3));
