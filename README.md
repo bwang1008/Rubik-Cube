@@ -12,7 +12,8 @@ Requirements for Ubuntu:\
 `apt-get install cmake`\
 `apt-get install libglfw3-dev`\
 `apt-get install libglew-dev`\
-`apt-get install libpng-dev`
+`apt-get install libpng-dev`\
+`apt-get install libjpeg-dev`
 
 To run in Ubuntu, 
 1. `mkdir build`
