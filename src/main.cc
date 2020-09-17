@@ -8,6 +8,8 @@
 
 #include <iostream>						// std::cout, std::endl
 
+#define N kCubeWidth					// just because N is shorter to type
+
 int window_width =  600;
 int window_height = 600;
 
@@ -59,8 +61,6 @@ GLFWwindow* init_glefw() {
 
 int main(int argc, char* argv[]) {
 
-	const int N = kCubeWidth;
-
 	if(N <= 0 || N >= kMaxWidth) {									// check cubeWidth is valid
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
 	
 
 
-
+	std::cout << "Finished!" << std::endl;
 
 	return 0;
 }

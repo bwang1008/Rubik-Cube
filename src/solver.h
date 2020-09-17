@@ -15,7 +15,8 @@ public:
 	Solver();
 	void setDequePtr(std::deque<glm::ivec3>* deque);
 	int getFaceColor(int face);
-	int getSticker(int face, int row, int col);
+	int get(int face, int row, int col);
+	void set(int face, int row, int col, int color);
 
 	void turnFront(int layer, int qt);
 	void turnRight(int layer, int qt);
@@ -68,25 +69,9 @@ private:
 
 	std::deque<glm::ivec3>* dequePtr; // pointer to the deque of moves to fill
 
-	int state; // current state that cube is in
-	// 0 = scrambling
-	// copy stickers
-	// 1 = wait for ENTER key to proceed
-	// 2 = solve bottom center
-	// 3 = wait for ENTER key to proceed
-	// 4 = solve top center
-	// 5 = wait for ENTER key to proceed
-	// 6 = solve back center
-	// 7 = wait for ENTER key to proceed
-	// 8 = solve left center
-	// 9 = wait for ENTER key to proceed
-	// 10 = solve front and right face simultaneously
-	// 11 = wait for ENTER key to proceed
-	// 12 = solve edges
-	// 13 = wait for ENTER key to proceed
-	// 14 = solve as 3x3x3
-
 	int storeTopColor;
+
+	int facePos[6];		// 0 means unrotated, 1 means rotated clockwise from original, 2 means rotated twice, 3 means rotated once counterclockwise
 };
 
 #endif
