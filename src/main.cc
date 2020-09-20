@@ -6,7 +6,8 @@
 #include "render_pass.h"				// helper for rendering in OpenGL
 #include "solver.h"						// Solver object -> algorithms to solve scrambled Rubik's Cube
 
-#include <iostream>						// std::cout, std::endl
+#include <iostream>						// std::cout, std::endl, std::cerr
+#include <vector>						// std::vector
 
 #define N kCubeWidth					// just because N is shorter to type
 
@@ -67,12 +68,26 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
+	std::cout << "N = " << N << std::endl;
+
 	GLFWwindow* window = init_glefw();								// setup window that displays graphics
 	GUI gui(window, window_width, window_height, window_height); 	// have window interact with keyboard/mouse
 
+	std::vector<glm::vec4> cube_vertices;
+	std::vector<glm::uvec3> cube_faces;
+
+	create_large_cube(cube_vertices, cube_faces);					// procedure_geometry::create_large_cube to fill in vertices and faces of overall rubik's cube
+
+
+
+
+	// user arguments
 	
 
+	// end user arguments
 
+
+	
 	std::cout << "Finished!" << std::endl;
 
 	return 0;

@@ -121,7 +121,6 @@ void Solver::turnFront(int layer, int qts) {
 			set(4, N - 1 - i, N - 1 - layer, upBand[i]);
 		}
 	}
-	
 }
 
 void Solver::turnRight(int layer, int qts) {
@@ -1256,7 +1255,6 @@ void Solver::preliminary1() {
 	for (int i = 1; i < N / 2; ++i) {
 		exec(4, i, -1);
 	}
-	
 }
 
 // solving Back face: use swapping method to get down stickers from Left, Right, Up
@@ -4280,7 +4278,6 @@ void Solver::solveLastCornerPosition() {
 		exec(2, 0, -1);
 		exec(4, 0, 1);
 	}
-
 }
 
 // assume corners are in the correct position; now orient each small cube so correct sticker on top
