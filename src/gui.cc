@@ -141,3 +141,5 @@ void GUI::MouseScrollCallback(GLFWwindow* window, double dx, double dy) {
 	GUI* gui = (GUI*)glfwGetWindowUserPointer(window);
 	gui->mouseScrollCallback(dx, dy);
 }
+
+const glm::vec3& GUI::getCamera() const { return eye_; }

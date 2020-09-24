@@ -29,6 +29,8 @@ public:
 	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	static void MouseScrollCallback(GLFWwindow* window, double dx, double dy);
 
+	const glm::vec3& getCamera() const;
+
 private:
 	// window
 	GLFWwindow* window_;

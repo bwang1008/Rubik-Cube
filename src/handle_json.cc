@@ -9,12 +9,14 @@
 
 // used tutorial at http://rachelnertia.github.io/programming/2016/07/03/json-hpp/
 int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& colors) {
-
+	std::cout << "hey!" << std::endl;
 	std::ifstream reader(json_path);
 	if(!reader.is_open()) {
 		std::cerr << "Unable to open file " << json_path << std::endl;
 		return -1;
 	}
+
+	std::cout << "Found file!" << std::endl;
 
 	using json = nlohmann::json;
 	json obj;
@@ -22,7 +24,9 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 	reader >> obj; 					// read in actual object
 	reader.close();
 
-	if(obj.find("N") != obj.end() && N != kCubeWidth) {
+	std::cout << "Read file!" << std::endl;
+
+	if(obj.find("N") != obj.end() && obj["N"] != kCubeWidth) {
 		std::cerr << "Mismatch between kCubeWidth = " << kCubeWidth << " and file N = " << obj["N"] << std::endl;
 		std::cerr << "Please change kCubeWidth = " << obj["N"] << " in config.h" << std::endl;
 		return -1;
@@ -48,7 +52,7 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		json face_data = obj[faces[i]];
 
 		int count = 0;
-		for(std::string& line : face_data) {
+		for(const std::string& line : face_data) {
 			if(count == kCubeWidth) {
 				std::cerr << "Encountered more than " << kCubeWidth << " lines in " << faces[i] << std::endl;
 				return -1;
@@ -73,4 +77,5 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
+	return 0;
 }
