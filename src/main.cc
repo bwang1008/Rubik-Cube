@@ -119,12 +119,17 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 
+		/*
 		rgbs.push_back(glm::uvec3(46, 139, 87));
 		rgbs.push_back(glm::uvec3(255, 0, 0));
 		rgbs.push_back(glm::uvec3(255, 255, 255));
 		rgbs.push_back(glm::uvec3(255, 255, 0));
 		rgbs.push_back(glm::uvec3(255, 140, 0));
 		rgbs.push_back(glm::uvec3(0, 0, 255));
+		*/
+		for(int i = 0; i < 6; ++i) {
+			std::cout << "well = " << rgbs[i][0] << " " << rgbs[i][1] << " " << rgbs[i][2] << std::endl;
+		}
 	}
 	else {
 		rgbs.push_back(glm::uvec3(46, 139, 87));

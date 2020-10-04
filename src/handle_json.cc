@@ -105,6 +105,11 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
+
+	std::map<char, int> tempIndex;
+	for(int i = 0; i < 6; ++i)
+		tempIndex[chars[i]] = i;
+
 	// map characters to faces
 	bool opposites[6][6];
 	for(int i = 0; i < 6; ++i)
@@ -113,13 +118,121 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 	for(int i = 0; i < 6; ++i)
 		opposites[i][i] = false;
 
+	std::vector<int> corners{	data[0][0][0], data[2][kCubeWidth-1][0], data[4][0][kCubeWidth-1], 										// front top left
+								data[0][0][kCubeWidth-1], data[2][kCubeWidth-1][kCubeWidth-1], data[1][0][0],							// front top right
+								data[0][kCubeWidth-1][0], data[3][0][0], data[4][kCubeWidth-1][kCubeWidth-1], 							// front bottom left
+								data[0][kCubeWidth-1][kCubeWidth-1], data[1][kCubeWidth-1][0], data[3][0][kCubeWidth-1],				// front bottom right
+								data[2][0][0], data[4][0][0], data[5][0][kCubeWidth-1],													// back top left
+								data[2][0][kCubeWidth-1], data[1][0][kCubeWidth-1], data[5][0][0],										// back top right
+								data[3][kCubeWidth-1][0], data[4][kCubeWidth-1][0], data[5][kCubeWidth-1][kCubeWidth-1],				// back bottom left
+								data[3][kCubeWidth-1][kCubeWidth-1], data[1][kCubeWidth-1][kCubeWidth-1], data[5][kCubeWidth-1][0]};	// back bottom right
+
+	// for each corner
+	for(unsigned int i = 0; i < corners.size(); i += 3) {
+		int c1 = tempIndex[corners[i]];
+		int c2 = tempIndex[corners[i+1]];
+		int c3 = tempIndex[corners[i+2]];
+
+		// std::cout << "C1,c2,c3 = " << c1 << " " << c2 << " " << c3 << std::endl; 
+
+		opposites[c1][c2] = false;
+		opposites[c1][c3] = false;
+		opposites[c2][c1] = false;
+		opposites[c2][c3] = false;
+		opposites[c3][c1] = false;
+		opposites[c3][c2] = false;
+	}
+
+	
+	std::cout << "chars = ";
+	for(char c : chars) {
+		std::cout << c;
+	}
+	std::cout << std::endl;
+
+	std::cout << "opposites:" << std::endl;
+	for(int i = 0; i < 6; ++i) {
+		for(int j = 0; j < 6; ++j) {
+			std::cout << opposites[i][j];
+		}
+		std::cout << std::endl;
+	}
 	
 
+	int count = 0;
+	for(int i = 0; i < 6; ++i) {
+		bool found = false;
+		for(int j = 0; j < 6; ++j) {
+			if(opposites[i][j]) {
+				found = true;
+				count++;
+				break;
+			} 
+		}
 
+		if(!found || count != (i+1)) {
+			std::cerr << "Corners of cube are not solvable" << std::endl;
+			return -1;
+		}
+	}
 
-	std::map<char, int> map1;
+	int perm[6] = {-1, -1, -1, -1, -1, -1};
+
+	for(int i = 0; i < 6; ++i) {
+		if(perm[i] != -1) {
+			continue;
+		}
+
+		perm[i] = i;
+		for(int j = 0; j < 6; ++j) {
+			if(opposites[i][j]) {
+				perm[j] = 5-i;
+				break;
+			}
+		}
+	}
+
+	for(int i = 0; i < 6; ++i) {
+		for(int j = 0; j < kCubeWidth; ++j) {
+			for(int k = 0; k < kCubeWidth; ++k) {
+				char orig = data[i][j][k];
+				int tempI = tempIndex[orig];
+				solver->set(i, j, k, perm[tempI]);
+			}
+		}
+	}
+
+	colors.clear();
+	for(int i = 0; i < 6; ++i) {
+		colors.push_back(glm::uvec3(255, 255, 255));
+	}
+
 	if(obj.find("colors") != obj.end()) {
-		
+		json color_data = obj["colors"];
+
+		for(int i = 0; i < 6; ++i) {
+			
+			char c = chars[i];
+			std::string g(1, c);
+			if(color_data.find(g) == color_data.end()) {
+				std::cerr << "Could not find symbol " << c << " in colors" << std::endl;
+				return -1;
+			}
+
+			std::cout << "WHOAH THERE" << std::endl;
+			std::cout << "color data = " << color_data[g] << std::endl;
+
+			json huh = color_data[g];
+
+			std::vector<int> temp;
+			for(int i : huh) {
+				temp.push_back(i);
+			}
+
+			glm::uvec3 rgb(temp[0], temp[1], temp[2]);
+			int pos = perm[tempIndex[c]];
+			colors[pos] = rgb;
+		}
 	}
 
 	std::cout << "JSON valid" << std::endl;
