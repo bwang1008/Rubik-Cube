@@ -118,6 +118,13 @@ int main(int argc, char* argv[]) {
 		if(res < 0) {
 			return -1;
 		}
+
+		rgbs.push_back(glm::uvec3(46, 139, 87));
+		rgbs.push_back(glm::uvec3(255, 0, 0));
+		rgbs.push_back(glm::uvec3(255, 255, 255));
+		rgbs.push_back(glm::uvec3(255, 255, 0));
+		rgbs.push_back(glm::uvec3(255, 140, 0));
+		rgbs.push_back(glm::uvec3(0, 0, 255));
 	}
 	else {
 		rgbs.push_back(glm::uvec3(46, 139, 87));

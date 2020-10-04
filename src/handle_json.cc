@@ -41,12 +41,10 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
-	std::map<char, int> map1;
-	if(obj.find("colors") != obj.end()) {
-		
-	}
+	std::cout << "gonna fill data[][][]" << std::endl;
 
-	int data[6][kCubeWidth][kCubeWidth];
+	char data[6][kCubeWidth][kCubeWidth];
+	std::map<char, int> counter;
 
 	for(int i = 0; i < 6; ++i) {
 		json face_data = obj[faces[i]];
@@ -65,7 +63,9 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 
 			for(int j = 0; j < kCubeWidth; ++j) {
 				char c = line[j];
+				data[i][count][j] = c;
 
+				++counter[c];
 			}
 
 			count++;
@@ -77,5 +77,51 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
+	std::vector<char> chars;
+	std::vector<int> counts;
+
+	for(std::map<char, int>::iterator iter = counter.begin(); iter != counter.end(); ++iter) {
+		chars.push_back(iter->first);
+		counts.push_back(iter->second);
+	}
+
+	if(counter.size() != 6) {
+		std::cerr << "Encountered " << counter.size() << " characters instead of 6:";
+		for(char c : chars) {
+			std::cerr << c;
+		}
+		std::cerr << std::endl;
+		return -1;
+	}
+
+	bool invalid = false;
+	for(int c : counts) {
+		if(c != kCubeWidth * kCubeWidth) {
+			std::cerr << "Incorrect counts of sticker colors:" << std::endl;
+			for(int i = 0; i < 6; ++i) {
+				std::cerr << chars[i] << " : " << counts[i] << std::endl;
+			}
+			return -1;
+		}
+	}
+
+	// map characters to faces
+	bool opposites[6][6];
+	for(int i = 0; i < 6; ++i)
+		for(int j = 0; j < 6; ++j)
+			opposites[i][j] = true;
+	for(int i = 0; i < 6; ++i)
+		opposites[i][i] = false;
+
+	
+
+
+
+	std::map<char, int> map1;
+	if(obj.find("colors") != obj.end()) {
+		
+	}
+
+	std::cout << "JSON valid" << std::endl;
 	return 0;
 }
