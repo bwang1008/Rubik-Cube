@@ -372,3 +372,26 @@ Commit "trying out branch" - September 16, 2020
 - Wanted to experiment with making a new branch, so as to keep working code
 - At the same time, wanted to restructure code to make it neater and continue with textures idea
 
+Commit "Changed solver access for optimization" - September 17, 2020
+- In Solver.cc, changed faces[i][j][k] to get(i, j, k) so that I can turning faces become O(N) instead of O(N^2) by keeping track of how many times each face is rotated
+
+Commit "Created reading from json" - September 20, 2020
+- Created handle_json.cc to read in json file
+- Created example JSON file
+
+Commit "Just checking" - September 24, 2020
+- Pass in json path as argument
+- Added create_textures2 in main.cc
+	- Couldn't put it in procedure_geometry.cc because it could not find Image
+
+Commit "Just to save" - October 4, 2020
+- Changed example JSON file because I made a typo, so had to find another example scrambled 3x3x3 Rubik's Cube
+- Continued working on reading in JSON
+
+Commit "Did more of reading JSON" - October 4, 2020
+- Read in corners
+- Find opposite color pairs
+- Map symbols to ints that preserve these opposite pairs
+- Read in the 6 colors that correspond to each symbol
+
+
