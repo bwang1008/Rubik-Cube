@@ -7,7 +7,7 @@ in vec4 vertex_position;
 in int my_face;
 
 flat out int index; // which face
-out vec2 coord; // uv coordinates
+out vec2 coord; 	// uv coordinates
 
 void main() {
 	gl_Position = projection * view * vertex_position;

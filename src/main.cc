@@ -1,17 +1,17 @@
-#include <GL/glew.h> 					// libglew-dev
+#include <GL/glew.h> 				// libglew-dev
 					
-#include "config.h"						// global constants					
-#include "gui.h"						// gui handles keyboard/mouse
-#include "handle_json.h"				// read & write json files
-#include "procedure_geometry.h"			// generate all 3D objects
-#include "render_pass.h"				// helper for rendering in OpenGL
-#include "solver.h"						// Solver object -> algorithms to solve scrambled Rubik's Cube
+#include "config.h"					// global constants					
+#include "gui.h"					// gui handles keyboard/mouse
+#include "handle_json.h"			// read & write json files
+#include "procedure_geometry.h"		// generate all 3D objects
+#include "render_pass.h"			// helper for rendering in OpenGL
+#include "solver.h"					// Solver object -> algorithms to solve scrambled Rubik's Cube
 
-#include <iostream>						// std::cout, std::endl, std::cerr
-#include <sstream> 						// std::stringstream
-#include <vector>						// std::vector
+#include <iostream>					// std::cout, std::endl, std::cerr
+#include <sstream> 					// std::stringstream
+#include <vector>					// std::vector
 
-#define N kCubeWidth					// just because N is shorter to type
+#define N kCubeWidth				// just because N is shorter to type
 
 int window_width =  600;
 int window_height = 600;
@@ -20,11 +20,11 @@ const std::string window_title = "Rubik's Cube";
 
 // Load shaders
 const char* cube_vertex_shader = 
-#include "shaders/cube.frag"
+#include "shaders/preview.vert"
 ;
 
 const char* cube_fragment_shader = 
-#include "shaders/cube.vert"
+#include "shaders/preview.frag"
 ;
 
 void ErrorCallback(int error, const char* description) {
@@ -77,8 +77,13 @@ int main(int argc, char* argv[]) {
 
 	std::vector<glm::vec4> cube_vertices;
 	std::vector<glm::uvec3> cube_faces;
+	std::vector<int> cube_id;
 
 	create_large_cube(cube_vertices, cube_faces);					// procedure_geometry::create_large_cube to fill in vertices and faces of overall rubik's cube
+
+	for(int i = 0; i < 6; ++i)										// have 0,1,2,3,4,5, to represent the 6 faces
+		for(int j = 0; j < 4; ++j)									// repeat four times...? (trial and error guessed) I think because we don't have geometry shader 
+			cube_id.push_back(i);
 
 	Image* images[6];												// 6 different textures for each face of cube
 	Solver* solver = new Solver();									// Solver container holds colors of all 6 faces
@@ -155,12 +160,13 @@ int main(int argc, char* argv[]) {
 	
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
+	cube_pass_input.assign(1, "my_face", cube_id.data(), cube_id.size(), 1, GL_INT);
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 
 	RenderPass cube_pass(-1, cube_pass_input, 
-		{cube_vertex_shader, nullptr, cube_fragment_shader},	// vertex shader, geometry shader, fragment shader
-		{ std_view, std_proj},									// uniforms
-		{ "fragment_color" }									// name of output of shader
+		{cube_vertex_shader, nullptr, cube_fragment_shader},									// vertex shader, geometry shader, fragment shader
+		{ std_view, std_proj, texture0, texture1, texture2, texture3, texture4, texture5}, 		// uniforms
+		{ "fragment_color" }																	// name of output of shader
 	);
 	
 	std::cout << "Rendering!" << std::endl;
@@ -187,7 +193,18 @@ int main(int argc, char* argv[]) {
 		gui.updateMatrices();						// eye, view_matrix, projection_matrix
 		mats = gui.getMatrixPointers();				// copy updated values into mats
 
-		std:stringstream title;						// title for my window
+		std::stringstream title;						// title for my window
+		title << window_title;
+		title << N;
+
+		glfwSetWindowTitle(window, title.str().data()); // set title of window
+
+
+		// draw cubes
+		cube_pass.setup();
+		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));	// draw primitives
+
+
 
 
 	}
