@@ -85,6 +85,10 @@ int main(int argc, char* argv[]) {
 		for(int j = 0; j < 4; ++j)									// repeat four times...? (trial and error guessed) I think because we don't have geometry shader 
 			cube_id.push_back(i);
 
+	for(auto what : cube_vertices) {
+		std::cout << "(" << what[0] << ", " << what[1] << ", " << what[2] << std::endl;
+	}
+
 	Image* images[6];												// 6 different textures for each face of cube
 	Solver* solver = new Solver();									// Solver container holds colors of all 6 faces
 	std::vector<glm::uvec3> rgbs;									// map from int (0-5) to rgb
@@ -157,7 +161,6 @@ int main(int argc, char* argv[]) {
 	auto texture4 = make_uniform("texture4", texture_data4);
 	auto texture5 = make_uniform("texture5", texture_data5);
 
-	
 	RenderDataInput cube_pass_input;
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
 	cube_pass_input.assign(1, "my_face", cube_id.data(), cube_id.size(), 1, GL_INT);
@@ -171,11 +174,14 @@ int main(int argc, char* argv[]) {
 	
 	std::cout << "Rendering!" << std::endl;
 
+	bool draw_cube = true;
+
 	while(!glfwWindowShouldClose(window)) {
 		// setup "basic" window stuff
 		glfwGetFramebufferSize(window, &window_width, &window_height);	// "size, in pixels, of the framebuffer of the specified window" - stored in window's window_width/height
 		glViewport(0, 0, window_width, window_height);					// "specifies the affine transformation of x and y from normalized device coordinates to window coordinates"
-		glClearColor(1.0f, 1.0f, 1.0f, 0.0f); 							// when glClear() clears buffer, set default to this color
+		// glClearColor(1.0f, 1.0f, 1.0f, 0.0f); 							// when glClear() clears buffer, set default to this color
+		glClearColor(0.56f, 0.79f, 0.95f, 0.0f);
 	
 		// glEnable — enable or disable server-side GL capabilities
 		glEnable(GL_DEPTH_TEST);										// I think tells framebuffer to update when there is a closer depth
@@ -200,17 +206,44 @@ int main(int argc, char* argv[]) {
 		glfwSetWindowTitle(window, title.str().data()); // set title of window
 
 
+		// update textures
+		for(int i = 0; i < 6; ++i) {
+			switch(i) {
+				case 0:
+					glActiveTexture(GL_TEXTURE0); break;
+				case 1:
+					glActiveTexture(GL_TEXTURE1); break;
+				case 2:
+					glActiveTexture(GL_TEXTURE2); break;
+				case 3:
+					glActiveTexture(GL_TEXTURE3); break;
+				case 4:
+					glActiveTexture(GL_TEXTURE4); break;
+				case 5:
+					glActiveTexture(GL_TEXTURE5); break;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
+			// glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, images[i]->width, images[i]->height, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
+		}
+
+
 		// draw cubes
-		cube_pass.setup();
-		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));	// draw primitives
+		if(draw_cube) {
+			cube_pass.setup();
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));	// draw primitives
+		}
 
-
-
+		
+		glfwPollEvents();			// processes events
+		glfwSwapBuffers(window);	// changes buffers to show change in window
 
 	}
 
+	glfwDestroyWindow(window);		// destrorys specific window
+	glfwTerminate();				// called before finishes
 
 	std::cout << "Finished!" << std::endl;
 
-	return 0;
+	exit(EXIT_SUCCESS);				// stdlib: aka return 0
 }

@@ -13,7 +13,7 @@ in vec2 coord;
 out vec4 fragment_color;
 
 void main() {
-	vec3 texColor = vec3(0.0, 0.0, 0.0);
+	vec3 texColor = vec3(0.0, 0.0, 1.0);
 
 	if(index == 0) {
 		texColor = texture(texture0, coord).xyz;
@@ -39,10 +39,12 @@ void main() {
 	float smallU = min(coord[0], 1 - coord[0]);
 	float smallV = min(coord[1], 1 - coord[1]);
 
+	/*
 	float EPS = 0.002;
 	if(smallU <= EPS || smallV <= EPS) {
 		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);
 	}
+	*/
 }
 
 
