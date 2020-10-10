@@ -229,7 +229,7 @@ void RenderPass::createMaterialTexture()
 			for (int col = 0; col < w; col++) {
 				unsigned r = bytes[row*w*3 + col*3];
 				unsigned g = bytes[row*w*3 + col*3 + 1];
-				unsigned b = bytes[row*w*3 + col*3 + 1];
+				unsigned b = bytes[row*w*3 + col*3 + 1];	// ?? shouldn't this be +2?
 				dummy[row*w+col] = r | (g << 8) | (b << 16) | (0xFF << 24);
 			}
 		}

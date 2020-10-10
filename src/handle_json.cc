@@ -8,8 +8,13 @@
 #include "json.hpp"				// json handling
 
 // used tutorial at http://rachelnertia.github.io/programming/2016/07/03/json-hpp/
+/**
+ *	json_path is a string saying where the JSON file is located in file system
+ *	solver is a Solver object that has a container for all sticker colors; we fill it here
+ *	colors will contain 6 rgb values for the 6 colors of stickers; we fill it here
+ *  return int: -1 means error, 0 means success
+*/
 int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& colors) {
-	std::cout << "hey!" << std::endl;
 	std::ifstream reader(json_path);
 	if(!reader.is_open()) {
 		std::cerr << "Unable to open file " << json_path << std::endl;
@@ -203,9 +208,12 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 	}
 
 	colors.clear();
-	for(int i = 0; i < 6; ++i) {
-		colors.push_back(glm::uvec3(255, 255, 255));
-	}
+	colors.push_back(glm::uvec3(46, 139, 87));		// set default colors
+	colors.push_back(glm::uvec3(255, 0, 0));
+	colors.push_back(glm::uvec3(255, 255, 255));
+	colors.push_back(glm::uvec3(255, 255, 0));
+	colors.push_back(glm::uvec3(255, 140, 0));
+	colors.push_back(glm::uvec3(0, 0, 255));
 
 	if(obj.find("colors") != obj.end()) {
 		json color_data = obj["colors"];
@@ -213,25 +221,22 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		for(int i = 0; i < 6; ++i) {
 			
 			char c = chars[i];
-			std::string g(1, c);
+			std::string g(1, c);				// turn character into string
 			if(color_data.find(g) == color_data.end()) {
 				std::cerr << "Could not find symbol " << c << " in colors" << std::endl;
 				return -1;
 			}
 
-			std::cout << "WHOAH THERE" << std::endl;
-			std::cout << "color data = " << color_data[g] << std::endl;
-
-			json huh = color_data[g];
+			json single_rgb = color_data[g];	// get json list of 3 ints: rgb
 
 			std::vector<int> temp;
-			for(int i : huh) {
+			for(int i : single_rgb) {
 				temp.push_back(i);
 			}
 
 			glm::uvec3 rgb(temp[0], temp[1], temp[2]);
 			int pos = perm[tempIndex[c]];
-			colors[pos] = rgb;
+			colors[pos] = rgb;					// put rgb as uvec3 in map
 		}
 	}
 

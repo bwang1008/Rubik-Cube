@@ -394,4 +394,7 @@ Commit "Did more of reading JSON" - October 4, 2020
 - Map symbols to ints that preserve these opposite pairs
 - Read in the 6 colors that correspond to each symbol
 
+Commit "Updated Log" - October 9, 2020
+- Added more commit messages here
+
 

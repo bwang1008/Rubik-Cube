@@ -32,7 +32,7 @@ void create_large_cube(std::vector<glm::vec4>& cube_vertices, std::vector<glm::u
 	cube_faces.push_back(glm::uvec3(index + 4, index + 7, index + 6));
 }
 
-/*
+
 void create_textures(Image* images[6], Solver* solver, std::vector<glm::uvec3> rgbs) {
 	// assumes solver.faces is already filled
 	
@@ -59,4 +59,3 @@ void create_textures(Image* images[6], Solver* solver, std::vector<glm::uvec3> r
 		images[f] = im;								// Assign created Image into parameter images
 	}
 }
-*/

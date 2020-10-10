@@ -8,6 +8,7 @@
 #include "solver.h"						// Solver object -> algorithms to solve scrambled Rubik's Cube
 
 #include <iostream>						// std::cout, std::endl, std::cerr
+#include <sstream> 						// std::stringstream
 #include <vector>						// std::vector
 
 #define N kCubeWidth					// just because N is shorter to type
@@ -61,34 +62,6 @@ GLFWwindow* init_glefw() {
 	return ret;
 }
 
-void create_textures2(Image* images[6], Solver* solver, std::vector<glm::uvec3> rgbs) {
-	// assumes solver.faces is already filled
-	
-	int append = (4 - ((3 * kCubeWidth) % 4)) % 4;	// Weird alignment with Image: needs number of bytes on width, to be divisible by 4.
-
-	for(int f = 0; f < 6; ++f) {					// for each of the six faces,
-		Image* im = new Image();					// create a base texture / image
-
-		im->width  = kCubeWidth;					// fill in width and height
-		im->height = kCubeWidth;
-
-		for(int i = 0; i < kCubeWidth; ++i) {
-			for(int j = 0; j < kCubeWidth; ++j) {	// fill in each row and column of texture / image
-				int color = solver->get(f, i, j);	// grab the value given from Solver.faces[6][N][N]
-				
-				im->bytes.push_back(rgbs[color][0]);	
-				im->bytes.push_back(rgbs[color][1]);
-				im->bytes.push_back(rgbs[color][2]);	// append each R,G,B value of the color
-			}
-			for(int j = 0; j < append; ++j) {		// append padding so alignment divisible by 4
-				im->bytes.push_back(0);
-			}
-		}
-
-		images[f] = im;								// Assign created Image into parameter images
-	}
-}
-
 int main(int argc, char* argv[]) {
 
 	if(N <= 0 || N >= kMaxWidth) {									// check cubeWidth is valid
@@ -114,24 +87,20 @@ int main(int argc, char* argv[]) {
 	// user arguments
 	if(argc >= 2) {
 		std::string path(argv[1]);										
-		int res = read_json(path, solver, rgbs);								// handle_json::read_json
+		int res = read_json(path, solver, rgbs);					// handle_json::read_json
 		if(res < 0) {
 			return -1;
 		}
 
 		/*
-		rgbs.push_back(glm::uvec3(46, 139, 87));
-		rgbs.push_back(glm::uvec3(255, 0, 0));
-		rgbs.push_back(glm::uvec3(255, 255, 255));
-		rgbs.push_back(glm::uvec3(255, 255, 0));
-		rgbs.push_back(glm::uvec3(255, 140, 0));
-		rgbs.push_back(glm::uvec3(0, 0, 255));
-		*/
 		for(int i = 0; i < 6; ++i) {
 			std::cout << "well = " << rgbs[i][0] << " " << rgbs[i][1] << " " << rgbs[i][2] << std::endl;
 		}
+		*/
 	}
 	else {
+		// no user arguments; prepopulate rgbs with the default 6 colors of stickers: green, red, white, yellow, orange, blue 
+		// solver is already prepopulated with default in Solver constructor
 		rgbs.push_back(glm::uvec3(46, 139, 87));
 		rgbs.push_back(glm::uvec3(255, 0, 0));
 		rgbs.push_back(glm::uvec3(255, 255, 255));
@@ -141,9 +110,8 @@ int main(int argc, char* argv[]) {
 	}
 	// end user arguments
 
-	create_textures2(images, solver, rgbs);							// procedure_geoemetry::create_textures to fill in images with correct bytes
+	create_textures(images, solver, rgbs);							// procedure_geoemetry::create_textures to fill in images with correct bytes
 	
-	/*
 	unsigned int textureNum[6];										// generated number for each texture (?)
 	for (int i = 0; i < 6; ++i) {									
 		glGenTextures(1, &(textureNum[i]));							// create actual number
@@ -154,7 +122,7 @@ int main(int argc, char* argv[]) {
 
 		std::cout << "Generated image " << (i+1) << std::endl;
 	}
-	*/
+	
 	std::cout << "Generated all 6 images" << std::endl;
 
 	MatrixPointers mats;												// Define MatrixPointers here for lambda to capture
@@ -183,6 +151,47 @@ int main(int argc, char* argv[]) {
 	auto texture3 = make_uniform("texture3", texture_data3);
 	auto texture4 = make_uniform("texture4", texture_data4);
 	auto texture5 = make_uniform("texture5", texture_data5);
+
+	
+	RenderDataInput cube_pass_input;
+	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
+	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
+
+	RenderPass cube_pass(-1, cube_pass_input, 
+		{cube_vertex_shader, nullptr, cube_fragment_shader},	// vertex shader, geometry shader, fragment shader
+		{ std_view, std_proj},									// uniforms
+		{ "fragment_color" }									// name of output of shader
+	);
+	
+	std::cout << "Rendering!" << std::endl;
+
+	while(!glfwWindowShouldClose(window)) {
+		// setup "basic" window stuff
+		glfwGetFramebufferSize(window, &window_width, &window_height);	// "size, in pixels, of the framebuffer of the specified window" - stored in window's window_width/height
+		glViewport(0, 0, window_width, window_height);					// "specifies the affine transformation of x and y from normalized device coordinates to window coordinates"
+		glClearColor(1.0f, 1.0f, 1.0f, 0.0f); 							// when glClear() clears buffer, set default to this color
+	
+		// glEnable — enable or disable server-side GL capabilities
+		glEnable(GL_DEPTH_TEST);										// I think tells framebuffer to update when there is a closer depth
+		glEnable(GL_MULTISAMPLE);										// get anti-aliasing by sampling around by a small offset to get smooth transitions
+		glEnable(GL_BLEND);												// "blend the computed fragment color values with the values in the color buffers"
+		glEnable(GL_CULL_FACE);											// "cull polygons based on their winding in window coordinates"
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);				// set buffer to default values
+		
+		glDepthFunc(GL_LESS);											// depth comparison function: GL_LESS = want objects closer to screen (needs Depth testing available: glEnable(GL_DEPTH_TEST))
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);				// needs glEnable(GL_BLEND): blends incoming fragment colors with colors already in frame buffer
+		glCullFace(GL_BACK);											// back-facing polygons are culled
+
+		// now update cube stuff
+		gui.updateMatrices();						// eye, view_matrix, projection_matrix
+		mats = gui.getMatrixPointers();				// copy updated values into mats
+
+		std:stringstream title;						// title for my window
+
+
+	}
+
 
 	std::cout << "Finished!" << std::endl;
 
