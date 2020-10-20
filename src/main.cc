@@ -82,12 +82,8 @@ int main(int argc, char* argv[]) {
 	create_large_cube(cube_vertices, cube_faces);					// procedure_geometry::create_large_cube to fill in vertices and faces of overall rubik's cube
 
 	for(int i = 0; i < 6; ++i)										// have 0,1,2,3,4,5, to represent the 6 faces
-		for(int j = 0; j < 4; ++j)									// repeat four times...? (trial and error guessed) I think because we don't have geometry shader 
+		for(int j = 0; j < 4; ++j)									// repeat four times: each texture uses 4 vertices
 			cube_id.push_back(i);
-
-	for(auto what : cube_vertices) {
-		std::cout << "(" << what[0] << ", " << what[1] << ", " << what[2] << std::endl;
-	}
 
 	Image* images[6];												// 6 different textures for each face of cube
 	Solver* solver = new Solver();									// Solver container holds colors of all 6 faces

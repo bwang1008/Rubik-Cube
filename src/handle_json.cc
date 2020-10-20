@@ -47,7 +47,7 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
-	std::cout << "gonna fill data[][][]" << std::endl;
+	//std::cout << "gonna fill data[][][]" << std::endl;
 
 	char data[6][kCubeWidth][kCubeWidth];	// store character data from json into this for now
 	std::map<char, int> counter;			// count how many characters there are in this json; ideally should be N of each character/sticker/color
@@ -149,7 +149,7 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		opposites[c3][c2] = false;
 	}
 
-	
+	/*
 	std::cout << "chars = ";
 	for(char c : chars) {
 		std::cout << c;
@@ -163,7 +163,7 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 		std::cout << std::endl;
 	}
-	
+	*/
 
 	int count = 0;
 	for(int i = 0; i < 6; ++i) {
