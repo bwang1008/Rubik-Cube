@@ -161,12 +161,12 @@ int main(int argc, char* argv[]) {
 	auto texture4 = make_uniform("texture4", texture_data4);
 	auto texture5 = make_uniform("texture5", texture_data5);
 
-	RenderDataInput cube_pass_input;
+	RenderDataInput cube_pass_input;		// all information on our cube - vertices, faces
 	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
 	cube_pass_input.assign(1, "my_face", cube_id.data(), cube_id.size(), 1, GL_INT);
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 
-	RenderPass cube_pass(-1, cube_pass_input, 
+	RenderPass cube_pass(-1, cube_pass_input, 	// put all shaders together to simplify rendering
 		{cube_vertex_shader, nullptr, cube_fragment_shader},									// vertex shader, geometry shader, fragment shader
 		{ std_view, std_proj, texture0, texture1, texture2, texture3, texture4, texture5}, 		// uniforms
 		{ "fragment_color" }																	// name of output of shader
@@ -176,6 +176,7 @@ int main(int argc, char* argv[]) {
 
 	bool draw_cube = true;
 
+	// rendering loop
 	while(!glfwWindowShouldClose(window)) {
 		// setup "basic" window stuff
 		glfwGetFramebufferSize(window, &window_width, &window_height);	// "size, in pixels, of the framebuffer of the specified window" - stored in window's window_width/height
@@ -196,8 +197,8 @@ int main(int argc, char* argv[]) {
 		glCullFace(GL_BACK);											// back-facing polygons are culled
 
 		// now update cube stuff
-		gui.updateMatrices();						// eye, view_matrix, projection_matrix
-		mats = gui.getMatrixPointers();				// copy updated values into mats
+		gui.updateMatrices();							// eye, view_matrix, projection_matrix
+		mats = gui.getMatrixPointers();					// copy updated values into mats
 
 		std::stringstream title;						// title for my window
 		title << window_title;
@@ -205,8 +206,7 @@ int main(int argc, char* argv[]) {
 
 		glfwSetWindowTitle(window, title.str().data()); // set title of window
 
-
-		// update textures
+		// update textures on screen
 		for(int i = 0; i < 6; ++i) {
 			switch(i) {
 				case 0:
@@ -223,24 +223,20 @@ int main(int argc, char* argv[]) {
 					glActiveTexture(GL_TEXTURE5); break;
 			}
 
-			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
-			// glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, images[i]->width, images[i]->height, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
+			glBindTexture(GL_TEXTURE_2D, textureNum[i]);	// bind texture to update for right now
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, images[i]->width, images[i]->height, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data()); // actually update
 		}
 
-
-		// draw cubes
 		if(draw_cube) {
-			cube_pass.setup();
-			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));	// draw primitives
+			cube_pass.setup();	// Vertex Array (VAO), bind uniforms
+			CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));	// draw all triangles	// draw primitives
 		}
 
-		
 		glfwPollEvents();			// processes events
 		glfwSwapBuffers(window);	// changes buffers to show change in window
-
 	}
 
-	glfwDestroyWindow(window);		// destrorys specific window
+	glfwDestroyWindow(window);		// destroys specific window
 	glfwTerminate();				// called before finishes
 
 	std::cout << "Finished!" << std::endl;

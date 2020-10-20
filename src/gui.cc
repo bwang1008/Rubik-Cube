@@ -25,13 +25,13 @@ GUI::~GUI() {
 
 void GUI::keyCallback(int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window_, GL_TRUE);
+		glfwSetWindowShouldClose(window_, GL_TRUE);				// press Escape to close window/application
 		return;
 	}
-	else if (mods == 0 && captureWASDUPDOWN(key, action)) {
+	else if (mods == 0 && captureWASDUPDOWN(key, action)) {		// handlw WASD first
 		return;
 	}
-	else if (key == GLFW_KEY_V && action != GLFW_RELEASE){
+	else if (key == GLFW_KEY_V && action != GLFW_RELEASE){		// press V to reset to default view of cube
 		center_ = glm::vec3(0.0f, 0.0f, 0.0f);
 		up_ = glm::vec3(0.0f, 1.0f, 0.0f);
 		look_ = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -48,7 +48,7 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y) {
 	current_y_ = float(window_height_ - mouse_y);
 	float delta_x = current_x_ - last_x_;
 	float delta_y = current_y_ - last_y_;
-	if (sqrt(delta_x * delta_x + delta_y * delta_y) < 1e-15) {
+	if (sqrt(delta_x * delta_x + delta_y * delta_y) < 1e-15) {		// small movements don't count
 		return;
 	}
 
@@ -60,7 +60,7 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y) {
 
 	// glm::vec3 posVec = glm::unProject(glm::vec3(current_x_, current_y_, 0.0), view_matrix_, projection_matrix_, glm::vec4(0,0,window_width_,window_height_));
 
-	if (drag_camera) {
+	if (drag_camera) {			// dragging mouse moves scene
 		glm::vec3 axis = glm::normalize(orientation_ * glm::vec3(mouse_direction.y, -mouse_direction.x, 0.0f));
 		
 		orientation_ = glm::mat3(glm::rotate(drag_speed_, axis) * glm::mat4(orientation_));
@@ -99,7 +99,7 @@ MatrixPointers GUI::getMatrixPointers() const {
 	return ret;
 }
 
-bool GUI::captureWASDUPDOWN(int key, int action) {
+bool GUI::captureWASDUPDOWN(int key, int action) {		// revolve around center, rather than FPS like
 	if (key == GLFW_KEY_W) {
 		camera_distance_ -= zoom_speed_;
 		return true;
