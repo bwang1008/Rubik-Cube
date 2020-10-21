@@ -40,6 +40,7 @@ void main() {
 	float smallV = min(coord[1], 1 - coord[1]);
 
 	/*
+	// trying to get black borders...
 	float EPS = 0.002;
 	if(smallU <= EPS || smallV <= EPS) {
 		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);

@@ -64,7 +64,7 @@ GLFWwindow* init_glefw() {
 
 int main(int argc, char* argv[]) {
 
-	if(N <= 0 || N >= kMaxWidth) {									// check cubeWidth is valid
+	if(N <= 0 || N > kMaxWidth) {									// check cubeWidth is valid
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
 		return -1;
@@ -177,8 +177,8 @@ int main(int argc, char* argv[]) {
 		// setup "basic" window stuff
 		glfwGetFramebufferSize(window, &window_width, &window_height);	// "size, in pixels, of the framebuffer of the specified window" - stored in window's window_width/height
 		glViewport(0, 0, window_width, window_height);					// "specifies the affine transformation of x and y from normalized device coordinates to window coordinates"
-		// glClearColor(1.0f, 1.0f, 1.0f, 0.0f); 							// when glClear() clears buffer, set default to this color
-		glClearColor(0.56f, 0.79f, 0.95f, 0.0f);
+		// glClearColor(1.0f, 1.0f, 1.0f, 0.0f); 						// when glClear() clears buffer, set default to this color
+		glClearColor(0.56f, 0.79f, 0.95f, 0.0f);						// nice sky blue
 	
 		// glEnable — enable or disable server-side GL capabilities
 		glEnable(GL_DEPTH_TEST);										// I think tells framebuffer to update when there is a closer depth

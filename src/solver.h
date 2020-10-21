@@ -69,7 +69,7 @@ private:
 
 	std::deque<glm::ivec3>* dequePtr; // pointer to the deque of moves to fill
 
-	int storeTopColor;
+	int storeTopColor;		// temporary storage variable in between methods when solving back face on top face
 
 	int facePos[6];		// 0 means unrotated, 1 means rotated clockwise from original, 2 means rotated twice, 3 means rotated once counterclockwise
 };
