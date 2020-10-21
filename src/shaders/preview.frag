@@ -7,6 +7,8 @@ uniform sampler2D texture3;
 uniform sampler2D texture4;
 uniform sampler2D texture5;
 
+uniform int N;
+
 flat in int index;
 in vec2 coord;
 
@@ -42,13 +44,11 @@ void main() {
 
 	float EPS = 0.01;
 
-	int N = 2;
-
 	float relativeErrorU = abs((u * N) - floor(u * N + 0.5));	// floor(x+0.5) = round(x) ; don't know if round is always supported though
 	float relativeErrorV = abs((v * N) - floor(v * N + 0.5));
 
 	if(relativeErrorU <= EPS || relativeErrorV <= EPS) {
-		fragment_color = vec4(0.8, 0.8, 0.8, 1.0);
+		fragment_color = vec4(0.8, 0.8, 0.8, 1.0);				// borders are light gray
 	}
 }
 

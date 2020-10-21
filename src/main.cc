@@ -136,6 +136,7 @@ int main(int argc, char* argv[]) {
 	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
 	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
 	std::function<glm::vec3()> cam_data = [&gui]() { return gui.getCamera(); };
+	std::function<int()> cubeWidth_data = []() { return kCubeWidth; };	
 
 	// return value says where location of each texture is
 	std::function<int()> texture_data0 = []() {return 0; };
@@ -149,6 +150,7 @@ int main(int argc, char* argv[]) {
 	auto std_view = make_uniform("view", view_data);
 	auto std_proj = make_uniform("projection", proj_data);
 	auto std_camera = make_uniform("camera_position", cam_data);
+	auto uniformN = make_uniform("N", cubeWidth_data);
 	
 	auto texture0 = make_uniform("texture0", texture_data0);
 	auto texture1 = make_uniform("texture1", texture_data1);
@@ -163,9 +165,10 @@ int main(int argc, char* argv[]) {
 	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
 
 	RenderPass cube_pass(-1, cube_pass_input, 	// put all shaders together to simplify rendering
-		{cube_vertex_shader, nullptr, cube_fragment_shader},									// vertex shader, geometry shader, fragment shader
-		{ std_view, std_proj, texture0, texture1, texture2, texture3, texture4, texture5}, 		// uniforms
-		{ "fragment_color" }																	// name of output of shader
+		{cube_vertex_shader, nullptr, cube_fragment_shader},	// vertex shader, geometry shader, fragment shader
+		{ std_view, std_proj, texture0, texture1, texture2, 
+			texture3, texture4, texture5, uniformN}, 			// uniforms
+		{ "fragment_color" }									// name of output of shader
 	);
 	
 	std::cout << "Rendering!" << std::endl;
