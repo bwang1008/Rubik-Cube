@@ -60,6 +60,8 @@ public:
 	void solveLastCornerOrientation();
 	void solve3x3x3();
 
+	void solve();
+
 private:
 	int N;
 	int faces[6][kCubeWidth][kCubeWidth]; // internal representation

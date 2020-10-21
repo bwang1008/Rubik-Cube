@@ -31,10 +31,10 @@ The orientation of the faces as input inside the JSON is as follows. Suppose you
 * the `front` face is the face that directly faces you
 * the `right` face is the face that you see if you start from `front`, then rotate the cube along the z-axis by 90 degrees clockwise (viewed from the top)
 * the `up` face is the face that you see if you start from `front`, then rotate the cube along the x-axis by 90 degrees counter-clockwise (when viewed from the right side)
-* the `down` facce is the face that you see if you start from `front`, then rotate the cube along the x-axis by 90 degrees clockwise (when viewed from the right side)
+* the `down` face is the face that you see if you start from `front`, then rotate the cube along the x-axis by 90 degrees clockwise (when viewed from the right side)
 * the `left` face is the face that you see if you start from `front`, then rotate the cube along the z-axis by 90 degrees counter-clockwise (viewed from the top)
 * the `back` face is the face that you see if you start from `front`, then rotate the cube along the z-axis 180 degrees.
 
 I am aware that many such virtual Rubik's Cube solvers exist elsewhere. Inspiration for this project is from https://www.youtube.com/watch?v=f9smvQ5fc7Q and https://www.youtube.com/watch?v=IM2czqavlWM by Code Bullet. The general outline followed is the reduction method, given by https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/. 
 
-Starter code is fully attributed to Professor Etienne Vouga, used from previous projects from Graphics class. 
+Starter code for setting up OpenGL is fully attributed to Professor Etienne Vouga, used from previous projects from Graphics class.

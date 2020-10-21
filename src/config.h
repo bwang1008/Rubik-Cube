@@ -5,7 +5,8 @@ const float kNear = 0.1f;
 const float kFar = 10000.0f;
 const float kFov = 45.0f;
 
+const int kMaxScramble = 137;
 const int kMaxWidth = 200;
-const int kCubeWidth = 3;
+const int kCubeWidth = 2;
 
 #endif

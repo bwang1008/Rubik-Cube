@@ -36,16 +36,20 @@ void main() {
 
 	fragment_color = vec4(texColor.rgb, 1.0);
 
-	float smallU = min(coord[0], 1 - coord[0]);
-	float smallV = min(coord[1], 1 - coord[1]);
+	// trying to get borders around each sticker...
+	float u = coord[0];
+	float v = coord[1];
 
-	/*
-	// trying to get black borders...
-	float EPS = 0.002;
-	if(smallU <= EPS || smallV <= EPS) {
-		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);
+	float EPS = 0.01;
+
+	int N = 2;
+
+	float relativeErrorU = abs((u * N) - floor(u * N + 0.5));	// floor(x+0.5) = round(x) ; don't know if round is always supported though
+	float relativeErrorV = abs((v * N) - floor(v * N + 0.5));
+
+	if(relativeErrorU <= EPS || relativeErrorV <= EPS) {
+		fragment_color = vec4(0.8, 0.8, 0.8, 1.0);
 	}
-	*/
 }
 
 

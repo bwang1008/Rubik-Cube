@@ -56,6 +56,8 @@ int Solver::get(int face, int row, int col) {
 	return faces[face][row][col];
 }
 
+// Sets the color of the sticker, given face, row, column, into the specified color (0-5)
+// should only be called in turnFront, turnRight,...
 void Solver::set(int face, int row, int col, int color) {
 	int rotationPos = facePos[face];
 	if(rotationPos == 1) {
@@ -71,6 +73,7 @@ void Solver::set(int face, int row, int col, int color) {
 	faces[face][row][col] = color;
 }
 
+// exec calls this when face = 0
 void Solver::turnFront(int layer, int qts) {
 	qts = ((qts % 4) + 4) % 4;
 	if (qts == 0) {
@@ -123,6 +126,7 @@ void Solver::turnFront(int layer, int qts) {
 	}
 }
 
+// exec calls this when face = 1
 void Solver::turnRight(int layer, int qts) {
 	qts = ((qts % 4) + 4) % 4;
 	if (qts == 0) {
@@ -175,6 +179,7 @@ void Solver::turnRight(int layer, int qts) {
 	}
 }
 
+// exec calls this when face = 2
 void Solver::turnUp(int layer, int qts) {
 	qts = ((qts % 4) + 4) % 4;
 	if (qts == 0) {
@@ -227,6 +232,7 @@ void Solver::turnUp(int layer, int qts) {
 	}
 }
 
+// exec calls this when face = 3
 void Solver::turnDown(int layer, int qts) {
 	qts = ((qts % 4) + 4) % 4;
 	if (qts == 0) {
@@ -279,6 +285,7 @@ void Solver::turnDown(int layer, int qts) {
 	}
 }
 
+// exec calls this when face = 4
 void Solver::turnLeft(int layer, int qts) {
 	qts = ((qts % 4) + 4) % 4;
 	if (qts == 0) {
@@ -331,6 +338,7 @@ void Solver::turnLeft(int layer, int qts) {
 	}
 }
 
+// exec calls this when face = 5
 void Solver::turnBack(int layer, int qts) {
 	qts = ((qts % 4) + 4) % 4;
 	if (qts == 0) {
@@ -512,10 +520,11 @@ int Solver::currentState() {
 	return 0;
 }
 
+// randomly adds moves to scramble a cube
 void Solver::scrambleCube() {
 	int N = kCubeWidth;
 	srand(1);
-	int numberMoves = std::min(3 * N * N, 137);
+	int numberMoves = std::min(3 * N * N, kMaxScramble);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;
@@ -528,7 +537,13 @@ void Solver::scrambleCube() {
 	}
 }
 
+// solves most of Down face; uses less moves than calling solveCenter0 alone
+// also puts most of stickers for back face onto the up face
 void Solver::preliminary0() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+	
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
 	myMap[1] = 'R';
@@ -739,6 +754,10 @@ void Solver::preliminary0() {
 // Even Worst-Case: 2M + 192(N-2) + 16 + 42(N-2)
 // Odd  Worst-Case: 2M + 192(N-2) + 16 + 42(N-3) + 1 + 21(N-3)
 void Solver::solveCenter0() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	int colorD = getFaceColor(3);
 
 	// get all colorD stickers from back
@@ -996,7 +1015,15 @@ void Solver::solveCenter0() {
 	}
 }
 
+// solves most of the stickers for back face onto the up face
+// solves some of left face
+// brings back stickers on up face, onto the back face
+// must be called if using preliminary0
 void Solver::preliminary1() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	int colorB = storeTopColor;
 
 	// most of back face, but placing on Up face for now, except for center col of odd N
@@ -1159,7 +1186,7 @@ void Solver::preliminary1() {
 		}
 	}
 
-	std::cout << "numCorrect0 = " << numCorrect << std::endl;
+	// std::cout << "numCorrect0 = " << numCorrect << std::endl;
 	
 	for (int numTimes = 0; numTimes < 3; ++numTimes) {
 		exec(4, 0, 1);
@@ -1230,7 +1257,7 @@ void Solver::preliminary1() {
 			}
 		}
 
-		std::cout << "numCorrect" << numTimes << " = " << numCorrect << std::endl;
+		// std::cout << "numCorrect" << numTimes << " = " << numCorrect << std::endl;
 	}
 	
 	// move the Up face that has Back stickers onto Back face, do this at the end of preliminary
@@ -1263,6 +1290,10 @@ void Solver::preliminary1() {
 // Even Worst-Case: 2M + 144(N-2) + 12 + 46(N-2)
 // Odd  Worst-Case: 2M + 144(N-2) + 12 + 46(N-3) + 1 + 22(N-3)
 void Solver::solveCenter1() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	// int colorB = getFaceColor(5);
 	int colorB = storeTopColor;
 
@@ -1484,6 +1515,10 @@ void Solver::solveCenter1() {
 // Even Worst-Case: 2M + 96(N-2) + 8 + 46(N-2)
 // Odd  Worst-Case: 2M + 96(N-2) + 8 + 46(N-3) + 1 + 22(N-3)
 void Solver::solveCenter2() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	int colorL = getFaceColor(4);
 
 	// get all colorB stickers from Front
@@ -1655,6 +1690,10 @@ void Solver::solveCenter2() {
 // Let M = number of mismatches on this face
 // Worst-Case: 2M + 96(N-2) + 8
 void Solver::solveCenter3() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	int colorU = getFaceColor(2);
 
 	// get all colorU stickers from Front
@@ -1756,6 +1795,10 @@ void Solver::solveCenter3() {
 // Let M = number of mismatches on this face
 // Worst-Case: 2M + 48(N-2) + 4
 void Solver::solveLastCenters() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	int colorF = getFaceColor(0);
 	int colorR = getFaceColor(1);
 
@@ -1854,6 +1897,10 @@ void Solver::flipEdge(int edge) {
 // solve first 4 edges
 // Even Worst-Case: 52N - 88, Odd Worst-Case: 52N - 140
 void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
 	myMap[1] = 'R';
@@ -2354,6 +2401,9 @@ void Solver::solveEdges0(std::vector<std::pair<int, int>>& colorPairs) {
 // solve middle 4 edges
 // Even Worst-Case: 108N - 312, Odd Worst-Case: 108N - 420
 void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
+	if(kCubeWidth <= 3) {
+		return;
+	}
 
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
@@ -2789,6 +2839,10 @@ void Solver::solveEdges1(std::vector<std::pair<int, int>>& colorPairs) {
 // solve last 4 edges
 // Even Worst-Case: 66.5N - 125, Odd Worst-Case: 66.5N - 191.5
 void Solver::solveEdges2() {
+	if(kCubeWidth <= 3) {
+		return;
+	}
+
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
 	myMap[1] = 'R';
@@ -2992,9 +3046,10 @@ void Solver::solveEdges2() {
 	}
 }
 
+// wrapper function that calls solveEdges0, solveEdges1, solveEdges2
 // Total Edges: Even Worst-Case: 226.5N - 525, Odd Worst-Case: 226.5N - 751.5
 void Solver::solveEdges() {
-	if (N <= 3) {
+	if (kCubeWidth <= 3) {
 		return;
 	}
 
@@ -3014,9 +3069,10 @@ void Solver::solveEdges() {
 	solveEdges2();
 }
 
+// first step in solving 3x3x3: make bottom cross
 void Solver::solveCross() {
 	// edges only exist for N >= 3
-	if (N <= 2) {
+	if (kCubeWidth <= 2) {
 		return;
 	}
 
@@ -3176,6 +3232,7 @@ void Solver::solveCross() {
 	}
 }
 
+// next step in solving 3x3x3: get corners of bottom layer, so all of bottom layer complete
 void Solver::solveCorners4() {
 	
 	std::map<int, char> myMap;
@@ -3382,8 +3439,9 @@ void Solver::solveCorners4() {
 	}
 }
 
+// next step in solving 3x3x3: solve the edges between down and up faces
 void Solver::solveSecondLayer() {
-	if (N <= 2) {
+	if (kCubeWidth <= 2) {
 		return;
 	}
 
@@ -3601,7 +3659,6 @@ void Solver::solveSecondLayer() {
 
 		// by the time we get here, we have placed the desired edge into the second layer
 	}
-
 }
 
 // https://ruwix.com/twisty-puzzles/4x4x4-rubiks-cube-rubiks-revenge/
@@ -3719,9 +3776,10 @@ void Solver::fixParityAdjacentCorners() {
 	exec(2, 0, -1);
 }
 
+// solve up layer cross
 void Solver::solveLastCross() {
 	// small enough cubes do not have edges
-	if (N <= 2) {
+	if (kCubeWidth <= 2) {
 		return;
 	}
 
@@ -3779,9 +3837,10 @@ void Solver::solveLastCross() {
 	}
 }
 
+// get correct edge pieces on up layer in the right place and orientation
 void Solver::solveLastEdges() {
 	// small enough cubes do not have edges
-	if (N <= 2) {
+	if (kCubeWidth <= 2) {
 		return;
 	}
 
@@ -3915,6 +3974,7 @@ void Solver::solveLastEdges() {
 	}
 }
 
+// place all corners of up layer into the correct spot (not necessarily correct orientation)
 void Solver::solveLastCornerPosition() {
 	int colorFront = getFaceColor(0);
 	int colorRight = getFaceColor(1);
@@ -3951,7 +4011,7 @@ void Solver::solveLastCornerPosition() {
 	}
 
 	int permutation = 1000 * indices[0] + 100 * indices[1] + 10 * indices[2] + indices[3];
-	std::cout << "PPPPPPPPERMUTATION = " << permutation << std::endl;
+	// std::cout << "PPPPPPPPERMUTATION = " << permutation << std::endl;
 
 	if (permutation == 1234) {
 
@@ -4296,6 +4356,7 @@ void Solver::solveLastCornerOrientation() {
 	}
 }
 
+// wrapper function that calls all of the 3x3x3 helper functions above, to solve a 3x3x3 cube
 // https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/ for reference
 void Solver::solve3x3x3() {
 	solveCross();
@@ -4305,4 +4366,20 @@ void Solver::solve3x3x3() {
 	solveLastEdges();
 	solveLastCornerPosition();
 	solveLastCornerOrientation();
+}
+
+// wrapper function that calls all helper functions to solve cube
+// Warning: this might make deque super big with lots of moves, for large N
+void Solver::solve() {
+	preliminary0();
+	solveCenter0();
+	preliminary1();
+	
+	solveCenter1();
+	solveCenter2();
+	solveCenter3();
+	solveLastCenters();
+	
+	solveEdges();
+	solve3x3x3();
 }

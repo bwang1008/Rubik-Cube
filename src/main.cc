@@ -70,10 +70,10 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	std::cout << "N = " << N << std::endl;
-
 	GLFWwindow* window = init_glefw();								// setup window that displays graphics
 	GUI gui(window, window_width, window_height, window_height); 	// have window interact with keyboard/mouse
+
+	std::cout << "N = " << N << std::endl;
 
 	std::vector<glm::vec4> cube_vertices;
 	std::vector<glm::uvec3> cube_faces;

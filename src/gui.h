@@ -48,7 +48,7 @@ private:
 
 	// user speed
 	float pan_speed_ = 0.5f;
-	float zoom_speed_ = 0.5f + 0.05 * kCubeWidth;
+	float zoom_speed_ = 0.1f + 0.01 * kCubeWidth;
 	float drag_speed_ = 0.02f;						// mouse click drag
 
 	// camera

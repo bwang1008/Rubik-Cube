@@ -3,6 +3,10 @@
 
 #include <iostream>
 
+/**
+*	Fills cube_vertices with 24 vertices (each of the 8 vertices are used in 3 different faces)
+*   Fills cube_faces with 12 triangles (2 triangles for each of the 6 faces)
+*/
 void create_large_cube(std::vector<glm::vec4>& cube_vertices, std::vector<glm::uvec3>& cube_faces) {
 	float half = kCubeWidth / 2.0f;
 
@@ -61,7 +65,11 @@ void create_large_cube(std::vector<glm::vec4>& cube_vertices, std::vector<glm::u
 	cube_faces.push_back(glm::uvec3(20 + 1, 20 + 3, 20 + 2));
 }
 
-
+/**
+*	All sticker colors are currently stored in solver parameter
+*	Need to fill images parameter with the correct rgb values
+* 	images parameter are used to texture the big cube
+*/
 void create_textures(Image* images[6], Solver* solver, std::vector<glm::uvec3> rgbs) {
 	// assumes solver.faces is already filled
 	
