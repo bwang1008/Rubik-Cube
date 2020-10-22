@@ -2,11 +2,11 @@
 
 OpenGL/C++ exercise to render a Rubik's Cube and solve a scrambled version.
 
-Supports cube sizes from 1 to 200. Change this value on line 10 of src/config.h. Larger cube sizes demand more computer resources and take longer to solve.
+Supports cube sizes from 1 to 4096. Change this value on line 10 of src/config.h. Larger cube sizes demand more computer resources and take longer to solve.
 
 Use the left mouse button to click and drag the cube around its center. Use W to zoom in, S to zoom out. Press V to readjust the camera to default settings. Press ENTER between stages of solving to proceed to the next one. Press ESCAPE to exit.
 
-The main idea is to first render a hollow cube, to save resources, with the appriopriate colors. Upon one rotation of a face, update the position of the vertices of the appropriate cubies on the fly in the vertex shader (not in main). Once that one particular rotation is finished, use the same vertices in main and update them to update transformation / colors appropriately (otherwise the colors are as if no rotation happened at all). For solving, we first solve the centers, then solve the edges, then solve the rest as a large 3x3x3 cube. 
+The main idea is to render the six square faces of the cube using textures with the appriopriate colors. Upon one rotation of a face, we add on a separate square layer with the same colors. When it finishes turning, we update the textures. Black triangles are added on the inside for the illusion that the cube is not hollow. For solving, we first solve the centers, then solve the edges, then solve the rest as a large 3x3x3 cube. 
 
 Requirements for Ubuntu:\
 `apt-get install cmake`\
