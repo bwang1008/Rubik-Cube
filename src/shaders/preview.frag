@@ -48,7 +48,7 @@ void main() {
 	float relativeErrorV = abs((v * N) - floor(v * N + 0.5));
 
 	if(relativeErrorU <= EPS || relativeErrorV <= EPS) {
-		fragment_color = vec4(1.0, 1.0, 1.0, 1.0);				// borders are light gray
+		fragment_color = vec4(1.0, 1.0, 1.0, 1.0);				// add borders to each sticker
 	}
 }
 

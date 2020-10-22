@@ -49,3 +49,5 @@ Check example0003A.json as an example.
 I am aware that many such virtual Rubik's Cube solvers exist elsewhere. Inspiration for this project is from https://www.youtube.com/watch?v=f9smvQ5fc7Q and https://www.youtube.com/watch?v=IM2czqavlWM by Code Bullet. The general outline followed is the reduction method, given by https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/. 
 
 Starter code for setting up OpenGL is fully attributed to Professor Etienne Vouga, used from previous projects from Graphics class.
+
+Warning: On high speeds, solving the cube will have lots of flashing color. Please be careful!

@@ -47,7 +47,7 @@ private:
 	float aspect_;
 
 	// user speed
-	float pan_speed_ = 0.5f;
+	float pan_speed_ = 0.1f + 0.01 * kCubeWidth;
 	float zoom_speed_ = 0.1f + 0.01 * kCubeWidth;
 	float drag_speed_ = 0.02f;						// mouse click drag
 

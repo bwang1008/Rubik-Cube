@@ -1,13 +1,23 @@
 #include "solver.h"
 #include <map>		// std::map for debugging purposes
 
+/**
+* Abstraction: pretend we have int[][][] (stack)
+* in reality, we have a single vector (data on heap)
+* computes the corresponding index for the single vector
+*/
+inline int getIndex(int i, int j, int k) {
+	return (kCubeWidth * kCubeWidth * i) + (kCubeWidth * j) + k;
+}
+
 Solver::Solver() {
 	N = kCubeWidth;
-	// state = 0;
+	
+	faces = std::vector<char>(6 * kCubeWidth * kCubeWidth);
 	for (int i = 0; i < 6; ++i) {
 		for (int j = 0; j < kCubeWidth; ++j) {
 			for (int k = 0; k < kCubeWidth; ++k) {
-				faces[i][j][k] = i;
+				faces[getIndex(i, j, k)] = (char) i;
 			}
 		}
 	}
@@ -26,7 +36,7 @@ Solver::Solver() {
 int Solver::getFaceColor(int face) {
 	if (N % 2 == 1) {
 		int index = N / 2;
-		return faces[face][index][index];
+		return faces[getIndex(face, index, index)];
 	}
 	return face;
 }
@@ -39,16 +49,16 @@ int Solver::get(int face, int row, int col) {
 
 	int rotationPos = facePos[face];
 	if(rotationPos == 1) {
-		return faces[face][kCubeWidth - col - 1][row];
+		return faces[getIndex(face, kCubeWidth - col - 1, row)];
 	}
 	else if(rotationPos == 2) {
-		return faces[face][kCubeWidth - row - 1][kCubeWidth - col - 1];
+		return faces[getIndex(face, kCubeWidth - row - 1, kCubeWidth - col - 1)];
 	}
 	else if(rotationPos == 3) {
-		return faces[face][col][kCubeWidth - row - 1];
+		return faces[getIndex(face, col, kCubeWidth - row - 1)];
 	}
 	
-	return faces[face][row][col];
+	return faces[getIndex(face, row, col)];
 }
 
 // Sets the color of the sticker, given face, row, column, into the specified color (0-5)
@@ -56,16 +66,16 @@ int Solver::get(int face, int row, int col) {
 void Solver::set(int face, int row, int col, int color) {
 	int rotationPos = facePos[face];
 	if(rotationPos == 1) {
-		faces[face][kCubeWidth - col - 1][row] = color;
+		faces[getIndex(face, kCubeWidth - col - 1, row)] = color;
 	}
 	else if(rotationPos == 2) {
-		faces[face][kCubeWidth - row - 1][kCubeWidth - col - 1] = color;
+		faces[getIndex(face, kCubeWidth - row - 1, kCubeWidth - col - 1)] = color;
 	}
 	else if(rotationPos == 3) {
-		faces[face][col][kCubeWidth - row - 1] = color;
+		faces[getIndex(face, col, kCubeWidth - row - 1)] = color;
 	}
 
-	faces[face][row][col] = color;
+	faces[getIndex(face, row, col)] = (char) color;
 }
 
 void Solver::dequeAdd(int face, int layer, int qt) {
@@ -3018,7 +3028,7 @@ void Solver::solveCross() {
 			exec(0, 0, -1);
 		}
 		// edge between front + up
-		else if (faces[2][N - 1][1] == colorDown && faces[0][0][1] == colorSide) {
+		else if (get(2, N - 1, 1) == colorDown && get(0, 0, 1) == colorSide) {
 			exec(0, 0, 2);
 		}
 		// flipped other way

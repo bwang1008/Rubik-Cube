@@ -13,7 +13,7 @@
 class Solver {
 public:
 	Solver();
-	
+
 	int getFaceColor(int face);
 	int get(int face, int row, int col);
 	void set(int face, int row, int col, int color);
@@ -27,7 +27,7 @@ public:
 
 private:
 	int N;
-	int faces[6][kCubeWidth][kCubeWidth]; // internal representation
+	std::vector<char> faces; // internal representation; size 6*N*N; we will pretend is int[6][N][N]
 	// 0 1 2 3 4 5
 	// front, right, top, bottom, left, back
 	// green, red, white, yellow, orange, blue
