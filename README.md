@@ -26,7 +26,7 @@ To run the program with a JSON input, specify the path of the JSON file right af
 
 3. `./rush.sh example0003A.json`
 
-However, do not change the value of kMaxWidth (4096). Loading JSON relies on this being 4096. This is because a single move is stored into JSON as a nice 2 bytes: 2 bits for front/right/up, 2 bits for 90/180/270 degrees, and 12 bits to specify at most which of the 4096 layers should be moved. `kCubeWidth` must be an integer between 1 and `kCubeWidth` inclusive. I do not recommend anything above 1024, however.
+However, do not change the value of `kMaxWidth` (4096). Loading JSON relies on this being 4096. This is because a single move is stored into JSON as a nice 2 bytes: 2 bits for front/right/up, 2 bits for 90/180/270 degrees, and 12 bits to specify at most which of the 4096 layers should be moved. `kCubeWidth` must be an integer between 1 and `kMaxWidth` inclusive. I do not recommend anything above 1024, however.
 
 The orientation of the faces as input inside the JSON is as follows. Suppose you view the cube with one facing directly facing you. Let this be face `front`. Let the y-axis be a straight line from your eyes to the center of `front`, pass through the center of the cube, and pass through the center of the back face of the cube. Let the x-axis be a straight line passing through the centers of the left face and right face. Let the z-axis be a straight line passing through the center of the top of the cube to the bottom face of the cube. Then
 
