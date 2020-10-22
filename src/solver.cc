@@ -11,17 +11,12 @@ Solver::Solver() {
 			}
 		}
 	}
-	dequePtr = nullptr;
+	
 	storeTopColor = getFaceColor(2);
 
 	for(int i = 0; i < 6; ++i) {
 		facePos[i] = 0;
 	}
-}
-
-// gives Solver access to deque of moves
-void Solver::setDequePtr(std::deque<glm::ivec3>* deque) {
-	dequePtr = deque;
 }
 
 /* 
@@ -71,6 +66,14 @@ void Solver::set(int face, int row, int col, int color) {
 	}
 
 	faces[face][row][col] = color;
+}
+
+void Solver::dequeAdd(int face, int layer, int qt) {
+	deq.push_back(glm::ivec3(face, layer, qt));
+}
+
+int Solver::dequeSize() {
+	return deq.size();
 }
 
 // exec calls this when face = 0
@@ -232,194 +235,39 @@ void Solver::turnUp(int layer, int qts) {
 	}
 }
 
-// exec calls this when face = 3
-void Solver::turnDown(int layer, int qts) {
-	qts = ((qts % 4) + 4) % 4;
-	if (qts == 0) {
-		return;
-	}
-
-	if (layer == 0) {
-		facePos[3] = (facePos[3] + qts) % 4;
-	}
-	else if (layer == N - 1) {
-		facePos[2] = (facePos[2] + 4 - qts) % 4;
-	}
-
-	// now move the bands 
-	int frontBand[kCubeWidth] = {0};
-	int rightBand[kCubeWidth] = {0};
-	int backBand[kCubeWidth] = {0};
-	int leftBand[kCubeWidth] = {0};
-
-	for (int i = 0; i < N; ++i) {
-		frontBand[i] = get(0, N - 1 - layer, i);
-		rightBand[i] = get(1, N - 1 - layer, i);
-		backBand[i] = get(5, N - 1 - layer, i);
-		leftBand[i] = get(4, N - 1 - layer, i);
-	}
-
-	if (qts == 1) {
-		for (int i = 0; i < N; ++i) {
-			set(0, N - 1 - layer, i, leftBand[i]);
-			set(1, N - 1 - layer, i, frontBand[i]);
-			set(5, N - 1 - layer, i, rightBand[i]);
-			set(4, N - 1 - layer, i, backBand[i]);
-		}
-	}
-	else if (qts == 2) {
-		for (int i = 0; i < N; ++i) {
-			set(0, N - 1 - layer, i, backBand[i]);
-			set(1, N - 1 - layer, i, leftBand[i]);
-			set(5, N - 1 - layer, i, frontBand[i]);
-			set(4, N - 1 - layer, i, rightBand[i]);
-		}
-	}
-	else {
-		for (int i = 0; i < N; ++i) {
-			set(0, N - 1 - layer, i, rightBand[i]);
-			set(1, N - 1 - layer, i, backBand[i]);
-			set(5, N - 1 - layer, i, leftBand[i]);
-			set(4, N - 1 - layer, i, frontBand[i]);
-		}
-	}
-}
-
-// exec calls this when face = 4
-void Solver::turnLeft(int layer, int qts) {
-	qts = ((qts % 4) + 4) % 4;
-	if (qts == 0) {
-		return;
-	}
-
-	if (layer == 0) {
-		facePos[4] = (facePos[4] + qts) % 4;
-	}
-	else if (layer == N - 1) {
-		facePos[1] = (facePos[1] + 4 - qts) % 4;
-	}
-
-	// now move the bands 
-	int upBand[kCubeWidth] = {0};
-	int frontBand[kCubeWidth] = {0};
-	int downBand[kCubeWidth] = {0};
-	int backBand[kCubeWidth] = {0};
-
-	for (int i = 0; i < N; ++i) {
-		upBand[i] = get(2, i, layer);
-		frontBand[i] = get(0, i, layer);
-		downBand[i] = get(3, i, layer);
-		backBand[i] = get(5, N - 1 - i, N - 1 - layer);
-	}
-
-	if (qts == 1) {
-		for (int i = 0; i < N; ++i) {
-			set(2, i, layer, backBand[i]);
-			set(0, i, layer, upBand[i]);
-			set(3, i, layer, frontBand[i]);
-			set(5, N - 1 - i, N - 1 - layer, downBand[i]);
-		}
-	}
-	else if (qts == 2) {
-		for (int i = 0; i < N; ++i) {
-			set(2, i, layer, downBand[i]);
-			set(0, i, layer, backBand[i]);
-			set(3, i, layer, upBand[i]);
-			set(5, N - 1 - i, N - 1 - layer, frontBand[i]);
-		}
-	}
-	else {
-		for (int i = 0; i < N; ++i) {
-			set(2, i, layer, frontBand[i]);
-			set(0, i, layer, downBand[i]);
-			set(3, i, layer, backBand[i]);
-			set(5, N - 1 - i, N - 1 - layer, upBand[i]);
-		}
-	}
-}
-
-// exec calls this when face = 5
-void Solver::turnBack(int layer, int qts) {
-	qts = ((qts % 4) + 4) % 4;
-	if (qts == 0) {
-		return;
-	}
-
-	if (layer == 0) {
-		facePos[5] = (facePos[5] + qts) % 4;
-	}
-	else if (layer == N - 1) {
-		facePos[0] = (facePos[0] + 4 - qts) % 4;
-	}
-
-	// now move the bands 
-	int upBand[kCubeWidth] = {0};
-	int leftBand[kCubeWidth] = {0};
-	int downBand[kCubeWidth] = {0};
-	int rightBand[kCubeWidth] = {0};
-
-	for (int i = 0; i < N; ++i) {
-		upBand[i] = get(2, layer, N - 1 - i);
-		leftBand[i] = get(4, i, layer);
-		downBand[i] = get(3, N - 1 - layer, i);
-		rightBand[i] = get(1, N - 1 - i, N - 1 - layer);
-	}
-
-	if (qts == 1) {
-		for (int i = 0; i < N; ++i) {
-			set(2, layer, N - 1 - i, rightBand[i]);
-			set(4, i, layer, upBand[i]);
-			set(3, N - 1 - layer, i, leftBand[i]);
-			set(1, N - 1 - i, N - 1 - layer, downBand[i]);
-		}
-	}
-	else if (qts == 2) {
-		for (int i = 0; i < N; ++i) {
-			set(2, layer, N - 1 - i, downBand[i]);
-			set(4, i, layer, rightBand[i]);
-			set(3, N - 1 - layer, i, upBand[i]);
-			set(1, N - 1 - i, N - 1 - layer, leftBand[i]);
-		}
-	}
-	else {
-		for (int i = 0; i < N; ++i) {
-			set(2, layer, N - 1 - i, leftBand[i]);
-			set(4, i, layer, downBand[i]);
-			set(3, N - 1 - layer, i, rightBand[i]);
-			set(1, N - 1 - i, N - 1 - layer, upBand[i]);
-		}
-	}
-}
-
 // wrapper function that turns internal representation, and writes to deque of moves
 void Solver::exec(int face, int layer, int qt) {
 	qt %= 4;
+
+	if(face >= 3) {		// front/back moves are equivalent; so are left/right, up/down
+		face = 5 - face;
+		layer = kCubeWidth - 1 - layer;
+		qt = (4 - qt) % 4;
+	}
+
 	switch (face) {
 	case 0: turnFront(layer, qt); 	break;
 	case 1: turnRight(layer, qt); 	break;
 	case 2: turnUp(layer, qt); 	  	break;
-	case 3: turnDown(layer, qt); 	break;
-	case 4: turnLeft(layer, qt); 	break;
-	case 5: turnBack(layer, qt); 	break;
 	}
 
-	if (dequePtr->size() > 0) {
-		glm::ivec3 copy = dequePtr->back();
+	if (deq.size() > 0) {
+		glm::ivec3 copy = deq.back();
 
 		if (copy[0] == face && copy[1] == layer) {
-			dequePtr->pop_back();
+			deq.pop_back();
 			copy[2] = (((copy[2] + qt) % 4) + 4) % 4;
 			if (copy[2] == 3) {
 				copy[2] = -1;
 			}
 			if (copy[2] != 0) {
-				dequePtr->push_back(copy);
+				deq.push_back(copy);
 			}
 		}
 		else {
 			if (qt == 3)
 				qt = -1;
-			dequePtr->push_back(glm::ivec3(face, layer, qt));
+			deq.push_back(glm::ivec3(face, layer, qt));
 		}
 
 	}
@@ -428,7 +276,7 @@ void Solver::exec(int face, int layer, int qt) {
 			qt = -1;
 
 		if(qt != 0)
-			dequePtr->push_back(glm::ivec3(face, layer, qt));
+			deq.push_back(glm::ivec3(face, layer, qt));
 	}
 }
 
@@ -506,18 +354,6 @@ void Solver::print() {
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-}
-
-// increment the current state of the solver
-// Odd = pause, 0 = scrambling, 2 = solving first center, 4 = solving second center, ...
-void Solver::incr() {
-	// state++;
-}
-
-// get the current state
-int Solver::currentState() {
-	// return state;
-	return 0;
 }
 
 // randomly adds moves to scramble a cube

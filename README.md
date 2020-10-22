@@ -26,7 +26,7 @@ To run the program with a JSON input, specify the path of the JSON file right af
 
 3. `./rush.sh example0003A.json`
 
-However, do not change the value of `kMaxWidth` (4096). Loading JSON relies on this being 4096. This is because a single move is stored into JSON as a nice 2 bytes: 2 bits for front/right/up, 2 bits for 90/180/270 degrees, and 12 bits to specify at most which of the 4096 layers should be moved. `kCubeWidth` must be an integer between 1 and `kMaxWidth` inclusive. I do not recommend anything above 1024, however.
+The value of `N` in the JSON must be the same as the value of `kCubeWidth` in config.h. However, do not change the value of `kMaxWidth` (4096). Loading JSON relies on this being 4096. This is because a single move is stored into JSON as a nice 2 bytes: 2 bits for front/right/up, 2 bits for 90/180/270 degrees, and 12 bits to specify at most which of the 4096 layers should be moved. `kCubeWidth` must be an integer between 1 and `kMaxWidth` inclusive. I do not recommend anything above 1024, however.
 
 The orientation of the faces as input inside the JSON is as follows. Suppose you view the cube with one facing directly facing you. Let this be face `front`. Let the y-axis be a straight line from your eyes to the center of `front`, pass through the center of the cube, and pass through the center of the back face of the cube. Let the x-axis be a straight line passing through the centers of the left face and right face. Let the z-axis be a straight line passing through the center of the top of the cube to the bottom face of the cube. Then
 
@@ -40,10 +40,11 @@ The orientation of the faces as input inside the JSON is as follows. Suppose you
 ## JSON Input
 * `N`: You must specify a N value; you must change 'const int kCubeWidth' value in config.h to match this value.
 
-* `colors`: To specify what colors your Rubik's cube stickers are, specify a list of three ints for each symbol you use for the sticker (optional)
+* `colors`: To specify what colors your Rubik's cube stickers are, specify a list of three ints for each symbol you use for the sticker (optional).
 
-* 'front' / 'right' / 'up' / 'down' / 'left' / 'back': Each must have `N` strings, each of length `N`, separated by commas. You can use any 6 distinct ASCII symbol to represent each sticker, but you must be consistent. The orientation must be the same as specified above. 
+* `front` / `right` / `up` / `down` / `left` / `back`: Each must have `N` strings, each of length `N`, separated by commas. You can use any 6 distinct ASCII symbol to represent each sticker, but you must be consistent. The orientation must be the same as specified above. 
 
+Check example0003A.json as an example.
 
 I am aware that many such virtual Rubik's Cube solvers exist elsewhere. Inspiration for this project is from https://www.youtube.com/watch?v=f9smvQ5fc7Q and https://www.youtube.com/watch?v=IM2czqavlWM by Code Bullet. The general outline followed is the reduction method, given by https://ruwix.com/twisty-puzzles/big-cubes-nxnxn-solution/. 
 

@@ -13,25 +13,35 @@
 class Solver {
 public:
 	Solver();
-	void setDequePtr(std::deque<glm::ivec3>* deque);
+	
 	int getFaceColor(int face);
 	int get(int face, int row, int col);
 	void set(int face, int row, int col, int color);
+	void dequeAdd(int face, int layer, int qt);
+	int dequeSize();
+
+	void print();
+	void scrambleCube();
+
+	void solve();
+
+private:
+	int N;
+	int faces[6][kCubeWidth][kCubeWidth]; // internal representation
+	// 0 1 2 3 4 5
+	// front, right, top, bottom, left, back
+	// green, red, white, yellow, orange, blue
+
+	std::deque<glm::ivec3> deq; // deque of moves to fill
+	int storeTopColor;		// temporary storage variable in between methods when solving back face on top face
+	int facePos[6];		// 0 means unrotated, 1 means rotated clockwise from original, 2 means rotated twice, 3 means rotated once counterclockwise
 
 	void turnFront(int layer, int qt);
 	void turnRight(int layer, int qt);
 	void turnUp(int layer, int qt);
-	void turnDown(int layer, int qt);
-	void turnLeft(int layer, int qt);
-	void turnBack(int layer, int qt);
 
 	void exec(int face, int layer, int qt);
 
-	void print();
-	void incr();
-	int currentState();
-	void scrambleCube();
-	
 	void preliminary0();
 	void solveCenter0();
 	void preliminary1();
@@ -59,21 +69,6 @@ public:
 	void solveLastCornerPosition();
 	void solveLastCornerOrientation();
 	void solve3x3x3();
-
-	void solve();
-
-private:
-	int N;
-	int faces[6][kCubeWidth][kCubeWidth]; // internal representation
-	// 0 1 2 3 4 5
-	// front, right, top, bottom, left, back
-	// green, red, white, yellow, orange, blue
-
-	std::deque<glm::ivec3>* dequePtr; // pointer to the deque of moves to fill
-
-	int storeTopColor;		// temporary storage variable in between methods when solving back face on top face
-
-	int facePos[6];		// 0 means unrotated, 1 means rotated clockwise from original, 2 means rotated twice, 3 means rotated once counterclockwise
 };
 
 #endif

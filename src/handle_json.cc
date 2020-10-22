@@ -241,6 +241,36 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
-	std::cout << "JSON valid" << std::endl;
+	if(obj.find("type") != obj.end() && obj["type"] == "load") {	// "type" is either empty, "new", or "load"
+		if(obj.find("all_moves") == obj.end()) {
+			std::cerr << "Could not find all_moves to load" << std::endl;
+			return -1;
+		}
+
+		json allMoves = obj["all_moves"];
+		for(int i : allMoves) {
+			int twoMove[] = {(i >> 16) & 0xFFFF, i & 0xFFFF};
+			for(int j = 0; j < 2; ++j) {
+				int bitMove = twoMove[j];
+
+				if(bitMove == 0) { // must be the last 2 bytes, used for padding the last move
+					break;
+				}
+
+				// first two bits represent front (00), right (01), or up (10)
+				int face = (bitMove >> 14) & 0x3;
+				// next two bits represent 1 clockwise (01), 180 turn (10), or 1 counterclockwise (11)
+				int qt = (bitMove >> 12) & 0x3;
+				// last 12 bits represent which layer: kMaxWidth must equal 4096
+				int layer = (bitMove & 0xFFFFFF);
+
+				solver -> dequeAdd(face, layer, qt);
+			}
+		}
+
+	}
+
+	std::cout << "JSON valid" << std::endl; 
+
 	return 0;									// 0 for OK
 }

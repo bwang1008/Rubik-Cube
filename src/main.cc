@@ -63,7 +63,11 @@ GLFWwindow* init_glefw() {
 }
 
 int main(int argc, char* argv[]) {
-
+	
+	if(kMaxWidth > 4096) {
+		std::cerr << "Max cube width must be less than or equal to 4096" << std::endl;
+		return -1;
+	}
 	if(N <= 0 || N > kMaxWidth) {									// check cubeWidth is valid
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
@@ -102,7 +106,7 @@ int main(int argc, char* argv[]) {
 		// solver is already prepopulated with default in Solver constructor
 		rgbs.push_back(glm::uvec3(46, 139, 87));
 		rgbs.push_back(glm::uvec3(255, 0, 0));
-		rgbs.push_back(glm::uvec3(220, 220, 220));
+		rgbs.push_back(glm::uvec3(230, 230, 230));
 		rgbs.push_back(glm::uvec3(255, 255, 0));
 		rgbs.push_back(glm::uvec3(255, 140, 0));
 		rgbs.push_back(glm::uvec3(0, 0, 255));
