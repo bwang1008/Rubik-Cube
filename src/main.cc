@@ -100,6 +100,8 @@ int main(int argc, char* argv[]) {
 		if(res < 0) {
 			return -1;
 		}
+
+		gui.changeState(2);											// increase state to 2: will call solver.solve() later
 	}
 	else {
 		// no user arguments; prepopulate rgbs with the default 6 colors of stickers: green, red, white, yellow, orange, blue 
@@ -110,6 +112,9 @@ int main(int argc, char* argv[]) {
 		rgbs.push_back(glm::uvec3(255, 255, 0));
 		rgbs.push_back(glm::uvec3(255, 140, 0));
 		rgbs.push_back(glm::uvec3(0, 0, 255));
+
+		// since no user provided json, should scramble cube
+		solver -> scrambleCube();									// state = 0: need to actually scramble next
 	}
 	// end user arguments
 

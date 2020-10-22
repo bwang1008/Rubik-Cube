@@ -241,6 +241,7 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 		}
 	}
 
+	bool loaded = false;
 	if(obj.find("type") != obj.end() && obj["type"] == "load") {	// "type" is either empty, "new", or "load"
 		if(obj.find("all_moves") == obj.end()) {
 			std::cerr << "Could not find all_moves to load" << std::endl;
@@ -267,10 +268,10 @@ int read_json(std::string& json_path, Solver* solver, std::vector<glm::uvec3>& c
 				solver -> dequeAdd(face, layer, qt);
 			}
 		}
-
+		loaded = true;
 	}
 
 	std::cout << "JSON valid" << std::endl; 
 
-	return 0;									// 0 for OK
+	return loaded;						// 0 for OK
 }

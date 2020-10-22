@@ -50,4 +50,4 @@ I am aware that many such virtual Rubik's Cube solvers exist elsewhere. Inspirat
 
 Starter code for setting up OpenGL is fully attributed to Professor Etienne Vouga, used from previous projects from Graphics class.
 
-Warning: On high speeds, solving the cube will have lots of flashing color. Please be careful!
+Warning: On high speeds, cube solving will have lots of flashing color. Please be careful!

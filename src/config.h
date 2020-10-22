@@ -7,6 +7,6 @@ const float kFov = 45.0f;
 
 const int kMaxScramble = 137;
 const int kMaxWidth = 4096;
-const int kCubeWidth = 1024;
+const int kCubeWidth = 10;
 
 #endif

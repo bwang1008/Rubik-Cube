@@ -142,4 +142,19 @@ void GUI::MouseScrollCallback(GLFWwindow* window, double dx, double dy) {
 	gui->mouseScrollCallback(dx, dy);
 }
 
-const glm::vec3& GUI::getCamera() const { return eye_; }
+const glm::vec3& GUI::getCamera() const { 
+	return eye_;
+}
+
+int GUI::getState() {
+	return state;
+}
+
+void GUI::changeState(int x) {
+	if(x <= 0) {
+		state++;
+	}
+	else {
+		state = x;
+	}
+}

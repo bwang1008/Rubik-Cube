@@ -23,6 +23,7 @@ public:
 	void mouseScrollCallback(double dx, double dy);
 	void updateMatrices();
 	MatrixPointers getMatrixPointers() const;
+	bool captureWASDUPDOWN(int key, int action);
 
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y);
@@ -30,6 +31,8 @@ public:
 	static void MouseScrollCallback(GLFWwindow* window, double dx, double dy);
 
 	const glm::vec3& getCamera() const;
+	int getState();
+	int changeState(int x = -1);
 
 private:
 	// window
@@ -65,7 +68,15 @@ private:
 	glm::mat4 projection_matrix_;
 	glm::mat4 model_matrix_ = glm::mat4(1.0f);
 
-	bool captureWASDUPDOWN(int key, int action);
+	// state of cube
+	int state = 0;
+	/*
+	0 = default solved
+	1 = is scrambling
+	2 = done scrambling, solver.solve() called
+	3 = is solving
+	4 = done solving
+	*/
 };
 
 #endif
