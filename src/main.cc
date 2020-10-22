@@ -96,19 +96,13 @@ int main(int argc, char* argv[]) {
 		if(res < 0) {
 			return -1;
 		}
-
-		/*
-		for(int i = 0; i < 6; ++i) {
-			std::cout << "well = " << rgbs[i][0] << " " << rgbs[i][1] << " " << rgbs[i][2] << std::endl;
-		}
-		*/
 	}
 	else {
 		// no user arguments; prepopulate rgbs with the default 6 colors of stickers: green, red, white, yellow, orange, blue 
 		// solver is already prepopulated with default in Solver constructor
 		rgbs.push_back(glm::uvec3(46, 139, 87));
 		rgbs.push_back(glm::uvec3(255, 0, 0));
-		rgbs.push_back(glm::uvec3(255, 255, 255));
+		rgbs.push_back(glm::uvec3(220, 220, 220));
 		rgbs.push_back(glm::uvec3(255, 255, 0));
 		rgbs.push_back(glm::uvec3(255, 140, 0));
 		rgbs.push_back(glm::uvec3(0, 0, 255));
@@ -200,8 +194,7 @@ int main(int argc, char* argv[]) {
 		mats = gui.getMatrixPointers();					// copy updated values into mats
 
 		std::stringstream title;						// title for my window
-		title << window_title;
-		title << N;
+		title << window_title << " " << N;
 
 		glfwSetWindowTitle(window, title.str().data()); // set title of window
 

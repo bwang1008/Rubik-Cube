@@ -88,7 +88,7 @@ void create_textures(Image* images[6], Solver* solver, std::vector<glm::uvec3> r
 				im->bytes.push_back(rgbs[color][1]);
 				im->bytes.push_back(rgbs[color][2]);	// append each R,G,B value of the color
 			}
-			for(int j = 0; j < append; ++j) {		// append padding so alignment divisible by 4
+			for(int j = 0; j < append; ++j) {		// append padding so alignment divisible by 4 (weird alignment issue mentioned in image.h)
 				im->bytes.push_back(0);
 			}
 		}

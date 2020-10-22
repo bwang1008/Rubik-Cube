@@ -88,10 +88,10 @@ void Solver::turnFront(int layer, int qts) {
 	}
 
 	// now move the bands 
-	int upBand[kCubeWidth];
-	int rightBand[kCubeWidth];
-	int downBand[kCubeWidth];
-	int leftBand[kCubeWidth];
+	int upBand[kCubeWidth] = {0};
+	int rightBand[kCubeWidth] = {0};
+	int downBand[kCubeWidth] = {0};
+	int leftBand[kCubeWidth] = {0};
 
 	for (int i = 0; i < N; ++i) {
 		upBand[i] = get(2, N - 1 - layer, i);
@@ -141,10 +141,10 @@ void Solver::turnRight(int layer, int qts) {
 	}
 
 	// now move the bands 
-	int upBand[kCubeWidth];
-	int backBand[kCubeWidth];
-	int downBand[kCubeWidth];
-	int frontBand[kCubeWidth];
+	int upBand[kCubeWidth] = {0};
+	int backBand[kCubeWidth] = {0};
+	int downBand[kCubeWidth] = {0};
+	int frontBand[kCubeWidth] = {0};
 
 	for (int i = 0; i < N; ++i) {
 		upBand[i] = get(2, N - 1 - i, N - 1 - layer);
@@ -194,10 +194,10 @@ void Solver::turnUp(int layer, int qts) {
 	}
 
 	// now move the bands 
-	int backBand[kCubeWidth];
-	int rightBand[kCubeWidth];
-	int frontBand[kCubeWidth];
-	int leftBand[kCubeWidth];
+	int backBand[kCubeWidth] = {0};
+	int rightBand[kCubeWidth] = {0};
+	int frontBand[kCubeWidth] = {0};
+	int leftBand[kCubeWidth] = {0};
 
 	for (int i = 0; i < N; ++i) {
 		backBand[i] = get(5, layer, N - 1 - i);
@@ -247,10 +247,10 @@ void Solver::turnDown(int layer, int qts) {
 	}
 
 	// now move the bands 
-	int frontBand[kCubeWidth];
-	int rightBand[kCubeWidth];
-	int backBand[kCubeWidth];
-	int leftBand[kCubeWidth];
+	int frontBand[kCubeWidth] = {0};
+	int rightBand[kCubeWidth] = {0};
+	int backBand[kCubeWidth] = {0};
+	int leftBand[kCubeWidth] = {0};
 
 	for (int i = 0; i < N; ++i) {
 		frontBand[i] = get(0, N - 1 - layer, i);
@@ -300,10 +300,10 @@ void Solver::turnLeft(int layer, int qts) {
 	}
 
 	// now move the bands 
-	int upBand[kCubeWidth];
-	int frontBand[kCubeWidth];
-	int downBand[kCubeWidth];
-	int backBand[kCubeWidth];
+	int upBand[kCubeWidth] = {0};
+	int frontBand[kCubeWidth] = {0};
+	int downBand[kCubeWidth] = {0};
+	int backBand[kCubeWidth] = {0};
 
 	for (int i = 0; i < N; ++i) {
 		upBand[i] = get(2, i, layer);
@@ -353,10 +353,10 @@ void Solver::turnBack(int layer, int qts) {
 	}
 
 	// now move the bands 
-	int upBand[kCubeWidth];
-	int leftBand[kCubeWidth];
-	int downBand[kCubeWidth];
-	int rightBand[kCubeWidth];
+	int upBand[kCubeWidth] = {0};
+	int leftBand[kCubeWidth] = {0};
+	int downBand[kCubeWidth] = {0};
+	int rightBand[kCubeWidth] = {0};
 
 	for (int i = 0; i < N; ++i) {
 		upBand[i] = get(2, layer, N - 1 - i);
@@ -543,7 +543,7 @@ void Solver::preliminary0() {
 	if(kCubeWidth <= 3) {
 		return;
 	}
-	
+
 	std::map<int, char> myMap;
 	myMap[0] = 'G';
 	myMap[1] = 'R';
