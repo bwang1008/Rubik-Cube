@@ -17,8 +17,9 @@ public:
 	int getFaceColor(int face);
 	int get(int face, int row, int col);
 	void set(int face, int row, int col, int color);
+
 	void dequeAdd(int face, int layer, int qt);
-	int dequeSize();
+	std::deque<glm::ivec3>* getDequePtr();	
 
 	void print();
 	void scrambleCube();

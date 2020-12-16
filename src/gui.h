@@ -67,16 +67,6 @@ private:
 	glm::mat4 view_matrix_ = glm::lookAt(eye_, center_, up_);
 	glm::mat4 projection_matrix_;
 	glm::mat4 model_matrix_ = glm::mat4(1.0f);
-
-	// state of cube
-	int state = 0;
-	/*
-	0 = default solved
-	1 = is scrambling
-	2 = done scrambling, solver.solve() called
-	3 = is solving
-	4 = done solving
-	*/
 };
 
 #endif

@@ -42,13 +42,17 @@ void main() {
 	float u = coord[0];
 	float v = coord[1];
 
-	float EPS = 0.01;
+	float EPS = 0.03;
+	float r = 0.2;												// circle radius for rounded corners
 
 	float relativeErrorU = abs((u * N) - floor(u * N + 0.5));	// floor(x+0.5) = round(x) ; don't know if round is always supported though
 	float relativeErrorV = abs((v * N) - floor(v * N + 0.5));
 
 	if(relativeErrorU <= EPS || relativeErrorV <= EPS) {
-		fragment_color = vec4(1.0, 1.0, 1.0, 1.0);				// add borders to each sticker
+		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);				// add borders to each sticker
+	}
+	else if(relativeErrorU < r/2 && relativeErrorV <= r - sqrt(r*r - (relativeErrorU - r)*(relativeErrorU - r))) {
+		fragment_color = vec4(0.0, 0.0, 0.0, 1.0);				// if relative coordinates below circle, color black
 	}
 }
 

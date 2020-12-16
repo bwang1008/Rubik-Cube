@@ -92,6 +92,14 @@ int main(int argc, char* argv[]) {
 	Image* images[6];												// 6 different textures for each face of cube
 	Solver* solver = new Solver();									// Solver container holds colors of all 6 faces
 	std::vector<glm::uvec3> rgbs;									// map from int (0-5) to rgb
+	int state = 0;
+	/*
+	0 = default solved
+	1 = is scrambling
+	2 = done scrambling, solver.solve() called
+	3 = is solving
+	4 = done solving
+	*/
 
 	// user arguments
 	if(argc >= 2) {
@@ -101,7 +109,7 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 
-		gui.changeState(2);											// increase state to 2: will call solver.solve() later
+		state = 2;													// set state to 2: will call solver.solve() later
 	}
 	else {
 		// no user arguments; prepopulate rgbs with the default 6 colors of stickers: green, red, white, yellow, orange, blue 
@@ -112,14 +120,16 @@ int main(int argc, char* argv[]) {
 		rgbs.push_back(glm::uvec3(255, 255, 0));
 		rgbs.push_back(glm::uvec3(255, 140, 0));
 		rgbs.push_back(glm::uvec3(0, 0, 255));
-
-		// since no user provided json, should scramble cube
-		solver -> scrambleCube();									// state = 0: need to actually scramble next
 	}
 	// end user arguments
 
 	create_textures(images, solver, rgbs);							// procedure_geoemetry::create_textures to fill in images with correct bytes
-	
+		
+	if(state == 0) {	
+		// since no user provided json, should scramble cube
+		solver->scrambleCube();										// state = 0: need to actually scramble next
+	}
+
 	unsigned int textureNum[6];										// generated number for each texture (?)
 	for (int i = 0; i < 6; ++i) {									
 		glGenTextures(1, &(textureNum[i]));							// create actual number
@@ -177,6 +187,9 @@ int main(int argc, char* argv[]) {
 	std::cout << "Rendering!" << std::endl;
 
 	bool draw_cube = true;
+	bool is_paused = false;
+	bool is_turning = false;
+	glm::uvec3 current_move(-1.0, -1.0, -1.0);
 
 	// rendering loop
 	while(!glfwWindowShouldClose(window)) {

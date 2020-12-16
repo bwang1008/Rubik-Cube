@@ -66,24 +66,25 @@ int Solver::get(int face, int row, int col) {
 void Solver::set(int face, int row, int col, int color) {
 	int rotationPos = facePos[face];
 	if(rotationPos == 1) {
-		faces[getIndex(face, kCubeWidth - col - 1, row)] = color;
+		faces[getIndex(face, kCubeWidth - col - 1, row)] = (char) color;
 	}
 	else if(rotationPos == 2) {
-		faces[getIndex(face, kCubeWidth - row - 1, kCubeWidth - col - 1)] = color;
+		faces[getIndex(face, kCubeWidth - row - 1, kCubeWidth - col - 1)] = (char) color;
 	}
 	else if(rotationPos == 3) {
-		faces[getIndex(face, col, kCubeWidth - row - 1)] = color;
+		faces[getIndex(face, col, kCubeWidth - row - 1)] = (char) color;
 	}
-
-	faces[getIndex(face, row, col)] = (char) color;
+	else {
+		faces[getIndex(face, row, col)] = (char) color;
+	}
 }
 
 void Solver::dequeAdd(int face, int layer, int qt) {
 	deq.push_back(glm::ivec3(face, layer, qt));
 }
 
-int Solver::dequeSize() {
-	return deq.size();
+std::deque<glm::ivec3>* Solver::getDequePtr() {
+	return &deq;
 }
 
 // exec calls this when face = 0
