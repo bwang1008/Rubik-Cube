@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
 		// solver is already prepopulated with default in Solver constructor
 		rgbs.push_back(glm::uvec3(46, 139, 87));
 		rgbs.push_back(glm::uvec3(255, 0, 0));
-		rgbs.push_back(glm::uvec3(230, 230, 230));
+		rgbs.push_back(glm::uvec3(200, 200, 200));
 		rgbs.push_back(glm::uvec3(255, 255, 0));
 		rgbs.push_back(glm::uvec3(255, 140, 0));
 		rgbs.push_back(glm::uvec3(0, 0, 255));
