@@ -15,7 +15,8 @@ public:
 	Solver();
 	void setDequePtr(std::deque<glm::ivec3>* deque);
 	int getFaceColor(int face);
-	int getSticker(int face, int row, int col);
+	int get(int face, int row, int col);
+	void set(int face, int row, int col, int color);
 
 	void turnFront(int layer, int qt);
 	void turnRight(int layer, int qt);
@@ -86,7 +87,8 @@ private:
 	// 13 = wait for ENTER key to proceed
 	// 14 = solve as 3x3x3
 
-	int storeTopColor;
+	int storeTopColor; // used for preserving color in between preliminary0 and preliminary1
+	int facePlace[6]; // each value is 0,1,2,3, indicating if face is normal (0), turned cw (1), upside down (2), or ccw (3)
 };
 
 #endif

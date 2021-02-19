@@ -215,8 +215,6 @@ void create_black_triangles(std::vector<glm::vec4>& black_triangle_vertices, std
 
 	int face = currentMove[0];
 	int layer = currentMove[1];
-
-
 }
 
 void create_rubik2(std::vector<glm::vec4>& cube_vertices, std::vector<glm::uvec3>& cube_faces) {
@@ -276,3 +274,4 @@ void create_rubik2(std::vector<glm::vec4>& cube_vertices, std::vector<glm::uvec3
 	cube_faces.push_back(glm::uvec3(20 + 0, 20 + 1, 20 + 2));
 	cube_faces.push_back(glm::uvec3(20 + 1, 20 + 3, 20 + 2));
 }
+

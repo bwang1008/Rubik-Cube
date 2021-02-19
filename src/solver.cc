@@ -4,6 +4,7 @@
 Solver::Solver() {
 	N = cubeWidth;
 	state = 0;
+	faces[0][0][0] = 0;
 	for (int i = 0; i < 6; ++i) {
 		for (int j = 0; j < cubeWidth; ++j) {
 			for (int k = 0; k < cubeWidth; ++k) {
@@ -12,6 +13,7 @@ Solver::Solver() {
 		}
 	}
 	dequePtr = nullptr;
+	storeTopColor = 0;
 }
 
 // gives Solver access to deque of moves
@@ -32,10 +34,33 @@ int Solver::getFaceColor(int face) {
 }
 
 // Gets the color of the sticker, given face, row, and column
-// 0 - 6 means green, red, white, yellow, orange, blue
-int Solver::getSticker(int face, int row, int col) {
+// return 0 - 5 means green, red, white, yellow, orange, blue
+int Solver::get(int face, int row, int col) {
 	// row, col 0-indexed from top right
+
+	int pos = (facePlace[face] % 4 + 4) % 4;
+
+	switch (pos) {
+	case 0: return faces[face][row][col];
+	case 1: return faces[face][col][cubeWidth - 1 - row];
+	case 2: return faces[face][cubeWidth - 1 - row][cubeWidth - 1 - col];
+	case 3: return faces[face][cubeWidth - 1 - col][row];
+	}
+
 	return faces[face][row][col];
+}
+
+// Sets color of the sticker on a given face, row, and column
+void Solver::set(int face, int row, int col, int color) {
+	
+	int pos = ((facePlace[face] % 4) + 4) % 4;
+
+	switch (pos) {
+	case 0: faces[face][row][col] = color; break;
+	case 1: faces[face][col][cubeWidth - 1 - row] = color; break;
+	case 2: faces[face][cubeWidth - 1 - row][cubeWidth - 1 - col] = color; break;
+	case 3: faces[face][cubeWidth - 1 - col][row] = color; break;
+	}
 }
 
 void Solver::turnFront(int layer, int qts) {
@@ -806,7 +831,7 @@ int Solver::currentState() {
 void Solver::scrambleCube() {
 	int N = cubeWidth;
 	srand(1);
-	int numberMoves = std::min(3 * N * N, 137);
+	int numberMoves = std::min(15 * N, 3000);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;
@@ -3306,6 +3331,7 @@ void Solver::solveEdges() {
 	solveEdges2();
 }
 
+// Solve initial edge pieces on bottom face
 void Solver::solveCross() {
 	// edges only exist for N >= 3
 	if (N <= 2) {
@@ -3468,6 +3494,7 @@ void Solver::solveCross() {
 	}
 }
 
+// Solve four corners on bottom face
 void Solver::solveCorners4() {
 	
 	std::map<int, char> myMap;
@@ -3674,6 +3701,7 @@ void Solver::solveCorners4() {
 	}
 }
 
+// Place edges not on top layer correctly
 void Solver::solveSecondLayer() {
 	if (N <= 2) {
 		return;

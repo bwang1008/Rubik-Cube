@@ -307,7 +307,7 @@ int main2(int argc, char* argv[]) {
 		glViewport(0, 0, window_width, window_height);
 
 		// progress bar
-		if (false && !finished) {
+		if (true && !finished) {
 			std::cout << "Progress: [";
 			int currProgress = std::round(50 * (float(dequeSize - gui.getSize()) / dequeSize));
 			for (int pr = 0; pr < currProgress; ++pr) {
@@ -690,7 +690,7 @@ int main2(int argc, char* argv[]) {
 }
 
 int tryingOutTextures(int argc, char* argv[]) {
-	if (cubeWidth <= 0 || cubeWidth > 2048) {
+	if (cubeWidth <= 0 || cubeWidth > 1024) {
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
 		return -1;
@@ -782,6 +782,7 @@ int tryingOutTextures(int argc, char* argv[]) {
 		}
 	}
 	
+	// create textures
 	unsigned int textureNum[6];
 	for (int i = 0; i < 6; ++i) {
 		glGenTextures(1, &(textureNum[i]));
@@ -813,7 +814,7 @@ int tryingOutTextures(int argc, char* argv[]) {
 	std::function<glm::mat4()> identity_mat = []() { return glm::mat4(1.0f); };
 	std::function<glm::vec3()> cam_data = [&gui]() { return gui.getCamera(); };
 	
-	// return value says where location of each texture is
+	// return value says where location of each of the 6 textures are
 	std::function<int()> texture_data0 = []() {return 0; };
 	std::function<int()> texture_data1 = []() {return 1; };
 	std::function<int()> texture_data2 = []() {return 2; };
@@ -843,7 +844,7 @@ int tryingOutTextures(int argc, char* argv[]) {
 		{ "fragment_color" }
 	);
 
-
+	// rendering loop
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
@@ -889,6 +890,7 @@ int tryingOutTextures(int argc, char* argv[]) {
 
 			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
 			
+			// actual setting textures
 			if (true || gui.isQuarterTurning()) {
 				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, images[i]->width, images[i]->height, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
 				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
@@ -896,7 +898,7 @@ int tryingOutTextures(int argc, char* argv[]) {
 			}
 		}
 		
-		// render faces
+		// render faces of cube
 		cube_pass.setup();
 		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));
 
