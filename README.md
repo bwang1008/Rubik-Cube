@@ -24,22 +24,22 @@ File directory structure:
 |- cmake - Folder - used for CMake  
 |- lib   - Folder - utilities and abstractions for jpeg,image,material,...  
 |- src   - Folder - actual source code for project  
-	|- shaders 					- Folder - vertex shader and fragment shader for GLSL  
-	|- CMakeLists.txt 			- File - CMake  
-	|- config.h 				- File - Constants  
-	|- cube.h 					- File - Specifies vertices and triangles to build a unit cube  
-	|- gui.cc 					- File - Controls for mouse and keyboard in animation  
-	|- gui.h 					- File - header for gui.cc  
-	|- json.hpp 				- File - Nlohmann's json for C++  
-	|- main.cc 					- File - Rendering loop  
-	|- procedure_geometry.cc 	- File - Specifies how to build large Rubik's cube from individual small cubes from cube.h  
-	|- procedure_geometry.h 	- File - header file for procedure_geometry.cc  
-	|- render_pass.cc 			- File - abstraction for rendering objects in OpenGL  
-	|- render_pass.h 			- File - header file for render_pass.cc  
-	|- shader_uniform.cc 		- File - abstraction for GLSL commands  
-	|- shader_uniform.h 		- File - header file for shader_uniform.cc  
-	|- solver.cc 				- File - implementation that solves Rubik's cube and generates the moves for it  
-	|- solver.h 				- File - header file for solver.cc  
+----|- shaders 					- Folder - vertex shader and fragment shader for GLSL  
+----|- CMakeLists.txt 			- File - CMake  
+----|- config.h 				- File - Constants  
+----|- cube.h 					- File - Specifies vertices and triangles to build a unit cube  
+----|- gui.cc 					- File - Controls for mouse and keyboard in animation  
+----|- gui.h 					- File - header for gui.cc  
+----|- json.hpp 				- File - Nlohmann's json for C++  
+----|- main.cc 					- File - Rendering loop  
+----|- procedure_geometry.cc 	- File - Specifies how to build large Rubik's cube from individual small cubes from cube.h  
+----|- procedure_geometry.h 	- File - header file for procedure_geometry.cc  
+----|- render_pass.cc 			- File - abstraction for rendering objects in OpenGL  
+----|- render_pass.h 			- File - header file for render_pass.cc  
+----|- shader_uniform.cc 		- File - abstraction for GLSL commands  
+----|- shader_uniform.h 		- File - header file for shader_uniform.cc  
+----|- solver.cc 				- File - implementation that solves Rubik's cube and generates the moves for it  
+----|- solver.h 				- File - header file for solver.cc  
 |- third-party 		- Folder - this should be for OpenGL mathematics library  
 |- .gitignore  		- File - what should not be committed to git repo  
 |- CMakeLists.txt 	- File - CMake  
