@@ -343,3 +343,32 @@ Commit "Edges are faster" - July 28, 2020
 	- For instance, if two correct cubies are next to each other, then both get solved simultaneously
 - Be careful on the flipping cubies on the current edge as well as last 4 edges, since might push some cubies incorrectly
 - Significant speed up on edge solving on N = 100
+
+Commit "Cleaned up code, comments, READEME, Log, TODO" - July 28, 2020
+- Got rid of much of the original solving code that was too inefficient
+- Deleted print statements and unnecessary comments
+
+Commit "Removed copyConfiguration after scrambling" - July 29, 2020
+- Since the scrambleCube method was moved to solver, no longer need external method to copy graphical cube to internal cube
+
+Commit "Multi-layer turn implemented" - August 5, 2020
+- Disorganized code to peek the next turn; if it's parallel to first turn and turning same amount, then move both together
+- Now with multi-layer turn, N = 100 takes 27 minutes
+
+Commit "Fixed bugs with odd sized cubes" - August 13, 2020
+- Got rid of code that originally drew a skybox; made irrelevant by finding how to color background
+- for odd cubes, make sure back center is actually the one we are solving
+
+Commit "Added Ubuntu requirements" - September 15, 2020
+- Classes started, so I got busy
+- Wanted to try loading this project back on Ubuntu machine again that was wiped
+- Added the 4 requirements from Professor Vouga's website.
+
+Commit "Included libjpeg-dev as dependency for Ubuntu" - September 15, 2020
+- Program complained that "Could NOT find JPEG (missing: JPEG_LIBRARY JPEG_INCLUDE_DIR)"
+- solved with "apt-get install libjpeg-dev". 
+
+Commit "trying out branch" - September 16, 2020
+- Wanted to experiment with making a new branch, so as to keep working code
+- At the same time, wanted to restructure code to make it neater and continue with textures idea
+
