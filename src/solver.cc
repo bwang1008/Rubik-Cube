@@ -712,7 +712,7 @@ void Solver::exec(int face, int layer, int qt) {
 	case 5: turnBack(layer, qt); break;
 	}
 
-	if (kOptimize && dequePtr->size() > 0) {
+	if (dequePtr->size() > 0) {
 		glm::ivec3 copy = dequePtr->back();
 
 		if (copy[0] == face && copy[1] == layer) {
@@ -831,7 +831,7 @@ int Solver::currentState() {
 void Solver::scrambleCube() {
 	int N = cubeWidth;
 	srand(1);
-	int numberMoves = std::min(15 * N, 3000);
+	int numberMoves = std::min(15 * N, kMaxScramble);
 
 	for (int i = 0; i < numberMoves; ++i) {
 		int randFace = rand() % 3;
@@ -1466,6 +1466,7 @@ void Solver::preliminary1() {
 		positions[i] = 3;
 	}
 
+	/*
 	int numCorrect = 0;
 	for (int i = 1; i < N - 1; ++i) {
 		for (int j = 1; j < N - 1; ++j) {
@@ -1476,6 +1477,7 @@ void Solver::preliminary1() {
 	}
 
 	std::cout << "numCorrect0 = " << numCorrect << std::endl;
+	*/
 	
 	for (int numTimes = 0; numTimes < 3; ++numTimes) {
 		exec(4, 0, 1);
@@ -1537,6 +1539,7 @@ void Solver::preliminary1() {
 			positions[i] = 3;
 		}
 
+		/*
 		numCorrect = 0;
 		for (int i = 1; i < N - 1; ++i) {
 			for (int j = 1; j < N - 1; ++j) {
@@ -1547,6 +1550,7 @@ void Solver::preliminary1() {
 		}
 
 		std::cout << "numCorrect" << numTimes << " = " << numCorrect << std::endl;
+		*/
 	}
 	
 	// move the Up face that has Back stickers onto Back face, do this at the end of preliminary
@@ -1571,7 +1575,6 @@ void Solver::preliminary1() {
 	for (int i = 1; i < N / 2; ++i) {
 		exec(4, i, -1);
 	}
-	
 }
 
 // solving Back face: use swapping method to get down stickers from Left, Right, Up
@@ -4271,7 +4274,7 @@ void Solver::solveLastCornerPosition() {
 	}
 
 	int permutation = 1000 * indices[0] + 100 * indices[1] + 10 * indices[2] + indices[3];
-	std::cout << "PPPPPPPPERMUTATION = " << permutation << std::endl;
+	//std::cout << "PPPPPPPPERMUTATION = " << permutation << std::endl;
 
 	if (permutation == 1234) {
 
@@ -4598,7 +4601,6 @@ void Solver::solveLastCornerPosition() {
 		exec(2, 0, -1);
 		exec(4, 0, 1);
 	}
-
 }
 
 // assume corners are in the correct position; now orient each small cube so correct sticker on top
