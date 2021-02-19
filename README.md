@@ -16,7 +16,7 @@ Stage 5: Front face center and Right face center completely solved
 Stage 6: Edge pieces are grouped together correctly  
 Stage 7: All edge and corner pieces correct  
 
-You will need to press ENTER in between each of these stages.
+You will need to press ENTER in between each of these stages. For small cubes, some stages will require no moves, so just press ENTER again.
 
 The main idea is to first render a hollow cube, to save resources, with the appriopriate colors. Upon one rotation of a face, update the position of the vertices of the appropriate cubies on the fly in the vertex shader (not in main). Once that one particular rotation is finished, use the same vertices in main and update them to update transformation / colors appropriately (otherwise the colors are as if no rotation happened at all). For solving, we first solve the centers, then solve the edges, then solve the rest as a large 3x3x3 or 4x4x4 cube, depending on parity. 
 
