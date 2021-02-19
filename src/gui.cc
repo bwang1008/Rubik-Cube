@@ -107,7 +107,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 	else if (key == GLFW_KEY_ENTER && action == GLFW_RELEASE) {
 		if (solver->currentState() & 1) { // if current state is odd, then valid
 			solver->incr();
-			std::cout << "state = " << solver->currentState() << std::endl;
+			//std::cout << "state = " << solver->currentState() << std::endl;
 		}
 	}
 	else if (key == GLFW_KEY_MINUS && action != GLFW_RELEASE) {

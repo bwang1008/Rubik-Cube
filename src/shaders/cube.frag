@@ -10,6 +10,15 @@ void main() {
 	float u = coord[0];
 	float v = coord[1];
 
+	vec4 white = vec4(1.0, 1.0, 1.0, 1.0); 						// white
+	vec4 yellow = vec4(1.0, 1.0, 0.0, 1.0); 					// yellow
+	vec4 red = vec4(1.0, 0.0, 0.0, 1.0); 						// red
+	vec4 orange = vec4(255.0f/255.0, 140.0f/255.0, 0.0, 1.0); 	// orange
+	vec4 green = vec4(46.0/256, 139.0/256, 87.0/256, 1.0);		// green
+	vec4 blue = vec4(0.0, 0.0, 1.0, 1.0); 						// blue
+
+	vec4 edgeColor = vec4(0.7, 0.7, 0.7, 1.0);					// black
+
 	// front, right, top axis
 	int first12Bits = (type >> 6) & 4095;
 
@@ -34,15 +43,6 @@ void main() {
 	int frontAxisNum = 9 * frontAxis[0] + 3 * frontAxis[1] + frontAxis[2];
 	int rightAxisNum = 9 * rightAxis[0] + 3 * rightAxis[1] + rightAxis[2];
 	int topAxisNum = 9 * topAxis[0] + 3 * topAxis[1] + topAxis[2];
-
-	vec4 white = vec4(1.0, 1.0, 1.0, 1.0); // white
-	vec4 yellow = vec4(1.0, 1.0, 0.0, 1.0); // yellow
-	vec4 red = vec4(1.0, 0.0, 0.0, 1.0); // red
-	vec4 orange = vec4(255.0f/255.0, 140.0f/255.0, 0.0, 1.0); // orange
-	//vec4 green = vec4(34.0/256, 139.0/256, 34.0/256, 1.0); // green
-	//46,139,87
-	vec4 green = vec4(46.0/256, 139.0/256, 87.0/256, 1.0);
-	vec4 blue = vec4(0.0, 0.0, 1.0, 1.0); // blue
 
 	int myAxis = 0;
 
@@ -136,12 +136,12 @@ void main() {
 	float EPS = 0.02;
 
 	if(dx < EPS || dy < EPS) {
-		fragment_color = vec4(0.7, 0.7, 0.7, 1.0);
+		fragment_color = edgeColor;
 	}
 	else {
 		float r = 0.2;
 		if(dx < r/2 && dy < r - sqrt(r*r - ((dx - r) * (dx - r)))) {
-			fragment_color = vec4(0.7, 0.7, 0.7, 1.0);	// rounded corners of each sticker
+			fragment_color = edgeColor;	// rounded corners of each sticker
 		}
 	}
 

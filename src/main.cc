@@ -462,7 +462,7 @@ int main(int argc, char* argv[]) {
 			gui.resetCount();
 			gui.setRotatingSpeed(5.0f);
 
-			//std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
+			std::cout << "SOLVED" << std::endl;
 			solver->incr();
 			finished = true;
 		}
