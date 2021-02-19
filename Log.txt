@@ -368,7 +368,6 @@ Commit "Included libjpeg-dev as dependency for Ubuntu" - September 15, 2020
 - Program complained that "Could NOT find JPEG (missing: JPEG_LIBRARY JPEG_INCLUDE_DIR)"
 - solved with "apt-get install libjpeg-dev". 
 
-Commit "trying out branch" - September 16, 2020
-- Wanted to experiment with making a new branch, so as to keep working code
-- At the same time, wanted to restructure code to make it neater and continue with textures idea
-
+Commit "Fixed spacing issue in README" - February 19, 2021
+- Removed unused constants and print statements
+- Updated README
