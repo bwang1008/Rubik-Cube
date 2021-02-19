@@ -4,7 +4,7 @@ OpenGL/C++ exercise to render a Rubik's Cube and solve a scrambled version.
 
 Supports cube sizes from 1 to 200. Change this value on line 21 of src/config.h. Larger cube sizes demand more computer resources and take longer to solve. This is intended to run in Ubuntu.
 
-Use the left mouse button to click and drag the cube around its center. Use W to zoom in, S to zoom out. Press V to re-adjust the camera to default settings. Press ENTER between stages of solving to proceed to the next one. Press ESCAPE to exit.
+Use the left mouse button to click and drag the cube around its center. Use W to zoom in, S to zoom out. Press V to re-adjust the camera to default settings. Press -/+ to decrease/increase the speed of a rotation. Press ENTER between stages of solving to proceed to the next one. Press ESCAPE to exit.
 
 When the program first starts, it will automatically start scrambling. Once it finishes scrambling, it will wait for the user to press ENTER to enter the next stage of solving. 
 
@@ -48,6 +48,7 @@ File directory structure:
 |- TODO.txt 		- File - Ideas for what to implement next  
 |- run.sh 			- File - Bash script to run the program  
 
+This is for the `master` branch. Do not use `reform` branch. I am trying out textures to render the Rubik's cube instead of rendering many little cubes in `reform`, but it is not ready yet.
 
 Requirements for Ubuntu:\
 `apt-get install cmake`\

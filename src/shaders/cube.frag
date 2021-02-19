@@ -138,6 +138,12 @@ void main() {
 	if(dx < EPS || dy < EPS) {
 		fragment_color = vec4(0.7, 0.7, 0.7, 1.0);
 	}
+	else {
+		float r = 0.2;
+		if(dx < r/2 && dy < r - sqrt(r*r - ((dx - r) * (dx - r)))) {
+			fragment_color = vec4(0.7, 0.7, 0.7, 1.0);	// rounded corners of each sticker
+		}
+	}
 
 	fragment_color[3] = 1.0; // prevent transparencies
 

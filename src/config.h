@@ -18,5 +18,5 @@ const float kScrollSpeed = 64.0f;
 //const int kColors[6][3] = { {46, 139, 87}, {255, 0, 0}, {255, 255, 255}, {255, 255, 0}, {255, 140, 0}, {0, 0, 255} };
 //const bool kOptimize = true;
 const int kMaxScramble = 1000;
-const int cubeWidth = 10;
+const int cubeWidth = 3;
 #endif
