@@ -88,7 +88,8 @@ GLFWwindow* init_glefw() {
 	return ret;
 }
 
-int main2(int argc, char* argv[]) {	
+int main(int argc, char* argv[]) {	
+	// reject invalid N
 	if (cubeWidth <= 0 || cubeWidth > 200) {
 		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
 		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
@@ -97,6 +98,7 @@ int main2(int argc, char* argv[]) {
 
 	std::cout << "Cube Width = " << cubeWidth << std::endl;
 
+	// set up graphical window
 	GLFWwindow *window = init_glefw();
 	GUI gui(window, window_width, window_height, window_height);
 
@@ -105,7 +107,7 @@ int main2(int argc, char* argv[]) {
 
 	Solver* solver = new Solver(); // create solver
 	gui.loadSolver(solver); // hand it to gui
-	gui.setDeque(); // hand solver the deque from gui
+	gui.setDeque(); // hand to the solver: the deque from gui; so gui has access to deque
 
 	// Rotation matrices;
 	glm::mat4 matX1 = glm::mat4(1.0f);
@@ -120,7 +122,7 @@ int main2(int argc, char* argv[]) {
 	glm::mat4 matY3 = glm::mat4(1.0f);
 	glm::mat4 matZ3 = glm::mat4(1.0f);
 
-	// edit entries to make proper rotation matrices
+	// edit entries to make proper rotation matrices; curly braces so I can minimize it in text editor
 	{
 		// sin(pi/2) = 1 to make counter clockwise; so negate for clockwise
 		matX1[1][1] = 0.0f;
@@ -187,7 +189,7 @@ int main2(int argc, char* argv[]) {
 	std::cout << "Num vertices = " << cube_vertices.size() << std::endl;
 	std::cout << "Num faces  = " << cube_faces.size() << std::endl;
 
-	glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
+	//glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
 
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
 	/*
@@ -215,7 +217,7 @@ int main2(int argc, char* argv[]) {
 	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
 	std::function<glm::mat4()> identity_mat = [](){ return glm::mat4(1.0f); };
 	std::function<glm::vec3()> cam_data = [&gui](){ return gui.getCamera(); };
-	std::function<glm::vec4()> lp_data = [&light_position]() { return light_position; };
+	//std::function<glm::vec4()> lp_data = [&light_position]() { return light_position; };
 	std::function<int()> face_data = [&gui]() { return gui.getCurrentMove()[0]; };
 	std::function<float()> theta_data = [&gui]() {
 		float temp = -gui.getCurrentPlayTime() * gui.getRotatingSpeed();
@@ -227,7 +229,7 @@ int main2(int argc, char* argv[]) {
 	auto std_view = make_uniform("view", view_data);
 	auto std_camera = make_uniform("camera_position", cam_data);
 	auto std_proj = make_uniform("projection", proj_data);
-	auto std_light = make_uniform("light_position", lp_data);
+	//auto std_light = make_uniform("light_position", lp_data);
 	auto face_uni = make_uniform("face", face_data);
 	auto theta_uni = make_uniform("theta", theta_data);
 
@@ -242,13 +244,13 @@ int main2(int argc, char* argv[]) {
 			{ "fragment_color"}
 			);
 
-	int dequeSize = 0;
-	long long totalMoves = 0;
+	int dequeSize = 0;			// to be used for progress bar display
+	long long totalMoves = 0;	// meta data for counting how many moves taken to solve the entire cube
 	long long totalQT = 0;
-	bool draw_cube = true;
-	bool finished = false;
+	bool draw_cube = true;		// not sure why this would ever be false
+	bool finished = false;		// true only when cube is completely solved
 
-	if(argc == 3){
+	if(argc == 3){				// this should never be used right now, but hopefully can take in user input file
 		std::string s(argv[2]);
 		std::cout << "loading file: " << s << std::endl;
 		//mesh.loadAnimationFrom(s);
@@ -259,18 +261,20 @@ int main2(int argc, char* argv[]) {
 	}
 	*/
 
+	// SCRAMBLE
 	std::cout << "Begin generating scrambles" << std::endl;
 	solver -> scrambleCube();
 	dequeSize = gui.getSize();
 	std::cout << "Going to scramble by " << gui.getSize() << " moves" << std::endl;
-	gui.setRotatingSpeed(250.0f);
+	gui.setRotatingSpeed(100.0f);
 
+	// render loop
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
 		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 0.0f);			// background color
 		//glClearColor(0.56f, 0.72f, 0.95f, 0.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
@@ -284,6 +288,7 @@ int main2(int argc, char* argv[]) {
 		gui.updateMatrices();
 		mats = gui.getMatrixPointers();
 
+		// title of window
 		std::stringstream title;
 		float cur_time = gui.getCurrentPlayTime();
 		title << window_title;
@@ -295,8 +300,7 @@ int main2(int argc, char* argv[]) {
 			
 			//mesh.updateAnimation(cur_time);
 		} 
-		else
-		{
+		else {
 			title << " Paused: "
 				<< std::setprecision(2)
 				<< std::setfill('0') << std::setw(6)
@@ -334,7 +338,7 @@ int main2(int argc, char* argv[]) {
 			solver->solveCenter0();
 			solver->preliminary1();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve 1st center
+			gui.setRotatingSpeed(5.0f); // to solve 1st center
 			
 			std::cout << "Click on animation window and press ENTER to proceed" << std::endl;
 			solver->incr(); // state == 1
@@ -351,7 +355,7 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solveCenter1();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve 2nd center
+			gui.setRotatingSpeed(5.0f); // to solve 2nd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (2)" << std::endl;
 			solver->incr();
@@ -368,7 +372,7 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solveCenter2();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve 3rd center
+			gui.setRotatingSpeed(5.0f); // to solve 3rd center
 
 			std::cout << "Click on animation window and press ENTER to proceed (3)" << std::endl;
 			solver->incr();
@@ -385,7 +389,7 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solveCenter3();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve 4th center
+			gui.setRotatingSpeed(5.0f); // to solve 4th center
 
 			std::cout << "Click on animation window and press ENTER to proceed (4)" << std::endl;
 			solver->incr();
@@ -402,7 +406,7 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solveLastCenters();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve 5th, 6th centers
+			gui.setRotatingSpeed(5.0f); // to solve 5th, 6th centers
 
 			std::cout << "Click on animation window and press ENTER to proceed (5)" << std::endl;
 			solver->incr();
@@ -421,7 +425,7 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solveEdges();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve edges
+			gui.setRotatingSpeed(5.0f); // to solve edges
 
 			std::cout << "Click on animation window and press ENTER to proceed (6)" << std::endl;
 			solver->incr();
@@ -440,7 +444,7 @@ int main2(int argc, char* argv[]) {
 			gui.resetCount();
 			solver->solve3x3x3();
 			dequeSize = gui.getSize();
-			gui.setRotatingSpeed(250.0f); // to solve 3x3x3
+			gui.setRotatingSpeed(5.0f); // to solve 3x3x3
 
 			std::cout << "Click on animation window and press ENTER to proceed (7)" << std::endl;
 			solver->incr();
@@ -456,7 +460,7 @@ int main2(int argc, char* argv[]) {
 
 			std::cout << "total moves = (" << totalMoves << ", " << totalQT << ")" << std::endl;
 			gui.resetCount();
-			gui.setRotatingSpeed(250.0f);
+			gui.setRotatingSpeed(5.0f);
 
 			//std::cout << "Click on animation window and press ENTER to proceed (8)" << std::endl;
 			solver->incr();
@@ -684,235 +688,8 @@ int main2(int argc, char* argv[]) {
 		glfwSwapBuffers(window);
 	}
 
+	// outside of rendering loop, do clean up
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
-}
-
-int tryingOutTextures(int argc, char* argv[]) {
-	if (cubeWidth <= 0 || cubeWidth > 1024) {
-		std::cerr << "Cube width defined in config.h is invalid" << std::endl;
-		std::cerr << "Width cannot be negative, and large values consume too much resources" << std::endl;
-		return -1;
-	}
-
-	std::cout << "Cube Width = " << cubeWidth << std::endl;
-
-	GLFWwindow* window = init_glefw();
-	GUI gui(window, window_width, window_height, window_height);
-
-	srand(1); // set seed for random
-	Image* images[6];
-	for (int i = 0; i < 6; ++i) {
-		images[i] = new Image();
-	}
-	std::string path = "../../../assets/NyanCat.jpg";
-
-	bool wantToLoad = false;
-	bool loaded = false;
-	if (wantToLoad) {
-		for (int index = 0; index < 6; ++index) {
-			loaded = LoadJPEG(path, images[index]);
-		}
-		
-	}
-
-	if (wantToLoad && !loaded) {
-		std::cout << "Could not find path" << std::endl;
-		return -1;
-	}
-	else if (wantToLoad && loaded) {
-		std::cout << "Loaded! Need to resize width" << std::endl;
-
-		for (int index = 0; index < 6; ++index) {
-
-			Image* im2 = new Image();
-			im2->width = images[index]->width;
-			im2->height = images[index]->height;
-
-			int append = (4 - ((3 * im2->width) % 4)) % 4;
-
-			int ind = 0;
-			for (int i = 0; i < im2->height; ++i) {
-				for (int j = 0; j < im2->width; ++j) {
-					im2->bytes.push_back(images[index]->bytes[ind]);
-					im2->bytes.push_back(images[index]->bytes[ind + 1]);
-					im2->bytes.push_back(images[index]->bytes[ind + 2]);
-
-					ind += 3;
-				}
-				// make new length divisible by 4, so attach on <append> more bytes
-
-				for (int j = 0; j < append; ++j) {
-					im2->bytes.push_back(0);
-				}
-			}
-
-			images[index] = im2;
-		}
-	}
-	else {
-		// wantToLoad is false
-		for (int index = 0; index < 6; ++index) {
-			Image* im = new Image();
-
-			im->width = cubeWidth;
-			im->height = cubeWidth;
-
-
-			for (int i = 0; i < im->height; ++i) {
-				for (int j = 0; j < im->width; ++j) {
-					int sth = rand() % 6;
-
-					im->bytes.push_back(kColors[sth][0]);
-					im->bytes.push_back(kColors[sth][1]);
-					im->bytes.push_back(kColors[sth][2]);
-				}
-
-				int currSize = im->width * 3;
-				while (currSize % 4 != 0) {
-					im->bytes.push_back(0);
-					currSize++;
-				}
-			}
-
-			images[index] = im;
-
-			std::cout << "Finished creating texture " << index + 1 << std::endl;
-		}
-	}
-	
-	// create textures
-	unsigned int textureNum[6];
-	for (int i = 0; i < 6; ++i) {
-		glGenTextures(1, &(textureNum[i]));
-		glBindTexture(GL_TEXTURE_2D, textureNum[i]);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-
-	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
-
-	std::vector<glm::vec4> cube_vertices;
-	std::vector<glm::uvec3> cube_faces;
-	std::vector<int> cube_id;
-
-	create_rubik2(cube_vertices, cube_faces);
-
-	for (int i = 0; i < 6; ++i) {
-		for (int j = 0; j < 4; ++j) {
-			cube_id.push_back(i);
-		}
-	}
-
-	// lambdas for uniforms
-	std::function<glm::mat4()> view_data = [&mats]() { return *mats.view; };
-	std::function<glm::mat4()> proj_data = [&mats]() { return *mats.projection; };
-	std::function<glm::mat4()> identity_mat = []() { return glm::mat4(1.0f); };
-	std::function<glm::vec3()> cam_data = [&gui]() { return gui.getCamera(); };
-	
-	// return value says where location of each of the 6 textures are
-	std::function<int()> texture_data0 = []() {return 0; };
-	std::function<int()> texture_data1 = []() {return 1; };
-	std::function<int()> texture_data2 = []() {return 2; };
-	std::function<int()> texture_data3 = []() {return 3; };
-	std::function<int()> texture_data4 = []() {return 4; };
-	std::function<int()> texture_data5 = []() {return 5; };
-
-	// create uniforms
-	auto std_view = make_uniform("view", view_data);
-	auto std_camera = make_uniform("camera_position", cam_data);
-	auto std_proj = make_uniform("projection", proj_data);
-	
-	auto texture0 = make_uniform("texture0", texture_data0);
-	auto texture1 = make_uniform("texture1", texture_data1);
-	auto texture2 = make_uniform("texture2", texture_data2);
-	auto texture3 = make_uniform("texture3", texture_data3);
-	auto texture4 = make_uniform("texture4", texture_data4);
-	auto texture5 = make_uniform("texture5", texture_data5);
-
-	RenderDataInput cube_pass_input;
-	cube_pass_input.assign(0, "vertex_position", cube_vertices.data(), cube_vertices.size(), 4, GL_FLOAT);
-	cube_pass_input.assign(1, "my_face", cube_id.data(), cube_id.size(), 1, GL_INT);
-	cube_pass_input.assignIndex(cube_faces.data(), cube_faces.size(), 3);
-	RenderPass cube_pass(-1, cube_pass_input,
-		{ preview_vertex_shader, nullptr, preview_fragment_shader },
-		{ std_view, std_proj, texture0, texture1, texture2, texture3, texture4, texture5 },
-		{ "fragment_color" }
-	);
-
-	// rendering loop
-	while (!glfwWindowShouldClose(window)) {
-		// Setup some basic window stuff.
-		glfwGetFramebufferSize(window, &window_width, &window_height);
-		glViewport(0, 0, window_width, window_height);
-		//glClearColor(0.56f, 0.72f, 0.95f, 1.0f);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_MULTISAMPLE);
-		glEnable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDepthFunc(GL_LESS);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glCullFace(GL_BACK);
-
-		gui.updateMatrices();
-		mats = gui.getMatrixPointers();
-
-		//int sth = rand() % (im->width * im->height * 3);
-		//im->bytes[sth] = 255;
-		//std::cout << "sth = " << sth << std::endl;
-
-		// update textures
-		for (int i = 0; i < 6; ++i) {
-			if (i == 0) {
-				glActiveTexture(GL_TEXTURE0);
-			}
-			else if (i == 1) {
-				glActiveTexture(GL_TEXTURE1);
-			}
-			else if (i == 2) {
-				glActiveTexture(GL_TEXTURE2);
-			}
-			else if (i == 3) {
-				glActiveTexture(GL_TEXTURE3);
-			}
-			else if (i == 4) {
-				glActiveTexture(GL_TEXTURE4);
-			}
-			else if (i == 5) {
-				glActiveTexture(GL_TEXTURE5);
-			}
-
-			glBindTexture(GL_TEXTURE_2D, textureNum[i]);
-			
-			// actual setting textures
-			if (true || gui.isQuarterTurning()) {
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, images[i]->width, images[i]->height, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
-				//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, images[i]->width, images[i]->height, 0, GL_RGB, GL_UNSIGNED_BYTE, images[i]->bytes.data());
-
-			}
-		}
-		
-		// render faces of cube
-		cube_pass.setup();
-		CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, cube_faces.size() * 3, GL_UNSIGNED_INT, 0));
-
-		// Poll and swap.
-		glfwPollEvents();
-		glfwSwapBuffers(window);
-	}
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	exit(EXIT_SUCCESS);
-}
-
-int main(int argc, char* argv[]) {
-	main2(argc, argv);
-	//tryingOutTextures(argc, argv);
 }
